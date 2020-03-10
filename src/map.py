@@ -2,6 +2,7 @@ class Map:
     mapGrid = [][]
     def __init__(self, players):
         self.players = players
+		self.setupMap()
 
     def movePlayer(self, player, move):
         room = self.mapGrid[player.x][player.y]
@@ -9,3 +10,6 @@ class Map:
 
     def checkRules(player, room, move):
         Rules.rule1()
+
+	def setupMap():
+		mapGrid.append("")
