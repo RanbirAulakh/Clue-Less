@@ -4,9 +4,14 @@ class Clue:
 		self.name = name
 		self.type = type
 		
+	"""
+	Actual name (Ballroom/Prof. Plum/Lead Pipe)
+	"""
 	def getClueName(self):
 		return self.name
-		
+	"""
+	Weapon/Person/Location
+	"""
 	def getClueType(self):
 		return self.type
 		
