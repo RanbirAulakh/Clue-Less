@@ -6,6 +6,7 @@ import platform
 import sys
 import argparse
 from client.client import Client
+from server.server import Server
 
 def main():
     parser = argparse.ArgumentParser(description="Clue-Less Game!")
@@ -13,7 +14,8 @@ def main():
     args = parser.parse_args()
 
     if args.type.lower() == "client":
-        print("Starting Client...")
-        Client().client
+        Client()
+    elif args.type.lower() == "server":
+        Server()
 
 main()

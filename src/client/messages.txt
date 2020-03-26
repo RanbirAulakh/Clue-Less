@@ -1,0 +1,8 @@
+
+Routing Keys:               Status:
+- create_public_game        
+- create_private_game       
+- find_game           
+- join_public_game          
+- join_private_game         
+
