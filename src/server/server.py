@@ -2,6 +2,7 @@ import pika
 import os
 import random
 from .game import Game
+from .player import Player
 import json
 
 # TODO multiple host https://pika.readthedocs.io/en/stable/examples/blocking_consume_recover_multiple_hosts.html
@@ -26,17 +27,16 @@ class Server:
         self.channel.queue_declare(queue='create_game') # Declare a queue
         self.channel.queue_declare(queue='find_game') # Declare a queue
         
-        self.channel.exchange_declare(exchange='logs', exchange_type='fanout')
-        result = self.channel.queue_declare(queue='loggy', exclusive=True)
-        queue_name = result.method.queue
-        self.channel.queue_bind(exchange='logs', queue=queue_name)
-        self.channel.basic_consume(queue='loggy', auto_ack=True, on_message_callback=self.game_lobby) # Declare a queue
+        # self.channel.exchange_declare(exchange='logs', exchange_type='fanout')
+        # result = self.channel.queue_declare(queue='loggy', exclusive=True)
+        # queue_name = result.method.queue
+        # self.channel.queue_bind(exchange='logs', queue=queue_name)
+        # self.channel.basic_consume(queue='loggy', auto_ack=True, on_message_callback=self.game_lobby) # Declare a queue
 
     def start_consume(self):
         self.channel.basic_consume(queue="create_game", auto_ack=True, on_message_callback=self.create_game)
         self.channel.basic_consume(queue="find_game", auto_ack=True, on_message_callback=self.find_game)
 
-        
     def custom_queue(self, key):
         self.channel.queue_declare(queue=key) # Declare a queue
 
@@ -45,25 +45,33 @@ class Server:
         
     # remove this testing function
     def generate_game_test(self):
+        testPlayer1 = Player("test", "green")
         generated_id = self.generate_game_id()
-        g = Game(generated_id, True, "test_lobby_1", None)
+
+        g = Game(generated_id, [testPlayer1], True, "Deez", None)
         self.game_model[generated_id] = g
         self.custom_queue(str(generated_id))
         self.start_custom_consume(str(generated_id))
 
         generated_id = self.generate_game_id()
-        g = Game(generated_id, True, "test_lobby_2", None)
+        g = Game(generated_id, [testPlayer1], True, "Dog", None)
         self.game_model[generated_id] = g
+        self.custom_queue(str(generated_id))
+        self.start_custom_consume(str(generated_id))
         
         generated_id = self.generate_game_id()
-        g = Game(generated_id, False, "test_lobby_3", "1234")
+        g = Game(generated_id, [testPlayer1], False, "Hola", "1234")
         self.game_model[generated_id] = g
+        self.custom_queue(str(generated_id))
+        self.start_custom_consume(str(generated_id))
 
     def create_game(self, ch, method, properties, body):
+        testPlayer1 = Player("test", "green")
+
         json_msg = json.loads(body.decode())
         generated_id = self.generate_game_id()
 
-        g = Game(generated_id, json_msg["visibility"], json_msg["user"], json_msg["key"])
+        g = Game(generated_id, [testPlayer1], json_msg["visibility"], json_msg["user"], json_msg["key"])
         self.game_model[generated_id] = g
 
         # create game id queue 
@@ -94,8 +102,6 @@ class Server:
         print(method)
         #json_msg = json.loads(body.decode())
         #game_id = json_msg["id"]
-
         #msg = "{0} said: {1}".format(json_msg["user"], json_msg["msg"])
         # self.channel.basic_publish(exchange='logs', routing_key='get_server', body="pbuck")
-        
         #return

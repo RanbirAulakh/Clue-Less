@@ -52,7 +52,7 @@ class Game:
     def find_game(self):
         self.result = self.channel.queue_declare(queue='', exclusive=True)
         self.callback_queue = self.result.method.queue
-        self.channel.basic_consume(queue=self.callback_queue,on_message_callback=self.on_response,auto_ack=True)
+        self.channel.basic_consume(queue=self.callback_queue, on_message_callback=self.on_response, auto_ack=True)
 
         self.response = None
         print("Searching for game...")
@@ -105,23 +105,7 @@ class Game:
                     self.find_game()
 
     def join_lobby(self, id):
-        self.channel.exchange_declare(exchange='logs', exchange_type='fanout')
-        # self.result = self.channel.queue_declare(queue='logs', exclusive=True)
-        # self.queue_name = self.result.method.queue
-        # self.channel.queue_bind(exchange='logs', queue='logs')
-        #result = self.channel.queue_declare(queue='logs', exclusive=True)
-        #queue_name = result.method.queue
-        #self.channel.queue_bind(exchange='logs', queue='loggy')
-        self.channel.basic_consume(queue='listen_server', on_message_callback=self.game_chat, auto_ack=True)
-        # self.channel.basic_publish(exchange='logs', routing_key='', body='test 123')
-
-        while(True):
-            user_input = inquirer.text("Enter Message:")
-            if user_input == "":
-                continue
-            else:
-                msg = {"msg":user_input, "id":id, "user":self.player_name}
-                self.channel.basic_publish(exchange='logs', routing_key='logs', body=json.dumps(msg))
+        pass 
 
     def game_chat(self, ch, method, properties, body):
         print("here??")

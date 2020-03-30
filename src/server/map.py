@@ -1,15 +1,11 @@
-class Map:
-    mapGrid = [][]
-    def __init__(self, players):
-        self.players = players
-		self.setupMap()
+# team: The Plum Professors
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
+# description:
 
-    def movePlayer(self, player, move):
-        room = self.mapGrid[player.x][player.y]
-        self.checkRules(player, room, move)
+from .room import Room
+from . import constants
 
-    def checkRules(player, room, move):
-        Rules.rule1()
-
-	def setupMap():
-		mapGrid.append("")
+class Map :
+	def __init__(self):
+		pass
+		
