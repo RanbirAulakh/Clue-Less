@@ -1,3 +1,7 @@
+"""
+Plum Professors
+Ranbir, Victoria, Parth, Michael
+"""
 class Clue:
 
 	def __init__(self, name, type):

@@ -1,12 +1,21 @@
+# team: The Plum Professors
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
+# description:
+
 import constants
 import random
 from player import Player
-import room
+from room import *
 from clue import Clue
-import map
+from map import Map
 
 class Game():
 	def __init__(self, id, players):
+		"""
+		Add game lookup by id?
+		
+		Random characters for each player or initialize the players out of initial game?
+		"""
 		#create decks of the different clue types
 		suspects = self.createSuspectDeck(constants.SUSPECTS)
 		weapons = self.createWeaponsDeck(constants.WEAPONS)
@@ -18,6 +27,7 @@ class Game():
 		random.shuffle(clueDeck)
 		numPlayers = len(players)
 		self.dealHands(players,clueDeck)
+		self.map = Map()
 		pass
 		
 	# create individual decks for the creation of the muder
@@ -64,8 +74,10 @@ class Game():
 			players[rounds%numPlayers].getHand().append(clueDeck.pop())
 			rounds += 1
 	
-testPlayer1 = Player("test")
-testPlayer2 = Player("test2")
+testPlayer1 = Player("test", "green")
+testPlayer2 = Player("test2", "plum")
+HallTest = Hallway("hall",["1","2"])
+print(HallTest.canGuess())
 Object = Game("id",[testPlayer1, testPlayer2])
 print("\n")
 thing=Object.getMurder()

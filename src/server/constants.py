@@ -1,3 +1,7 @@
+# team: The Plum Professors
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
+# description:
+
 #Constants of the weapons
 CANDLESTICK="Candlestick"
 REVOLVER="Revolver"
