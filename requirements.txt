@@ -1,4 +1,3 @@
 pygame
 pika
-inquirer
-aioamqp
+PyInquirer

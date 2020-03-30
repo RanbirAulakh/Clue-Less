@@ -29,7 +29,7 @@ class Game():
 		weapons = self.createWeaponsDeck(constants.WEAPONS)
 		rooms = self.createRoomsDeck(constants.ROOMS)
 		# draw 1 from each and store it as the murder you are solving
-		storedMurder = self.createMurder(suspects, rooms, weapons)
+		self.createMurder(suspects, rooms, weapons)
 		#combine the decks then deal to the players)
 		clueDeck = suspects + weapons + rooms
 		random.shuffle(clueDeck)

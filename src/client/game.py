@@ -1,7 +1,7 @@
 import pika
 import os
 import enum
-import inquirer
+from PyInquirer import prompt
 import random
 import string
 import json
@@ -30,8 +30,13 @@ class Game:
 
     def create_game(self, player_name):
         self.player_name = player_name
-        choices = inquirer.list_input("What would you like to do?",
-            choices=[Options.PUBLIC_GAME.value, Options.PRIVATE_GAME.value, Options.BACK.value])
+        options = [{
+            'type':'list',
+            'name':'choices',
+            'message':'What would you like to do?',
+            'choices':[Options.PUBLIC_GAME.value, Options.PRIVATE_GAME.value, Options.BACK.value]
+        }]
+        choices = prompt(options)['choices']
 
         self.channel.queue_declare(queue='create_game')
         if Options.PUBLIC_GAME.value == choices:
@@ -39,7 +44,8 @@ class Game:
             self.channel.basic_publish(exchange='', routing_key='create_game', body=json.dumps(msg))
 
         elif Options.PRIVATE_GAME.value == choices:
-            key = inquirer.text("Create your own password (Leave blank for generated key)?")
+            enter_key_question = [{ 'type': 'input', 'name':'key', 'message':'Create your own password (Leave blank for generated key)?'}]
+            key = prompt(enter_key_question)['key']
             if key == "":
                 key = self.generate_private_key()
                 print("Your password is: {0} and share with your friends!".format(key))
@@ -63,8 +69,13 @@ class Game:
             self.connection.process_data_events()
         
         if(self.response.decode() == "No available games!"):
-            choices = inquirer.list_input("No available games!",
-                choices=[Options.REFRESH_GAME.value, Options.BACK.value])
+            options = [{
+                'type':'list',
+                'name':'choices',
+                'message':'What would you like to do?',
+                'choices':[Options.REFRESH_GAME.value, Options.BACK.value]
+            }]
+            choices = prompt(options)["choices"]
 
             if Options.REFRESH_GAME.value == choices:
                 self.find_game()
@@ -84,19 +95,27 @@ class Game:
             lst.append(game_choice_format)
 
         lst.extend([Options.REFRESH_GAME.value, Options.BACK.value])
-        choices = inquirer.list_input("Which Clue-Less games would you like to join?", choices=lst)
+        #choices = inquirer.list_input("Which Clue-Less games would you like to join?", choices=lst)
+        options = [{
+            'type':'list',
+            'name':'choices',
+            'message':'What would you like to do?',
+            'choices':lst
+        }]
+        choices = prompt(options)
 
-        if choices == Options.REFRESH_GAME.value:
+        if choices['choices'] == Options.REFRESH_GAME.value:
             self.find_game()
-        elif choices == Options.REFRESH_GAME.value:
+        elif choices['choices'] == Options.REFRESH_GAME.value:
             return
         else:
-            id = choices.split(" -")[0]
+            id = choices['choices'].split(" -")[0]
             if json_msg[id]["visibility"]:
                 self.join_lobby(id)
             else:
                 # TODO validate private_key on server side
-                validate_key = inquirer.text("What is the password to this lobby?")
+                pass_question = [{ 'type': 'input', 'name':'key', 'message':'What is the password to this lobby?'}]
+                validate_key = prompt(pass_question)['key']
                 if validate_key == json_msg[id]["key"]:
                     # join the lobby
                     self.join_lobby(id)
