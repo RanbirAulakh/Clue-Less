@@ -33,7 +33,7 @@ Server should be up and running. Then execute
 
 ##### Windows 
 
-#### Deploy Server Component(s) to Heroku (For Production Only!)
+#### Deploy Server Component(s) to Heroku (For Production Only)
 git add .
 git commit -am "commit message"
 git push heroku master
@@ -50,6 +50,9 @@ amqp://bdvzzyja:GqbzJa1YXO26se5uKe-_lS9jiSrNKQ63@termite.rmq.cloudamqp.com/bdvzz
 **LocalHost URL**
 amqp://guest:guest@localhost:5672/%2f
 
+
+##### Create Installer (For Production Only)
+WIP
 
 **What is ___?**
 - Procfile

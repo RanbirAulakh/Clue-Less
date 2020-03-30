@@ -1,3 +1,7 @@
+
+# TODO implement Property (python3)
+# https://www.datacamp.com/community/tutorials/property-getters-setters
+
 class Game:
     id = ""
     visibility = True
@@ -14,3 +18,5 @@ class Game:
         # responible for handling PLAYERS, RULES, ETC
         pass
     
+    def convert_to_json(self):
+        return { "id": self.id, "visibility": self.visibility, "created_by": self.created_by, "key": self.private_key}
