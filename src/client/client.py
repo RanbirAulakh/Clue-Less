@@ -26,8 +26,6 @@ class Client:
     
     def main_menu_prompt(self):
         while(True):
-            #choices = inquirer.list_input("What would you like to do?", 
-            #    choices=[Options.CREATE_GAME.value, Options.FIND_GAME.value, Options.QUIT.value])
             options = [{
                 'type':'list',
                 'name':'choices',

@@ -43,6 +43,9 @@ class Game:
             msg = { "visibility": True, "user": self.player_name, "key": None}
             self.channel.basic_publish(exchange='', routing_key='create_game', body=json.dumps(msg))
 
+            print("Game successfully created!")
+            self.find_game()
+
         elif Options.PRIVATE_GAME.value == choices:
             enter_key_question = [{ 'type': 'input', 'name':'key', 'message':'Create your own password (Leave blank for generated key)?'}]
             key = prompt(enter_key_question)['key']
@@ -52,8 +55,12 @@ class Game:
             msg = { "visibility": False, "user": self.player_name, "key":key}
             self.channel.basic_publish(exchange='', routing_key='create_game', body=json.dumps(msg))
 
+            print("Game successfully created!")
+            self.find_game()
+
         elif Options.BACK.value == choices:
             return
+        
 
     def find_game(self):
         self.result = self.channel.queue_declare(queue='', exclusive=True)
@@ -106,7 +113,7 @@ class Game:
 
         if choices['choices'] == Options.REFRESH_GAME.value:
             self.find_game()
-        elif choices['choices'] == Options.REFRESH_GAME.value:
+        elif choices['choices'] == Options.BACK.value:
             return
         else:
             id = choices['choices'].split(" -")[0]
