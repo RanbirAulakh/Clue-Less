@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    {% if not user.is_authenticated %}
+        <div class="alert bg-warning text-white" role="alert">
+        Please Login if you would like to create or join game!
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-users"></i> Total Users</div>
+                <div class="card-body text-center display-4">2</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-gamepad"></i> Total Games</div>
+                <div class="card-body text-center display-4">2</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Popular Character</div>
+                <div class="card-body text-center display-4">Scarlet</div>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

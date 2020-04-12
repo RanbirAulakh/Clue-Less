@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block tab_title %} Create Game {% endblock %}
+{% block content %}
+    <form method="post" class="col-md-4 col-sm-6">
+        <h2>Create a Game</h2>
+        {% csrf_token %}
+
+
+        {{ form.as_p }}
+        <button class="btn btn-block btn-success" type="submit">Create Game</button>
+    </form>
+    <script>
+        $('#publicRadioBtn').click(function () {
+            if(publicRadioBtn.checked) {
+                $('#password_input').remove();
+            }
+        });
+        $('#privateRadioBtn').click(function () {
+            if(privateRadioBtn.checked) {
+                $('<div class="form-group" id="password_input">\n' +
+                    '            <label for="exampleFormControlInput1">Password (Leave blank to generate one)</label>\n' +
+                    '            <input type="text" class="form-control" id="password" placeholder="">\n' +
+                    '        </div>').insertBefore('#submitBtn')
+            }
+        });
+    </script>
+
+{% endblock %}

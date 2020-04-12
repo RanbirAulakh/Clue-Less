@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block tab_title %} Login Account {% endblock %}
+{% block content %}
+    <form method="post" class="col-md-4 col-sm-6">
+        <h2>Login</h2>
+        {% if error or logform.is_bound and not logform.is_valid %}
+            <p class="alert alert-danger">Invalid username or password.</p>
+        {% endif %}
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-block btn-success" type="submit">Login</button>
+    </form>
+{% endblock %}
