@@ -1,8 +1,8 @@
 
 from django import forms
-from game.models import Create
+from game.models import Game
 
-class CreateGameForm(forms.ModelForm):
+class GameForm(forms.ModelForm):
     TYPE_CHOICES = (
         ('Public', 'Public'),
         ('Private', 'Private')
@@ -14,5 +14,5 @@ class CreateGameForm(forms.ModelForm):
     # password1 = forms.CharField(label="Password", widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta:
-        model = Create
+        model = Game
         fields = ['name', 'type']

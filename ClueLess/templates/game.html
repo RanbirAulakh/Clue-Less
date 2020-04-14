@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="row">
-
-
+    <div clas="col-md-12">
+        <ul class="breadcrumb list-inline justify-content-center ">
+            <li class="list-inline-item"><i class="fa fa-passport"></i> {{ game_details.id }}</li>
+            <li class="list-inline-item pl-5"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
+            <li class="list-inline-item pl-5 "><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
+            <li class="list-inline-item pl-5 "><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
+        </ul>
     </div>
 
-    
-    <h2>{{ game_details.name }}'s Lobby</h2>
-    id: {{ game_details.id }} <br>
-    type: {{ game_details.type }} <br>
-    created_date: {{ game_details.created_date }} <br>
+
 {% endblock %}

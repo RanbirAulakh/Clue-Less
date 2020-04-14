@@ -4,25 +4,22 @@
     <form method="post" class="col-md-4 col-sm-6">
         <h2>Create a Game</h2>
         {% csrf_token %}
-
-
         {{ form.as_p }}
-        <button class="btn btn-block btn-success" type="submit">Create Game</button>
+        <button id="submitBtn" class="btn btn-block btn-success" type="submit">Create Game</button>
     </form>
     <script>
-        $('#publicRadioBtn').click(function () {
-            if(publicRadioBtn.checked) {
+        $('#id_type').change(function() {
+            var value = $(this).val();
+            if(value == "Private"){
                 $('#password_input').remove();
-            }
-        });
-        $('#privateRadioBtn').click(function () {
-            if(privateRadioBtn.checked) {
                 $('<div class="form-group" id="password_input">\n' +
                     '            <label for="exampleFormControlInput1">Password (Leave blank to generate one)</label>\n' +
                     '            <input type="text" class="form-control" id="password" placeholder="">\n' +
                     '        </div>').insertBefore('#submitBtn')
+            } else {
+                $('#password_input').remove();
             }
-        });
+        })
     </script>
 
 {% endblock %}

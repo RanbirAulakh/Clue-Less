@@ -8,6 +8,9 @@ class RegisterForm(UserCreationForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     password2 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    win = 0
+    loss = 0
+    games_played = 0
 
     class Meta:
         model = User

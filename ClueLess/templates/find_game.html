@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+    TODO https://stackoverflow.com/questions/3583534/refresh-div-element-generated-by-a-django-template <br/> <br/>
     <div class="card mb-12 bg-dark text-white">
         <div class="card-header sb-nav-link-icon"><i class="fas fa-gamepad"></i> Available Games</div>
         <div class="card-body">
@@ -29,7 +30,7 @@
                             <td>{{ item.type }}</td>
                             <td>1/4</td>
                             <td>
-                                <button type="button" style="margin-top: -7px" class="btn btn-sm btn-primary"><i class="fas fa-gamepad"></i> Join</button>
+                                <a style="margin-top: -7px"  class="btn btn-sm btn-primary" href="/game/{{ item.id }}" role="button"><i class="fas fa-gamepad"></i> Join</a>
                             </td>
                         </tr>
                     {% endfor %}
