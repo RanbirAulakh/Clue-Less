@@ -8,17 +8,19 @@
 # import constants
 from . import constants
 import random
+<<<<<<< HEAD:src/server/game.py
 from .player import Player
 from .room import *
 from .clue import Clue
 from .map import Map
 
-class Game():
+class Board():
 	id = ""
 	visibility = True
 	created_by = ""
 	private_key = ""
 	def __init__(self, id, players, visibility, created_by, private_key=""):
+
 		"""
 		Add game lookup by id?
 		
@@ -33,14 +35,16 @@ class Game():
 		#combine the decks then deal to the players)
 		clueDeck = suspects + weapons + rooms
 		random.shuffle(clueDeck)
-		numPlayers = len(players)
 		self.dealHands(players,clueDeck)
-		self.map = Map()
 		
 		self.id = id
 		self.visibility = visibility
 		self.created_by = created_by
 		self.private_key = private_key
+		self.map = map.genMap()
+		self.turnOrder = self.makeTurnOrder(players)
+		
+		pass
 		
 	# create individual decks for the creation of the muder
 	def createSuspectDeck(self, suspects):
@@ -92,16 +96,18 @@ class Game():
 
 	def convert_to_json(self):
 		return { "id": self.id, "visibility": self.visibility, "created_by": self.created_by, "key": self.private_key}
-
-# disabiling it for now
-# testPlayer1 = Player("test", "green")
-# testPlayer2 = Player("test2", "plum")
-# HallTest = Hallway("hall",["1","2"])
-# print(HallTest.canGuess())
-# Object = Game("id",[testPlayer1, testPlayer2], True, "Player")
-# print("\n")
-# thing=Object.getMurder()
-# for i in testPlayer1.getHand():
-# 	print("Player 1 : " + i.getClueName())
-# for i in testPlayer2.getHand():
-# 	print("Player 2 : " + i.getClueName())
+			
+	def getMap(self):
+		return self.map
+	
+	def makeTurnOrder(self, players) :
+		turnOrder = []
+		for i in constants.SUSPECTS :
+			for ii in players :
+				if ii.getCharacter().lower() == i.lower() :
+					turnOrder.append(ii)
+		return turnOrder
+		
+	def getTurnOrder(self) :
+		return self.turnOrder
+		
