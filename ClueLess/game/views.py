@@ -30,5 +30,4 @@ def create_game_page(request):
 
 def game(request, id):
     game_details = models.Game.objects.get(id=id)
-    print(game_details.type)
     return render(request, 'game.html', {'game_details': game_details})

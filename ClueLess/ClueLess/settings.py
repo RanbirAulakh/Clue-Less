@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'ClueLess',
     'home',
     'game',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ClueLess.wsgi.application'
-
+ASGI_APPLICATION = "ClueLess.routing.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
