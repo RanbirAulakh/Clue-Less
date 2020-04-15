@@ -33,7 +33,7 @@ Library = billiard = dining
 ||			||		||
 Conserv = Ballroom = Kitchen
 """
-STUDY="STUDY"
+STUDY="Study"
 HALL="Hall"
 LOUNGE="Lounge"
 LIBRARY="Library"
