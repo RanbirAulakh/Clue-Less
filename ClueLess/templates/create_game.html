@@ -8,18 +8,29 @@
         <button id="submitBtn" class="btn btn-block btn-success" type="submit">Create Game</button>
     </form>
     <script>
-        $('#id_type').change(function() {
-            var value = $(this).val();
-            if(value == "Private"){
-                $('#password_input').remove();
-                $('<div class="form-group" id="password_input">\n' +
-                    '            <label for="exampleFormControlInput1">Password (Leave blank to generate one)</label>\n' +
-                    '            <input type="text" class="form-control" id="password" placeholder="">\n' +
-                    '        </div>').insertBefore('#submitBtn')
-            } else {
-                $('#password_input').remove();
-            }
-        })
+        $(document).ready(function() {
+            $('label[for=id_private_key]').remove();
+            $('#id_private_key').remove();
+            $('#id_type').change(function () {
+                var value = $(this).val();
+                if (value == "Private") {
+                    $('#id_private_key').remove();
+                    $('<div class="input-group mb-3" id="password_input">\n' +
+                        '  <input type="text" class="form-control" id="id_private_key" required>\n' +
+                        '  <div class="input-group-append">\n' +
+                        '    <button id="generateKeyBtn" class="btn btn-outline-secondary" type="button">Generate Key</button>\n' +
+                        '  </div>\n' +
+                        '</div>').insertBefore('#submitBtn');
+                } else {
+                    $('#password_input').remove();
+                }
+            });
+
+            $('#generateKeyBtn').click(function () {
+                alert("sike")
+            });
+        });
+
     </script>
 
 {% endblock %}

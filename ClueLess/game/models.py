@@ -6,7 +6,7 @@ class Game(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField(null=False)
     type = models.CharField(max_length=10)
-    private_key = models.TextField()
+    private_key = models.TextField(null=True, blank=True)
 
     created_date = models.DateField(auto_now_add=True)
     completed_date = models.DateTimeField(null=True, blank=True)  # if game is completed

@@ -28,6 +28,9 @@ def create_game_page(request):
     return render(request, 'create_game.html', {'form': form})
 
 
-def game(request, id):
-    game_details = models.Game.objects.get(id=id)
+def game(request, game_id):
+    if not request.user.is_authenticated:
+        return redirect('/login')
+
+    game_details = models.Game.objects.get(id=game_id)
     return render(request, 'game.html', {'game_details': game_details})
