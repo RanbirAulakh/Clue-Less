@@ -8,6 +8,7 @@ class Room:
 		self.name = roomName
 		self.connections = roomConnections
 		self.players=[]
+		self.weapon = None
 		
 	def getConnections(self):
 		return self.connections
@@ -24,9 +25,21 @@ class Room:
 	def addPlayer(self, player):
 		self.players.append(player)
 		
+	def setWeapon(self, clue):
+		self.weapon = clue
+		
+	def getWeapon(self):
+		return self.weapon
+		
 class Hallway(Room):
 	def canGuess(self):
 		return False
 		
 	def canMove(self):
 		return len(self.players) == 0
+		
+	def setWeapon(self,clue):
+		pass
+		
+	def getWeapon(self):
+		return None
