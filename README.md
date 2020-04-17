@@ -13,9 +13,11 @@ Victoria Palaoro
 #### Start Django Server
 `cd ClueLess/`
 
-`python3 manage.py makemigrations (one time)`
+If this is an initial setup or if you have made some changes to the Model classes, run the commands below:
 
-`python3 manage.py migrate (one time)`
+- `python3 manage.py makemigrations`
+
+- `python3 manage.py migrate`
 
 `python3 manage.py runserver`
 
@@ -29,24 +31,12 @@ Then open web broswer (Chrome, Firefox, or Edge) and go to `http://127.0.0.1:800
 - requirements.txt
     - Travis-CI or Heroku can download required dependencies in order to run the game
     - django - Python web framework
+    - channels - Message communication
+    - django-redis - Message communication (data store)
 
 
-#### (WIP) Deploy Django to Heroku (For Production Only)
+#### (WIP) Deploy Django to Heroku
 git add .
 git commit -am "commit message"
 git push heroku master
-
-##### Heroku disable web
-heroku ps:scale web=0 
-
-**CloueAMQP_URL** - Each URL supports up to 20 user connections (basically 5 games if there are 4 players in each game)
-amqp://oczwxoia:Ed4t562v_dpmVP5P-j9EmwTBmz2Fc5RJ@termite.rmq.cloudamqp.com/oczwxoia
-amqp://bdvzzyja:GqbzJa1YXO26se5uKe-_lS9jiSrNKQ63@termite.rmq.cloudamqp.com/bdvzzyja
-
-**LocalHost URL**
-amqp://guest:guest@localhost:5672/%2f
-
-
-##### Create Installer (For Production Only)
-WIP
 
