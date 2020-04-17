@@ -1,3 +1,4 @@
+"""
 import sys
 sys.path.append("../")
 import server.constants as constants
@@ -16,3 +17,4 @@ roomTest.removePlayer(first)
 
 assert(first not in roomTest.getPlayers())
 assert(second in roomTest.getPlayers())
+"""
