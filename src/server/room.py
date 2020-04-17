@@ -25,6 +25,12 @@ class Room:
 	def addPlayer(self, player):
 		self.players.append(player)
 		
+	def removePlayer(self, player):
+		self.players.remove(player)
+	
+	def getPlayers(self):
+		return self.players
+	
 	def setWeapon(self, clue):
 		self.weapon = clue
 		
