@@ -8,7 +8,6 @@
 # import constants
 from . import constants
 import random
-<<<<<<< HEAD:src/server/game.py
 from .player import Player
 from .room import *
 from .clue import Clue

@@ -1,4 +1,4 @@
-class Room:
+class Room():
 	def __init__(self, roomName):
 		self.name = roomName
 		self.connections = []
