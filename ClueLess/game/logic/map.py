@@ -2,34 +2,86 @@
 # author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
 # description:
 
-from room import *
-import constants
+from .room import Room
+from . import constants
 
 class Map :
 	def __init__(self):
-		self.map = {
-			constants.STUDY : Room(constants.STUDY, [constants.STUDY_HALL, constants.STUDY_LIBRARY, constants.KITCHEN]),
-			constants.HALL : Room(constants.HALL,[constants.STUDY_HALL, constants.HALL_LOUNGE, constants.HALL_BILLIARD]),
-			constants.LOUNGE : Room(constants.LOUNGE,[constants.HALL_LOUNGE, constants.LOUNGE_DINING, constants.CONSERVATORY]),
-			constants.LIBRARY : Room(constants.LIBRARY,[constants.STUDY_LIBRARY, constants.LIBRARY_CONSERVATORY, constants.LIBRARY_BILLIARD]),
-			constants.BILLIARD : Room(constants.BILLIARD,[constants.HALL_BILLIARD, constants.BILLIARD_DINING, constants.LIBRARY_BILLIARD, constants.BILLIARD_BALLROOM]),
-			constants.DINING : Room(constants.DINING,[constants.BILLIARD_DINING, constants.LOUNGE_DINING, constants.DINING_KITCHEN]),
-			constants.CONSERVATORY : Room(constants.CONSERVATORY,[constants.CONSERVATORY_BALLROOM, constants.LIBRARY_CONSERVATORY, constants.LOUNGE]),
-			constants.BALLROOM : Room(constants.BALLROOM,[constants.BILLIARD_BALLROOM, constants.CONSERVATORY_BALLROOM, constants.BALLROOM_KITCHEN]),
-			constants.KITCHEN : Room(constants.KITCHEN,[constants.DINING_KITCHEN, constants.BALLROOM_KITCHEN, constants.STUDY]),
-			constants.BILLIARD_DINING : Hallway(constants.BILLIARD_DINING,[constants.BILLIARD, constants.DINING]),
-			constants.DINING_KITCHEN : Hallway(constants.DINING_KITCHEN,[constants.DINING, constants.KITCHEN]),
-			constants.STUDY_HALL : Hallway(constants.STUDY_HALL,[constants.STUDY, constants.HALL]),
-			constants.STUDY_LIBRARY : Hallway(constants.STUDY_LIBRARY,[constants.STUDY, constants.LIBRARY]),
-			constants.HALL_LOUNGE : Hallway(constants.HALL_LOUNGE,[constants.HALL, constants.LOUNGE]),
-			constants.HALL_BILLIARD : Hallway(constants.HALL_BILLIARD,[constants.HALL, constants.BILLIARD]),
-			constants.LIBRARY_BILLIARD : Hallway(constants.LIBRARY_BILLIARD,[constants.LIBRARY, constants.BILLIARD]),
-			constants.CONSERVATORY_BALLROOM : Hallway(constants.CONSERVATORY_BALLROOM,[constants.CONSERVATORY, constants.BALLROOM]),
-			constants.BILLIARD_BALLROOM : Hallway(constants.BILLIARD_BALLROOM,[constants.BILLIARD, constants.BALLROOM]),
-			constants.BALLROOM_KITCHEN : Hallway(constants.BALLROOM_KITCHEN,[constants.BALLROOM, constants.KITCHEN]),
-			constants.LIBRARY_CONSERVATORY : Hallway(constants.LIBRARY_CONSERVATORY,[constants.LIBRARY, constants.CONSERVATORY]),
-			constants.LOUNGE_DINING : Hallway(constants.LOUNGE_DINING,[constants.LOUNGE, constants.DINING])
-		}
-		print(constants.STUDY)
-		pass
-		
+		self.rooms = []
+		setupRooms()
+
+	def setupRooms():
+		SLHallway = Hallway(S-Li)
+		LiCHallway = Hallway(Li-C)
+		CBaHallway = Hallway(C-Ba)
+		BaKHallway = Hallway(Ba-K)
+		DKHallway = Hallway(D-K)
+		DLoHallway = Hallway(D-Lo)
+		HLoHallway = Hallway(H-Lo)
+		BaBiHallway = Hallway(Ba-Bi)
+		LiBiHallway = Hallway(Li-Bi)
+		BiDHallway = Hallway(Bi-D)
+		HBiHallway = Hallway(H-Bi)
+		SHHallway = Hallway(S-H)
+		Study = Room(Study)
+		Hall = Room(Hall)
+		Library = Room(Library)
+		Lounge = Room(Lounge)
+		DiningRoom = Room(DiningRoom)
+		Kitchen = Room(Kitchen)
+		Ballroom = Room(Ballroom)
+		Conservatory = Room(Conservatory)
+		BilliardRoom = Room(BilliardRoom)
+		SLHallway.setConnections(Study)
+		SLHallway.setConnections(Library)
+		LiCHallway.setConnections(Library)
+		LiCHallway.setConnections(Conservatory)
+		CBaHallway.setConnections(Conservatory)
+		CBaHallway.setConnections(Ballroom)
+		BaKHallway.setConnections(Ballroom)
+		BaKHallway.setConnections(Kitchen)
+		DKHallway.setConnections(Kitchen)
+		DKHallway.setConnections(DiningRoom)
+		DLoHallway.setConnections(DiningRoom)
+		DLoHallway.setConnections(Lounge)
+		HLoHallway.setConnections(Hall)
+		HLoHallway.setConnections(Lounge)
+		BaBiHallway.setConnections(Ballroom)
+		BaBiHallway.setConnections(BilliardRoom)
+		LiBiHallway.setConnections(Library)
+		LiBiHallway.setConnections(BilliardRoom)
+		BiDHallway.setConnections(BilliardRoom)
+		BiDHallway.setConnections(DiningRoom)
+		HBiHallway.setConnections(Hall)
+		HBiHallway.setConnections(BilliardRoom)
+		SHHallway.setConnections(Study)
+		SHHallway.setConnections(Hall)
+		Study.setConnections(SLHallway)
+		Study.setConnections(SHHallway)
+		Study.setConnections(BilliardRoom)
+		Hall.setConnections(SHHallway)
+		Hall.setConnections(HBiHallway)
+		Hall.setConnections(HLoHallway)
+		Lounge.setConnections(BilliardRoom)
+		Lounge.setConnections(HLoHallway)
+		Lounge.setConnections(DLoHallway)
+		Library.setConnections(SLHallway)
+		Library.setConnections(LiBiHallway)
+		Library.setConnections(LiCHallway)
+		BilliardRoom.setConnections(LiBiHallway)
+		BilliardRoom.setConnections(BaBiHallway)
+		BilliardRoom.setConnections(BiDHallway)
+		BilliardRoom.setConnections(HBiHallway)
+		DiningRoom.setConnections(BiDHallway)
+		DiningRoom.setConnections(DKHallway)
+		DiningRoom.setConnections(DLoHallway)
+		Conservatory.setConnections(LiCHallway)
+		Conservatory.setConnections(BilliardRoom)
+		Conservatory.setConnections(CBaHallway)
+		Ballroom.setConnections(CBaHallway)
+		Ballroom.setConnections(BaBiHallway)
+		Ballroom.setConnections(BaKHallway)
+		Kitchen.setConnections(BaKHallway)
+		Kitchen.setConnections(BilliardRoom)
+		Kitchen.setConnections(DKHallway)
+		self.rooms = [SLHallway, LiCHallway,CBaHallway, BaKHallway,DKHallway,DLoHallway,HLoHallway,BilliardRoom,BaBiHallway,LiBiHallway,BiDHallway,HBiHallway,SHHallway,Study,Hall,Kitchen,Ballroom,Conservatory,Library,Lounge,DiningRoom,]
