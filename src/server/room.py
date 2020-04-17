@@ -1,32 +1,34 @@
-"""
-Since accusations can be made anywhere, no real reason to have it as a method, but guesses(suggestions?) can only be made in
-main rooms.
-"""
-
 class Room:
-	def __init__(self, roomName, roomConnections):
+	def __init__(self, roomName):
 		self.name = roomName
-		self.connections = roomConnections
-		self.players=[]
-		
+		self.connections = []
+		self.players = []
+		self.maxplayers = 8
+
+
+	def setConnections(self, room):
+		self.connections = self.connections.add(room)
+
+	def setPlayers(self, newplayers):
+		self.players = newplayers
+
+	def getMaxPlayers(self):
+		return self.maxplayers
+
+	def getPlayers(self):
+		return self.players
+
 	def getConnections(self):
 		return self.connections
-		
+
 	def getName(self):
 		return self.name
-		
+
 	def canGuess(self):
 		return True
-		
-	def canMove(self):
-		return True
-		
-	def addPlayer(self, player):
-		self.players.append(player)
-		
+
 class Hallway(Room):
 	def canGuess(self):
 		return False
-		
-	def canMove(self):
-		return len(self.players) == 0
+	def getMaxPlayers(self):
+		return 1
