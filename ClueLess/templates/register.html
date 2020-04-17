@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block tab_title %} Register Account {% endblock %}
+{% block content %}
+    <form method="post" class="col-md-4 col-sm-6">
+        <h2>Register</h2>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-block btn-success" type="submit">Sign up</button>
+    </form>
+{% endblock %}

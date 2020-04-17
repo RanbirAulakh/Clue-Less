@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if not user.is_authenticated %}
+        <div class="alert bg-warning text-white" role="alert">
+        To view your own personal stats, please login!
+        </div>
+    {% else %}
+        <div class="alert bg-danger text-white" role="alert">
+          Your record (WIP) - These are hardcoded values!
+        </div>
+        <div class="row">
+            <div class="col-xl-4 col-md-4">
+                <div class="card bg-dark text-white mb-4">
+                    <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-trophy"></i> Total Wins</div>
+                    <div class="card-body text-center display-4">2</div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-4">
+                <div class="card bg-dark text-white mb-4">
+                    <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-poop"></i> Total Loss</div>
+                    <div class="card-body text-center display-4">2</div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-4">
+                <div class="card bg-dark text-white mb-4">
+                    <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-gamepad"></i> Total Games Played</div>
+                    <div class="card-body text-center display-4">2</div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-4">
+                <div class="card bg-dark text-white mb-4">
+                    <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Chosen Character</div>
+                    <div class="card-body text-center display-4">Scarlet</div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="alert bg-primary text-white" role="alert">
+      Global Statistic (WIP) - These are hardcoded values!
+    </div>
+    <div class="row">
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-users"></i> Total Users</div>
+                <div class="card-body text-center display-4">{{ users_count }}</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-gamepad"></i> Total Games</div>
+                <div class="card-body text-center display-4">{{ total_games }}</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Popular Character</div>
+                <div class="card-body text-center display-4">Scarlet</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-trophy"></i> Most Wins</div>
+                <div class="card-body text-center display-4">User Account</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-poop"></i> Worst Guesser</div>
+                <div class="card-body text-center display-4">User Account</div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

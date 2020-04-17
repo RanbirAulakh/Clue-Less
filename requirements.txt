@@ -1,3 +1,1 @@
-pygame
-pika
-inquirer
+django

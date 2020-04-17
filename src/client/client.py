@@ -1,8 +1,10 @@
 import pika
 import os
 import sys
-import inquirer
+from PyInquirer import prompt
+
 import enum
+from .game import Game
 
 class Options(enum.Enum):
     CREATE_GAME = "Create a Clue-Less Game"
@@ -15,23 +17,29 @@ class Client:
     def __init__(self):
         print("Welcome to Clue-Less (Text) Game!")
 
-        player_name = inquirer.text(message="Please enter your username? ")
-        print("Hello {0}".format(player_name))
+        # self.player_name = inquirer.text(message="Please enter your username? ")
+        questions = [{ 'type': 'input', 'name':'name', 'message':'Please enter your username?'}]
+        self.player_name = prompt(questions)['name'];
+        print("Hello {0}".format(self.player_name))
 
-        choices = inquirer.list_input("What would you like to do?", 
-            choices=[Options.CREATE_GAME.value, Options.FIND_GAME.value, Options.QUIT.value])
+        self.main_menu_prompt()
+    
+    def main_menu_prompt(self):
+        while(True):
+            options = [{
+                'type':'list',
+                'name':'choices',
+                'message':'What would you like to do?',
+                'choices':[Options.CREATE_GAME.value, Options.FIND_GAME.value, Options.QUIT.value]
+            }]
+            choices = prompt(options)
 
-        if Options.CREATE_GAME.value == choices:
-            print(Options.CREATE_GAME.value)
-        elif Options.FIND_GAME.value == choices:
-            print("Me want to find a game")
-        elif Options.QUIT.value == choices:
-            print("Clue-Less is successfully closed.")
-        else:
-            print("Shouldn't reach here")
-
-    def create_game(self):
-        pass
-
-    def client(self):
-        pass
+            if Options.CREATE_GAME.value == choices['choices']:
+                Game().create_game(self.player_name)
+            elif Options.FIND_GAME.value == choices['choices']:
+                Game().find_game()
+            elif Options.QUIT.value == choices['choices']:
+                print("Clue-Less is successfully closed.")
+                sys.exit(0)
+            else:
+                print("Shouldn't reach here")
