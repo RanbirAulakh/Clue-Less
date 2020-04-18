@@ -36,21 +36,20 @@ gameSocket.onclose = function(e) {
     console.error('game socket closed unexpectedly');
 };
 
-document.querySelector('#game-message-input').focus();
-document.querySelector('#game-message-input').onkeyup = function(e) {
-    if (e.keyCode === 13) {  // enter, return
-        document.querySelector('#game-message-submit').click();
-    }
-};
-
-document.querySelector('#game-message-submit').onclick = function(e) {
-    const messageInputDom = document.querySelector('#game-message-input');
-    const message = messageInputDom.value;
-    gameSocket.send(JSON.stringify({
-        'message': message
-    }));
-    messageInputDom.value = '';
-};
+// document.querySelector('#game-message-input').focus();
+// document.querySelector('#game-message-input').onkeyup = function(e) {
+//     if (e.keyCode === 13) {  // enter, return
+//         document.querySelector('#game-message-submit').click();
+//     }
+// };
+// document.querySelector('#game-message-submit').onclick = function(e) {
+//     const messageInputDom = document.querySelector('#game-message-input');
+//     const message = messageInputDom.value;
+//     gameSocket.send(JSON.stringify({
+//         'message': message
+//     }));
+//     messageInputDom.value = '';
+// };
 
 
 $('#game-move-submit').click(function() {

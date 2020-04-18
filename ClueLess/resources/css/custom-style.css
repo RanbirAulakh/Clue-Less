@@ -6,8 +6,8 @@
     display: grid;
     justify-content: center;
     align-content: center;
-    grid-template-columns: repeat(5, 10vw);
-    grid-template-rows: repeat(5, 10vw);
+    grid-template-columns: repeat(5, 7vw);
+    grid-template-rows: repeat(5, 7vw);
 }
 
 .room-box {

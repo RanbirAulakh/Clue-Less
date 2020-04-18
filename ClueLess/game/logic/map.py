@@ -2,37 +2,38 @@
 # author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
 # description:
 
-from .room import Room
+from .room import Room, Hallway
 
 from . import constants
 
 class Map :
 	def __init__(self):
 		self.rooms = []
-		setupRooms()
+		self.setupRooms()
 
-	def setupRooms():
-		SLHallway = Hallway(S-Li)
-		LiCHallway = Hallway(Li-C)
-		CBaHallway = Hallway(C-Ba)
-		BaKHallway = Hallway(Ba-K)
-		DKHallway = Hallway(D-K)
-		DLoHallway = Hallway(D-Lo)
-		HLoHallway = Hallway(H-Lo)
-		BaBiHallway = Hallway(Ba-Bi)
-		LiBiHallway = Hallway(Li-Bi)
-		BiDHallway = Hallway(Bi-D)
-		HBiHallway = Hallway(H-Bi)
-		SHHallway = Hallway(S-H)
-		Study = Room(Study)
-		Hall = Room(Hall)
-		Library = Room(Library)
-		Lounge = Room(Lounge)
-		DiningRoom = Room(DiningRoom)
-		Kitchen = Room(Kitchen)
-		Ballroom = Room(Ballroom)
-		Conservatory = Room(Conservatory)
-		BilliardRoom = Room(BilliardRoom)
+	def setupRooms(self):
+		SLHallway = Hallway("S-Li")
+		LiCHallway = Hallway("Li-C")
+		CBaHallway = Hallway("C-Ba")
+		BaKHallway = Hallway("Ba-K")
+		DKHallway = Hallway("D-K")
+		DLoHallway = Hallway("D-Lo")
+		HLoHallway = Hallway("H-Lo")
+		BaBiHallway = Hallway("Ba-Bi")
+		LiBiHallway = Hallway("Li-Bi")
+		BiDHallway = Hallway("Bi-D")
+		HBiHallway = Hallway("H-Bi")
+		SHHallway = Hallway("S-H")
+		Study = Room("Study")
+		Hall = Room("Hall")
+		Library = Room("Library")
+		Lounge = Room("Lounge")
+		DiningRoom = Room("DiningRoom")
+		Kitchen = Room("Kitchen")
+		Ballroom = Room("Ballroom")
+		Conservatory = Room("Conservatory")
+		BilliardRoom = Room("BilliardRoom")
+
 		SLHallway.setConnections(Study)
 		SLHallway.setConnections(Library)
 		LiCHallway.setConnections(Library)
@@ -57,6 +58,7 @@ class Map :
 		HBiHallway.setConnections(BilliardRoom)
 		SHHallway.setConnections(Study)
 		SHHallway.setConnections(Hall)
+
 		Study.setConnections(SLHallway)
 		Study.setConnections(SHHallway)
 		Study.setConnections(BilliardRoom)
@@ -85,4 +87,5 @@ class Map :
 		Kitchen.setConnections(BaKHallway)
 		Kitchen.setConnections(BilliardRoom)
 		Kitchen.setConnections(DKHallway)
+
 		self.rooms = [SLHallway, LiCHallway,CBaHallway, BaKHallway,DKHallway,DLoHallway,HLoHallway,BilliardRoom,BaBiHallway,LiBiHallway,BiDHallway,HBiHallway,SHHallway,Study,Hall,Kitchen,Ballroom,Conservatory,Library,Lounge,DiningRoom,]

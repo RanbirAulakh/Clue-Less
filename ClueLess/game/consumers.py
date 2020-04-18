@@ -2,6 +2,7 @@
 import logging
 import json
 
+from .logic import game
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import DenyConnection
 from asgiref.sync import async_to_sync
@@ -14,7 +15,7 @@ class GameConsumers(AsyncWebsocketConsumer):
     # we can manage the game from the memory
     game_model = {}
 
-    # keeps seperated from game_model since game_model will be used to send to users
+    # keeps seperated from game_model since game_model will be used to send to users.
     # game_model_answers should only be verified on server side
     game_model_answers = {}
 
@@ -60,9 +61,12 @@ class GameConsumers(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
+        # (a person is moved, a suggestion is made, a player
+        # disproves a suggestion, or a player is unable to disprove a suggestion)
+
         text_data_json = json.loads(text_data)
 
-        type = text_data_json["type"]
+        # type = text_data_json["type"]
 
 
         message = text_data_json['message']
@@ -85,9 +89,15 @@ class GameConsumers(AsyncWebsocketConsumer):
             if str(self.scope["user"]) not in current_players_lst:
                 current_players_lst.append(str(self.scope["user"]))
                 self.game_model[self.game_id]['users'] = current_players_lst
+
+            if len(current_players_lst) > 2:
+                # start game
+                pass
         else:
             # create new game
-            self.game_model[self.game_id] = { }
+            g = game.Game()
+
+            self.game_model[self.game_id] = {}
             self.game_model[self.game_id]['id'] = str(self.game_id)
             self.game_model[self.game_id]['players'] = [str(self.scope["user"])]
             self.game_model[self.game_id]['status'] = "Started"

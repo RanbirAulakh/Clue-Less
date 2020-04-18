@@ -5,9 +5,8 @@ class Room:
 		self.players = []
 		self.maxplayers = 8
 
-
 	def setConnections(self, room):
-		self.connections = self.connections.add(room)
+		self.connections.append(room)
 
 	def setPlayers(self, newplayers):
 		self.players = newplayers
@@ -27,8 +26,10 @@ class Room:
 	def canGuess(self):
 		return True
 
+
 class Hallway(Room):
 	def canGuess(self):
 		return False
+
 	def getMaxPlayers(self):
 		return 1
