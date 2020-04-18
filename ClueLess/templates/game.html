@@ -1,15 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
     <div class="container">
         <div class="row">
             <div class="col-md-12 mt-3">
-                <ul class="breadcrumb bg-dark list-inline justify-content-center text-white">
-                    <li class="list-inline-item"><i class="fas fa-user-astronaut"></i> Player 1</li>
-                    <li class="list-inline-item pl-5"><i class="fas fa-user-astronaut"></i> Player 2</li>
-                    <li class="list-inline-item pl-5"><i class="fas fa-user-astronaut"></i> Player 3</li>
-                    <li class="list-inline-item pl-5"><i class="fas fa-user-astronaut"></i> Player 4</li>
+                <ul class="breadcrumb bg-dark list-inline justify-content-center text-white" id="players_lobby">
                 </ul>
             </div>
             <div class="p-2 col-md-3">
@@ -21,62 +18,75 @@
                     <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
                 </ul>
                 <br/>
-                <button type="button" class="btn btn-primary btn-block">Move</button>
-                <button type="button" class="btn btn-primary btn-block">Suggestion</button>
-                <button type="button" class="btn btn-primary btn-block">Accuse</button>
-                <button type="button" class="btn btn-danger btn-block">Leave Game</button>
+                <button id="game-move-submit" type="button" class="btn btn-primary btn-block">Move</button>
+                <button id="game-suggestion-submit" type="button" class="btn btn-primary btn-block">Suggestion</button>
+                <button id="game-accuse-submit" type="button" class="btn btn-primary btn-block">Accuse</button>
+                <a href="/" class="btn btn-danger btn-block"> Leave Game</a>
             </div>
             <div class="col-md-9">
                 <div class="form-group">
                     <label for="exampleFormControlTextarea1">Game Log</label>
                     <textarea class="form-control" id="game-log" rows="20" disabled></textarea>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="game-message-input">
-                    <div class="input-group-append">
-                        <input id="game-message-submit" class="btn btn-primary" type="button" value="Send">
+                <div class="players_location">
+                    <a class="btn btn-secondary disabled" role="button" aria-disabled="true">Ranbir @ Kitchen </a>
+                    <a class="btn btn-secondary disabled" role="button" aria-disabled="true">Admin @ Hallway between Kitchen/Dining </a>
+                </div>
+            </div>
+            <div class="col-md-12 mt-3">
+                <div class="board">
+                    <div class="room-box">STUDY
+                        <div class="passageway-box tl">
+                            <i class="fas fa-arrow-down rotate-45-left"></i>
+                        </div>
+                    </div>
+                    <div class="hallway-hor"></div>
+                    <div class="room-box">HALL</div>
+                    <div class="hallway-hor"></div>
+                    <div class="room-box">LOUNGE
+                        <div class="passageway-box tr">
+                            <i class="fas fa-arrow-down rotate-45-right"></i>
+                        </div>
+                    </div>
+
+                    <div class="hallway-ver"></div>
+                    <div class="square"></div>
+                    <div class="hallway-ver"></div>
+                    <div class="square"></div>
+                    <div class="hallway-ver"></div>
+
+                    <div class="room-box">LIBRARY</div>
+                    <div class="hallway-hor"></div>
+                    <div class="room-box">BILLIARD ROOM</div>
+                    <div class="hallway-hor"></div>
+                    <div class="room-box">DINING ROOM</div>
+
+
+                    <div class="hallway-ver"></div>
+                    <div class="square"></div>
+                    <div class="hallway-ver"></div>
+                    <div class="square"></div>
+                    <div class="hallway-ver"></div>
+
+                    <div class="room-box">CONSERVATORY
+                        <div class="passageway-box bl">
+                            <i class="fas fa-arrow-up rotate-45-right"></i>
+                        </div>
+                    </div>
+                    <div class="hallway-hor"></div>
+                    <div class="room-box">BALLROOM</div>
+                    <div class="hallway-hor"></div>
+                    <div class="room-box">KITCHEN
+                        <div class="passageway-box br">
+                            <i class="fas fa-arrow-up rotate-45-left"></i>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        const game_Id = JSON.parse(document.getElementById('game_id').textContent);
-
-        const gameSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/game/'
-            + game_Id
-            + '/'
-        );
-
-        gameSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#game-log').value += (data.message + '\n');
-        };
-
-        gameSocket.onclose = function(e) {
-            console.error('game socket closed unexpectedly');
-        };
-
-        document.querySelector('#game-message-input').focus();
-        document.querySelector('#game-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#game-message-submit').click();
-            }
-        };
-
-        document.querySelector('#game-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#game-message-input');
-            const message = messageInputDom.value;
-            gameSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
+    <script src="{%  static "js/messages.js"%}"></script>
 
 
 {% endblock %}
