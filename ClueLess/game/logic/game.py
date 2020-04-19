@@ -17,7 +17,10 @@ class Game():
 		"""
 		TODO Random characters for each player or initialize the players out of initial game?
 		"""
-		print("Creating game")
+		print("Creating a game")
+
+		self.players = []
+		self.murder = []
 
 		# create decks of the different clue types
 		suspects = self.createSuspectDeck(constants.SUSPECTS)
@@ -31,27 +34,26 @@ class Game():
 		clueDeck = suspects + weapons + rooms
 		random.shuffle(clueDeck)
 
-		self.player = []
-
 		#numPlayers = len(players) // TODO move to another function
 		#self.dealHands(players, clueDeck) // TODO move to another function
+
 		self.map = Map()
 
 	def add_player(self, player_name, chosen_character):
-		for i in self.player:
+		for i in self.players:
 			if i.name == player_name:
 				print("Player {0} already exist!".format(player_name))
 				return
 
 		p = Player(player_name, chosen_character)
 		print("Adding {0} to the game.".format(i.name))
-		self.player.append(p)
+		self.players.append(p)
 
 	def remove_player(self, player_name):
-		for i in self.player:
+		for i in self.players:
 			if i.name == player_name:
 				print("Removing {0} from the game.".format(i.name))
-				self.player.remove(i)
+				self.players.remove(i)
 				break
 		
 	# create individual decks for the creation of the muder
@@ -75,14 +77,13 @@ class Game():
 		
 	# Shuffle and use the individual decks to put together the murder to be solved.
 	def createMurder(self, suspectClues, roomClues, weaponClues):
-		murder = []
+		self.murder = []
 		random.shuffle(suspectClues)
 		random.shuffle(roomClues)
 		random.shuffle(weaponClues)
-		murder.append(suspectClues.pop())
-		murder.append(roomClues.pop())
-		murder.append(weaponClues.pop())
-		self.murder = murder
+		self.murder.append(suspectClues.pop())
+		self.murder.append(roomClues.pop())
+		self.murder.append(weaponClues.pop())
 
 		print("MURDER SUSPECT: {0} / ROOM: {1} / WEAPON: {2}".format(self.murder[0].name, self.murder[1].name, self.murder[2].name))
 		
@@ -93,12 +94,14 @@ class Game():
 	Deal initial hands, and if a player leaves, place their hand in the "clueDeck" var
 	and pass it to remaining players.
 	"""
-	def dealHands(self, players, clueDeck):
-		numPlayers = len(players)
-		rounds = 0
-		while len(clueDeck) != 0:
-			players[rounds % numPlayers].getHand().append(clueDeck.pop())
-			rounds += 1
+	def deal_hands(self, players, clue_deck):
+		num_players = len(players)
+		if len(self.players) == 3: # TODO change to 4
+			rounds = 0
+			while len(clue_deck) != 0:
+				players[rounds % num_players].getHand().append(clue_deck.pop())
+				rounds += 1
+
 
 # disabiling it for now
 # testPlayer1 = Player("test", "green")

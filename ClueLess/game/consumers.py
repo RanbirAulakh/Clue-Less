@@ -19,6 +19,9 @@ class GameConsumers(AsyncWebsocketConsumer):
     # game_model_answers should only be verified on server side
     game_model_answers = {}
 
+    # idk what I am doing
+    game_memory_data = {}
+
     async def connect(self):
         if self.scope['user'] == AnonymousUser:
             raise DenyConnection("Invalid User!")
@@ -92,10 +95,15 @@ class GameConsumers(AsyncWebsocketConsumer):
 
             if len(current_players_lst) > 2:
                 # start game
+
                 pass
         else:
             # create new game
             g = game.Game()
+            self.game_memory_data[self.game_id] = {"game": g}
+
+            # player_name = 
+            # g.add_player(self, str(self.scope['user']))
 
             self.game_model[self.game_id] = {}
             self.game_model[self.game_id]['id'] = str(self.game_id)
