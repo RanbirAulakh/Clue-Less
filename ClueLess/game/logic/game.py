@@ -11,36 +11,51 @@ from .room import *
 from .clue import Clue
 from .map import Map
 
-class Game():
-	id = ""
-	visibility = True
-	created_by = ""
-	private_key = ""
-	def __init__(self, id, players, visibility, created_by, private_key=""):
-		self.players = players
+class Game:
+	def __init__(self):
+		self.players = []
+		self.murder = []
+
 		"""
 		TODO Random characters for each player or initialize the players out of initial game?
 		"""
-		#create decks of the different clue types
+		# create decks of the different clue types
 		suspects = self.create_suspect_deck(constants.SUSPECTS)
 		weapons = self.create_weapons_deck(constants.WEAPONS)
 		rooms = self.create_rooms_deck(constants.ROOMS)
+
 		# draw 1 from each and store it as the murder you are solving
 		self.create_murder(suspects, rooms, weapons)
-		#combine the decks then deal to the players)
+
+		# combine the decks then deal to the players)
 		clue_deck = suspects + weapons + rooms
 		random.shuffle(clue_deck)
-		self.deal_hands(players,clue_deck)
-		
-		self.id = id
-		self.visibility = visibility
-		self.created_by = created_by
-		self.private_key = private_key
+
 		self.map = Map()
-		self.turn_order = self.make_turn_order(players)
-		
+
+		# self.turn_order = self.make_turn_order(players) # TODO move to another function
+
+	def add_player(self, player_name):
+		for i in self.players:
+			if i.name == player_name:
+				print("Player {0} already exist!".format(player_name))
+				return
+
+		p = Player(player_name, None)
+		print("Adding {0} to the game.".format(p.name))
+		self.players.append(p)
+
+	def remove_player(self, player_name):
+		for i in self.players:
+			if i.name == player_name:
+				print("Removing {0} from the game.".format(i.name))
+				self.players.remove(i)
+				break
+
+	def deal_hands(self):
 		pass
-		
+		# self.deal_hands(players,clue_deck) # TODO move to another function
+
 	# create individual decks for the creation of the muder
 	def create_suspect_deck(self, suspects):
 		clues=[]
@@ -62,14 +77,15 @@ class Game():
 		
 	# Shuffle and use the individual decks to put together the murder to be solved.
 	def create_murder(self, suspect_clues, room_clues, weapon_clues):
-		murder = []
+		self.murder = []
 		random.shuffle(suspect_clues)
 		random.shuffle(room_clues)
 		random.shuffle(weapon_clues)
-		murder.append(suspect_clues.pop())
-		murder.append(room_clues.pop())
-		murder.append(weapon_clues.pop())
-		self.murder = murder
+		self.murder.append(suspect_clues.pop())
+		self.murder.append(room_clues.pop())
+		self.murder.append(weapon_clues.pop())
+
+		print("MURDER SUSPECT: {0} / ROOM: {1} / WEAPON: {2}".format(self.murder[0].name, self.murder[1].name, self.murder[2].name))
 		
 	def get_murder(self):
 		return self.murder
@@ -85,13 +101,6 @@ class Game():
 			players[rounds%num_players].get_hand().append(clue_deck.pop())
 			rounds += 1
 
-	def game_model(self):
-		# responible for handling PLAYERS, RULES, ETC
-		pass
-
-	def convert_to_json(self):
-		return { "id": self.id, "visibility": self.visibility, "created_by": self.created_by, "key": self.private_key}
-			
 	def get_map(self):
 		return self.map
 	
@@ -140,5 +149,3 @@ class Game():
 				return False
 		#if all of the passed in clues are in the murder clues, they win
 		return True
-					
-				
