@@ -5,17 +5,17 @@ class Player():
 		self.hand = []
 		self.seen = []
 		
-	def getHand(self):
+	def get_hand(self):
 		return self.hand
 		
-	def getName(self):
+	def get_name(self):
 		return self.name
 		
-	def appendSeen(self, clue):
+	def append_seen(self, clue):
 		self.seen.append(clue)
 	
-	def getSeen(self):
+	def get_seen(self):
 		return self.seen
 		
-	def getCharacter(self):
+	def get_character(self):
 		return self.character

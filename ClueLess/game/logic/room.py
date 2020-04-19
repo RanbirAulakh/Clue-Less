@@ -1,36 +1,36 @@
 class Room():
-	def __init__(self, roomName):
-		self.name = roomName
+	def __init__(self, room_name):
+		self.name = room_name
 		self.connections = []
 		self.players = []
 
-	def addConnections(self, room):
+	def add_connections(self, room):
 		self.connections.append(room)
 
-	def addPlayer(self, player):
+	def add_player(self, player):
 		self.players.append(player)
 		
-	def removePlayer(self, player):
+	def remove_player(self, player):
 		self.players.remove(player)
 
-	def getPlayers(self):
+	def get_players(self):
 		return self.players
 
-	def getConnections(self):
+	def get_connections(self):
 		return self.connections
 
-	def getName(self):
+	def get_name(self):
 		return self.name
 
-	def canGuess(self):
+	def can_guess(self):
 		return True
 		
-	def canMove(self):
+	def can_move(self):
 		return True
 
 
 class Hallway(Room):
-	def canGuess(self):
+	def can_guess(self):
 		return False
-	def canMove(self):
-		return len(self.getPlayers) == 0
+	def can_move(self):
+		return len(self.get_players) == 0
