@@ -2,8 +2,8 @@
 # author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
 # description:
 
-from room import *
-import constants
+from .room import *
+from . import constants
 class Map :
 	def __init__(self):
 		self.rooms = []
