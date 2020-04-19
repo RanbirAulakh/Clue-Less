@@ -13,7 +13,7 @@ from .room import *
 from .clue import Clue
 from .map import Map
 
-class Board():
+class Game():
 	id = ""
 	visibility = True
 	created_by = ""
@@ -40,7 +40,7 @@ class Board():
 		self.visibility = visibility
 		self.created_by = created_by
 		self.private_key = private_key
-		self.map = map.genMap()
+		self.map = Map()
 		self.turnOrder = self.makeTurnOrder(players)
 		
 		pass
