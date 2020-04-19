@@ -11,7 +11,7 @@ class Room():
 		self.players.append(player)
 		
 	def removePlayer(self, player):
-		self.player.remove(player)
+		self.players.remove(player)
 
 	def getPlayers(self):
 		return self.players
