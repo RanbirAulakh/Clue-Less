@@ -11,12 +11,12 @@ class Clue:
 	"""
 	Actual name (Ballroom/Prof. Plum/Lead Pipe)
 	"""
-	def getClueName(self):
+	def get_clue_name(self):
 		return self.name
 	"""
 	Weapon/Person/Location
 	"""
-	def getClueType(self):
+	def get_clue_type(self):
 		return self.type
 		
 # For target, add image to init?
