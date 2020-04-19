@@ -4,6 +4,7 @@
 
 from .room import *
 from . import constants
+
 class Map :
 	def __init__(self):
 		self.rooms = []

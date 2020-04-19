@@ -1,11 +1,9 @@
-# # TODO implement Property (python3)
-# # https://www.datacamp.com/community/tutorials/property-getters-setters
-# =======
 # team: The Plum Professors
 # author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
 # description:
 
 # import constants
+import logging
 from . import constants
 import random
 from .player import Player
@@ -21,9 +19,7 @@ class Game():
 	def __init__(self, id, players, visibility, created_by, private_key=""):
 		self.players = players
 		"""
-		Add game lookup by id?
-		
-		Random characters for each player or initialize the players out of initial game?
+		TODO Random characters for each player or initialize the players out of initial game?
 		"""
 		#create decks of the different clue types
 		suspects = self.create_suspect_deck(constants.SUSPECTS)

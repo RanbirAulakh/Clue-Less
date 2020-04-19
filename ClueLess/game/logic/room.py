@@ -28,6 +28,7 @@ class Room():
 	def can_move(self):
 		return True
 
+
 class Hallway(Room):
 	def can_guess(self):
 		return False

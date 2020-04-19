@@ -19,4 +19,3 @@ class Player():
 		
 	def get_character(self):
 		return self.character
-	

@@ -2,15 +2,22 @@
 import logging
 import json
 
+from .logic import game
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import DenyConnection
 from asgiref.sync import async_to_sync
 
 from django.contrib.auth.models import AnonymousUser
-from django.core.exceptions import ObjectDoesNotExist
 
 
 class GameConsumers(AsyncWebsocketConsumer):
+    # instead of storing the data to the DB and reading from the DB,
+    # we can manage the game from the memory
+    # This is the model that will be returned to user (contains partial data)
+    game_model = {}
+
+    # Private game memory (contains all data)
+    game_memory_data = {}
 
     async def connect(self):
         if self.scope['user'] == AnonymousUser:
@@ -19,20 +26,27 @@ class GameConsumers(AsyncWebsocketConsumer):
         self.game_id = self.scope['url_route']['kwargs']['game_id']
         self.game_group_name = 'game_%s' % self.game_id
 
-        print("{0} is connected to Game {1}".format(self.scope["user"], self.game_id))
-
         await self.channel_layer.group_add(
             self.game_group_name,
             self.channel_name
         )
 
+        if self.game_id not in self.game_memory_data.keys():
+            g = game.Game()
+            self.game_memory_data[self.game_id] = {"game": g}
+
+            self.game_model[self.game_id] = {}
+            self.game_model[self.game_id]['id'] = str(self.game_id)
+
         await self.accept()
+        await self.update_user_joined()
 
         await self.channel_layer.group_send(
             self.game_group_name,
             {
                 'type': 'chat_message',
-                'message': "{0} is connected to Game {1}".format(self.scope["user"], self.game_id)
+                'message': "{0} has joined the game {1}".format(self.scope["user"], self.game_id),
+                'model': json.dumps(self.game_model[self.game_id])
             }
         )
 
@@ -42,19 +56,22 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        # await self.send(text_data=json.dumps({
-        #     'message_user_connected': "{0} left the Game {1}".format(self.scope["user"], self.game_id)
-        # }))
+        await self.update_user_left()
         await self.channel_layer.group_send(
             self.game_group_name,
             {
                 'type': 'chat_message',
-                'message': "{0} left the Game {1}".format(self.scope["user"], self.game_id)
+                'message': "{0} left the game {1}".format(self.scope["user"], self.game_id),
+                'model': json.dumps(self.game_model[self.game_id])
             }
         )
 
     async def receive(self, text_data):
+        # (a person is moved, a suggestion is made, a player
+        # disproves a suggestion, or a player is unable to disprove a suggestion)
+
         text_data_json = json.loads(text_data)
+
         message = text_data_json['message']
 
         await self.channel_layer.group_send(
@@ -66,11 +83,24 @@ class GameConsumers(AsyncWebsocketConsumer):
         )
 
     async def chat_message(self, event):
-        print(event)
-        message = event['message']
-
         # Send message to WebSocket
-        await self.send(text_data=json.dumps({
-            'message': message
-        }))
+        await self.send(text_data=json.dumps(event))
 
+    async def update_user_joined(self):
+        user = str(self.scope['user'])
+
+        g = self.game_memory_data[self.game_id]['game']
+        g.add_player(user)
+
+    async def update_user_left(self):
+        user = str(self.scope['user'])
+
+        g = self.game_memory_data[self.game_id]['game']
+        g.remove_player(user)
+
+
+        # if self.game_id in self.game_model.keys():
+        #     current_players_lst = self.game_model[self.game_id]['players']
+        #     if str(self.scope["user"]) in current_players_lst:
+        #         current_players_lst.remove(str(self.scope["user"]))
+        #         self.game_model[self.game_id]['users'] = current_players_lst

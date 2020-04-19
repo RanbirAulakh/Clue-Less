@@ -1,3 +1,89 @@
 .navbar {
     min-height: 70px;
 }
+
+.board {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    grid-template-columns: repeat(5, 7vw);
+    grid-template-rows: repeat(5, 7vw);
+}
+
+.room-box {
+    background: #576490;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    position:relative;
+}
+
+.passageway-box {
+    color: black;
+    background-color: #f8f9fa;
+
+    width: 15%;
+    height: 15%;
+}
+
+.passageway-box.tl {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.passageway-box.tr {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.passageway-box.bl {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.passageway-box.br {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.rotate-45-left {
+    display: inline-block;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+
+.rotate-45-right {
+    display: inline-block;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+.hallway-ver {
+    background: #1D1E2C;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    border-left: #f8f9fa solid 40px;
+    border-right: #f8f9fa solid 40px;
+}
+
+.hallway-hor {
+    background: #1D1E2C;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    border-top: #f8f9fa solid 40px;
+    border-bottom: #f8f9fa solid 40px;
+}

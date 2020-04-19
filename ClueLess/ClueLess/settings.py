@@ -137,3 +137,27 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     BASE_DIR + '/resources',
 )
+
+
+# Logging Configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'detailed': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'detailed',
+            'level': 'WARNING',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+}

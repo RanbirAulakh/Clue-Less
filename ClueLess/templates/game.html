@@ -1,82 +1,112 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
     <div class="container">
         <div class="row">
             <div class="col-md-12 mt-3">
-                <ul class="breadcrumb bg-dark list-inline justify-content-center text-white">
-                    <li class="list-inline-item"><i class="fas fa-user-astronaut"></i> Player 1</li>
-                    <li class="list-inline-item pl-5"><i class="fas fa-user-astronaut"></i> Player 2</li>
-                    <li class="list-inline-item pl-5"><i class="fas fa-user-astronaut"></i> Player 3</li>
-                    <li class="list-inline-item pl-5"><i class="fas fa-user-astronaut"></i> Player 4</li>
+                <ul class="breadcrumb bg-dark list-inline justify-content-center text-white" id="players_lobby">
                 </ul>
             </div>
+
             <div class="p-2 col-md-3">
-                <ul class="list-group">
+                <ul class="list-group mb-3">
+                    <li class="list-group-item text-center">Your Cards</li>
+                    <li id="player_card_person" class="list-group-item">PERSON </li>
+                    <li id="player_card_room" class="list-group-item">ROOM </li>
+                    <li id="player_card_suspect" class="list-group-item">WEAPON </li>
+                </ul>
+                <ul class="list-group mb-3">
+                    <li class="list-group-item text-center">Players Locations</li>
+                    <li class="list-group-item">Ranbir @ Kitchen </li>
+                    <li class="list-group-item">Admin @ Hallway between Kitchen/Dining </li>
+                </ul>
+                <ul class="list-group mb-3">
                     <li class="list-group-item text-center">Game Details</li>
                     <li id="game_id" class="list-group-item"><i class="fa fa-passport"></i> {{ game_details.id }}</li>
                     <li class="list-group-item"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
                     <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
                     <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
                 </ul>
-                <br/>
-                <button type="button" class="btn btn-primary btn-block">Move</button>
-                <button type="button" class="btn btn-primary btn-block">Suggestion</button>
-                <button type="button" class="btn btn-primary btn-block">Accuse</button>
-                <button type="button" class="btn btn-danger btn-block">Leave Game</button>
+
+                <a href="/" class="btn btn-danger btn-block"> Leave Game</a>
             </div>
-            <div class="col-md-9">
-                <div class="form-group">
-                    <label for="exampleFormControlTextarea1">Game Log</label>
-                    <textarea class="form-control" id="game-log" rows="20" disabled></textarea>
-                </div>
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="game-message-input">
-                    <div class="input-group-append">
-                        <input id="game-message-submit" class="btn btn-primary" type="button" value="Send">
+            <div class="col-md-9 pt-2">
+                <a id="game-move-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Move</a>
+                <a id="game-suggestion-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Make Suggestion</a>
+                <a id="game-accuse-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Accuse</a>
+                <nav class="mt-3">
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Game Log</a>
+                        <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Map</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div class="form-group mt-3">
+                            <textarea class="form-control" id="game-log" rows="20" disabled></textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+                        <div class="board mt-3">
+                            <div class="room-box">STUDY
+                                <div class="passageway-box tl">
+                                    <i class="fas fa-arrow-down rotate-45-left"></i>
+                                </div>
+                            </div>
+                            <div class="hallway-hor"></div>
+                            <div class="room-box">HALL</div>
+                            <div class="hallway-hor"></div>
+                            <div class="room-box">LOUNGE
+                                <div class="passageway-box tr">
+                                    <i class="fas fa-arrow-down rotate-45-right"></i>
+                                </div>
+                            </div>
+
+                            <div class="hallway-ver"></div>
+                            <div class="square"></div>
+                            <div class="hallway-ver"></div>
+                            <div class="square"></div>
+                            <div class="hallway-ver"></div>
+
+                            <div class="room-box">LIBRARY</div>
+                            <div class="hallway-hor"></div>
+                            <div class="room-box">BILLIARD ROOM</div>
+                            <div class="hallway-hor"></div>
+                            <div class="room-box">DINING ROOM</div>
+
+
+                            <div class="hallway-ver"></div>
+                            <div class="square"></div>
+                            <div class="hallway-ver"></div>
+                            <div class="square"></div>
+                            <div class="hallway-ver"></div>
+
+                            <div class="room-box">CONSERVATORY
+                                <div class="passageway-box bl">
+                                    <i class="fas fa-arrow-up rotate-45-right"></i>
+                                </div>
+                            </div>
+                            <div class="hallway-hor"></div>
+                            <div class="room-box">BALLROOM</div>
+                            <div class="hallway-hor"></div>
+                            <div class="room-box">KITCHEN
+                                <div class="passageway-box br">
+                                    <i class="fas fa-arrow-up rotate-45-left"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-12 mt-3">
+
             </div>
         </div>
     </div>
 
-    <script>
-        const game_Id = JSON.parse(document.getElementById('game_id').textContent);
-
-        const gameSocket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/game/'
-            + game_Id
-            + '/'
-        );
-
-        gameSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            document.querySelector('#game-log').value += (data.message + '\n');
-        };
-
-        gameSocket.onclose = function(e) {
-            console.error('game socket closed unexpectedly');
-        };
-
-        document.querySelector('#game-message-input').focus();
-        document.querySelector('#game-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#game-message-submit').click();
-            }
-        };
-
-        document.querySelector('#game-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#game-message-input');
-            const message = messageInputDom.value;
-            gameSocket.send(JSON.stringify({
-                'message': message
-            }));
-            messageInputDom.value = '';
-        };
-    </script>
+    <script src="{%  static "js/messages.js"%}"></script>
 
 
 {% endblock %}
