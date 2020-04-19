@@ -32,7 +32,6 @@ class Game:
 		random.shuffle(clue_deck)
 
 		self.map = Map()
-
 		# self.turn_order = self.make_turn_order(players) # TODO move to another function
 
 	def add_player(self, player_name):
@@ -121,6 +120,7 @@ class Game:
 			if(target_room.can_move()):
 				start_room.remove_player(player)
 				target_room.add_player(player)
+				player.set_room(target_room)
 				return True
 			else:
 				return False
@@ -130,7 +130,14 @@ class Game:
 	#and pull them by name to do exact compares.
 	def make_guess(self, guessing_player, clues):
 		for player in self.players :
+			if(player.get_character() in clues):
+				player.get_room().remove_player(player)
+				guessing_player.get_room().add_player(player)
+				player.set_room(guessing_player.get_room)
+	
+		for player in self.players :
 			if(guessing_player != player):
+				#move the player who is being suggested to the suggested room
 				for c in player.get_hand() :
 					if (c.get_clue_name().lower() in clues) :
 						return c
@@ -149,3 +156,28 @@ class Game:
 				return False
 		#if all of the passed in clues are in the murder clues, they win
 		return True
+	
+	#At start, place the players in a starting hallway based on their character.
+	def place_players(self):
+		rooms = self.map.get_rooms()
+		for player in players :
+			character = player.get_character()
+			if(character == constants.SCARLET):
+				rooms[constants.HALL_LOUNGE].add_player(player)
+				player.set_room(rooms[constants.HALL_LOUNGE])
+			elif(character == constants.MUSTARD):
+				rooms[constants.LOUNGE_DINING].add_player(player)
+				player.set_room(rooms[constants.LOUNGE_DINING])
+			elif(character == constants.WHITE):
+				rooms[constants.BALLROOM_KITCHEN].add_player(player)
+				player.set_room(rooms[constants.BALLROOM_KITCHEN])
+			elif(character == constants.GREEN):
+				rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
+				player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
+			elif(character == constants.PEACOCK):
+				rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
+				player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
+			elif(character == constants.PLUM):
+				rooms[constants.STUDY_LIBRARY].add_player(player)
+				player.set_room(rooms[constants.STUDY_LIBRARY])
+		pass
