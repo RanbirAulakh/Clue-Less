@@ -13,13 +13,10 @@ from django.contrib.auth.models import AnonymousUser
 class GameConsumers(AsyncWebsocketConsumer):
     # instead of storing the data to the DB and reading from the DB,
     # we can manage the game from the memory
+    # This is the model that will be returned to user (contains partial data)
     game_model = {}
 
-    # keeps seperated from game_model since game_model will be used to send to users.
-    # game_model_answers should only be verified on server side
-    game_model_answers = {}
-
-    # idk what I am doing
+    # Private game memory (contains all data)
     game_memory_data = {}
 
     async def connect(self):
@@ -34,8 +31,14 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        await self.accept()
+        if self.game_id not in self.game_memory_data.keys():
+            g = game.Game()
+            self.game_memory_data[self.game_id] = {"game": g}
 
+            self.game_model[self.game_id] = {}
+            self.game_model[self.game_id]['id'] = str(self.game_id)
+
+        await self.accept()
         await self.update_user_joined()
 
         await self.channel_layer.group_send(
@@ -69,9 +72,6 @@ class GameConsumers(AsyncWebsocketConsumer):
 
         text_data_json = json.loads(text_data)
 
-        # type = text_data_json["type"]
-
-
         message = text_data_json['message']
 
         await self.channel_layer.group_send(
@@ -87,33 +87,20 @@ class GameConsumers(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(event))
 
     async def update_user_joined(self):
-        if self.game_id in self.game_model.keys():
-            current_players_lst = self.game_model[self.game_id]['players']
-            if str(self.scope["user"]) not in current_players_lst:
-                current_players_lst.append(str(self.scope["user"]))
-                self.game_model[self.game_id]['users'] = current_players_lst
+        user = str(self.scope['user'])
 
-            if len(current_players_lst) > 2:
-                # start game
-
-                pass
-        else:
-            # create new game
-            g = game.Game()
-            self.game_memory_data[self.game_id] = {"game": g}
-
-            # player_name = 
-            # g.add_player(self, str(self.scope['user']))
-
-            self.game_model[self.game_id] = {}
-            self.game_model[self.game_id]['id'] = str(self.game_id)
-            self.game_model[self.game_id]['players'] = [str(self.scope["user"])]
-            self.game_model[self.game_id]['status'] = "Started"
-            self.game_model[self.game_id]['current_turn'] = [str(self.scope["user"])]
+        g = self.game_memory_data[self.game_id]['game']
+        g.add_player(user)
 
     async def update_user_left(self):
-        if self.game_id in self.game_model.keys():
-            current_players_lst = self.game_model[self.game_id]['players']
-            if str(self.scope["user"]) in current_players_lst:
-                current_players_lst.remove(str(self.scope["user"]))
-                self.game_model[self.game_id]['users'] = current_players_lst
+        user = str(self.scope['user'])
+
+        g = self.game_memory_data[self.game_id]['game']
+        g.remove_player(user)
+
+
+        # if self.game_id in self.game_model.keys():
+        #     current_players_lst = self.game_model[self.game_id]['players']
+        #     if str(self.scope["user"]) in current_players_lst:
+        #         current_players_lst.remove(str(self.scope["user"]))
+        #         self.game_model[self.game_id]['users'] = current_players_lst
