@@ -102,16 +102,17 @@ class Game():
 				players[rounds % num_players].getHand().append(clue_deck.pop())
 				rounds += 1
 
-
-# disabiling it for now
-# testPlayer1 = Player("test", "green")
-# testPlayer2 = Player("test2", "plum")
-# HallTest = Hallway("hall",["1","2"])
-# print(HallTest.canGuess())
-# Object = Game("id",[testPlayer1, testPlayer2], True, "Player")
-# print("\n")
-# thing=Object.getMurder()
-# for i in testPlayer1.getHand():
-# 	print("Player 1 : " + i.getClueName())
-# for i in testPlayer2.getHand():
-# 	print("Player 2 : " + i.getClueName())
+	def getMap(self):
+		return self.map
+	
+	def makeTurnOrder(self, players) :
+		turnOrder = []
+		for i in constants.SUSPECTS :
+			for ii in players :
+				if ii.getCharacter().lower() == i.lower() :
+					turnOrder.append(ii)
+		return turnOrder
+		
+	def getTurnOrder(self) :
+		return self.turnOrder
+		

@@ -22,8 +22,8 @@ WHITE="Mrs. White"
 SCARLET="Ms. Scarlet" #Ms. to Miss?
 PEACOCK="Mrs. Peacock"
 
-#Array of them like the weapons
-SUSPECTS=[PEACOCK,PLUM,MUSTARD,GREEN,WHITE,SCARLET]
+#Array of them like the weapons/Will also serve as determining turn order.
+SUSPECTS=[SCARLET,MUSTARD,WHITE,GREEN,PEACOCK,PLUM]
 
 #Room names, 9 in all, Ordered by Top left corner to bottom right corner
 """

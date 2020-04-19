@@ -1,18 +1,17 @@
-class Room:
+class Room():
 	def __init__(self, roomName):
 		self.name = roomName
 		self.connections = []
 		self.players = []
-		self.maxplayers = 8
 
-	def setConnections(self, room):
+	def addConnections(self, room):
 		self.connections.append(room)
 
-	def setPlayers(self, newplayers):
-		self.players = newplayers
-
-	def getMaxPlayers(self):
-		return self.maxplayers
+	def addPlayer(self, player):
+		self.players.append(player)
+		
+	def removePlayer(self, player):
+		self.players.remove(player)
 
 	def getPlayers(self):
 		return self.players
@@ -25,11 +24,13 @@ class Room:
 
 	def canGuess(self):
 		return True
+		
+	def canMove(self):
+		return True
 
 
 class Hallway(Room):
 	def canGuess(self):
 		return False
-
-	def getMaxPlayers(self):
-		return 1
+	def canMove(self):
+		return len(self.getPlayers) == 0
