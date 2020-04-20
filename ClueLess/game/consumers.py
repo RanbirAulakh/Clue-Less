@@ -38,8 +38,9 @@ class GameConsumers(AsyncWebsocketConsumer):
         # check if the game exist in the memory
         # If not, create new game and store them in the memory
         if self.game_id not in self.game_memory_data.keys():
-            g = game.Game()
-            self.game_memory_data[self.game_id] = {"game": g}
+            print("creating new game instances")
+            # g = game.Game()
+            self.game_memory_data[self.game_id] = game.Game()
 
             self.game_model[self.game_id] = {}
             self.game_model[self.game_id]['id'] = str(self.game_id)
@@ -126,17 +127,17 @@ class GameConsumers(AsyncWebsocketConsumer):
     async def update_user_joined(self):
         user = str(self.scope['user'])
 
-        self.game_memory_data[self.game_id]['game'].add_player(user)
+        self.game_memory_data[self.game_id].add_player(user)
         self.game_model[self.game_id]['players'].append(user)
 
-        if not self.game_memory_data[self.game_id]['game'].already_chosen(user):
+        if not self.game_memory_data[self.game_id].already_chosen(user):
             await self.send(text_data=json.dumps({
                     "pick_character": True,
-                    "available_characters": self.game_memory_data[self.game_id]['game'].available_characters
+                    "available_characters": self.game_memory_data[self.game_id].available_characters
                 }
             ))
         else:
-            character_select = self.game_memory_data[self.game_id]['game'].get_chosen_character(user)
+            character_select = self.game_memory_data[self.game_id].get_chosen_character(user)
             await self.send(text_data=json.dumps({
                     "update_character_section": character_select
                 }
@@ -150,7 +151,7 @@ class GameConsumers(AsyncWebsocketConsumer):
 
     async def update_chosen_character(self, character_select):
         user = str(self.scope['user'])
-        if self.game_memory_data[self.game_id]['game'].player_select_character(user, character_select):
+        if self.game_memory_data[self.game_id].player_select_character(user, character_select):
             msg = "{0} selects {1} as their game piece character.".format(user, character_select)
             self.game_log[self.game_id] += '\n' + msg
             await self.channel_layer.group_send(
@@ -158,7 +159,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': msg,
-                    "available_characters": self.game_memory_data[self.game_id]['game'].available_characters,
+                    "available_characters": self.game_memory_data[self.game_id].available_characters,
                 }
             )
             await self.send(text_data=json.dumps({
@@ -171,13 +172,13 @@ class GameConsumers(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                     "error": "Character already chosen! Please choose another one!",
                     "pick_character": True,
-                    "available_characters": self.game_memory_data[self.game_id]['game'].available_characters
+                    "available_characters": self.game_memory_data[self.game_id].available_characters
                 }
             ))
 
     async def draw_cards(self, player_name):
         user = str(self.scope['user'])
-        cards = self.game_memory_data[self.game_id]['game'].deal_hands(user)
+        cards = self.game_memory_data[self.game_id].deal_hands(user)
         await self.send(text_data=json.dumps({
                 "draw_cards": cards,
             }
@@ -188,6 +189,6 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.game_group_name,
             {
                 'type': 'chat_message',
-                "update_location": self.game_memory_data[self.game_id]['game'].get_locations(),
+                "update_location": self.game_memory_data[self.game_id].get_locations(),
             }
         )

@@ -15,7 +15,8 @@ from .map import Map
 class Game:
 	def __init__(self):
 		self.current_turn = None
-		self.available_characters = constants.SUSPECTS
+		self.available_characters = ["Professor Plum", "Colonel Mustard", "Mr. Green", "Mrs. White", "Ms. Scarlet", "Mrs. Peacock"]
+
 		self.players = []
 		self.murder = []
 
