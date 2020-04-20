@@ -116,6 +116,9 @@ class GameConsumers(AsyncWebsocketConsumer):
         if "player_select" in text_data_json:
             await self.update_chosen_character(text_data_json['player_select'])
             await self.get_cards()
+            await self.get_locations()
+        elif "show_available_moves" in text_data_json:
+            await self.show_available_rooms()
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -135,7 +138,6 @@ class GameConsumers(AsyncWebsocketConsumer):
     async def update_user_joined(self):
         user = str(self.scope['user'])
 
-        self.game_memory_data[self.game_id].add_player(user)
         self.game_model[self.game_id]['players'].append(user)
 
         if not self.game_memory_data[self.game_id].already_chosen(user):
@@ -147,10 +149,11 @@ class GameConsumers(AsyncWebsocketConsumer):
         else:
             character_select = self.game_memory_data[self.game_id].get_chosen_character(user)
             player_cards = self.game_memory_data[self.game_id].get_cards(user)
+            locations = self.game_memory_data[self.game_id].get_locations()
             await self.send(text_data=json.dumps({
                     "update_character_section": character_select,
                     "your_cards": player_cards,
-                    "update_location": self.game_memory_data[self.game_id].get_locations(),
+                    "update_location": locations,
                 }
             ))
 
@@ -162,6 +165,7 @@ class GameConsumers(AsyncWebsocketConsumer):
 
     async def update_chosen_character(self, character_select):
         user = str(self.scope['user'])
+        self.game_memory_data[self.game_id].add_player(user)
         if self.game_memory_data[self.game_id].player_select_character(user, character_select):
             msg = "{0} selects {1} as their game piece character.".format(user, character_select)
             self.game_log[self.game_id] += '\n' + msg
@@ -204,41 +208,41 @@ class GameConsumers(AsyncWebsocketConsumer):
         This is useful is player accidentally refresh.
         :return:
         """
+        if self.game_memory_data[self.game_id].status == "Started":
+            for i in self.game_memory_data[self.game_id].players:
+                user = i.name
+                user_channel = "{0}_game_{1}".format(user, self.game_id)
+                cards = self.game_memory_data[self.game_id].get_cards(user)
 
-        for i in self.game_memory_data[self.game_id].players:
-            user = i.name
-            user_channel = "{0}_game_{1}".format(user, self.game_id)
-            cards = self.game_memory_data[self.game_id].get_cards(user)
+                msg = "{0} drew {1} cards!".format(user, len(cards))
+                self.game_log[self.game_id] += '\n' + msg
 
-            msg = "{0} drew {1} cards!".format(user, len(cards))
-            self.game_log[self.game_id] += '\n' + msg
+                await self.channel_layer.group_send(
+                    user_channel,
+                    {
+                        'type': 'chat_message',
+                        'your_cards': cards,
+                    }
+                )
 
-            await self.channel_layer.group_send(
-                user_channel,
-                {
-                    'type': 'chat_message',
-                    'your_cards': cards,
-                }
-            )
+                # let other people know how many cards you drew
+                await self.channel_layer.group_send(
+                    self.game_group_name,
+                    {
+                        'type': 'chat_message',
+                        'message': msg,
+                    }
+                )
 
-            # let other people know how many cards you drew
+    async def show_available_rooms(self):
+        print("Show_available_rooms")
+
+    async def get_locations(self):
+        if self.game_memory_data[self.game_id].status == "Started":
             await self.channel_layer.group_send(
                 self.game_group_name,
                 {
                     'type': 'chat_message',
-                    'message': msg,
+                    "update_location": self.game_memory_data[self.game_id].get_locations()
                 }
             )
-
-
-
-    async def get_location(self):
-        print("Locations")
-        # await self.channel_layer.group_send(
-        #     self.game_group_name,
-        #     {
-        #         'type': 'chat_message',
-        #         "update_location": self.game_memory_data[self.game_id].get_locations(),
-        #         'message': "msg",
-        #     }
-        # )
