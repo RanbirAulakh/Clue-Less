@@ -138,8 +138,11 @@ class GameConsumers(AsyncWebsocketConsumer):
             ))
         else:
             character_select = self.game_memory_data[self.game_id].get_chosen_character(user)
+            player_cards = self.game_memory_data[self.game_id].get_cards(user)
             await self.send(text_data=json.dumps({
-                    "update_character_section": character_select
+                    "update_character_section": character_select,
+                    "draw_cards": player_cards,
+                    "update_location": self.game_memory_data[self.game_id].get_locations(),
                 }
             ))
 
@@ -154,6 +157,7 @@ class GameConsumers(AsyncWebsocketConsumer):
         if self.game_memory_data[self.game_id].player_select_character(user, character_select):
             msg = "{0} selects {1} as their game piece character.".format(user, character_select)
             self.game_log[self.game_id] += '\n' + msg
+
             await self.channel_layer.group_send(
                 self.game_group_name,
                 {
@@ -179,8 +183,12 @@ class GameConsumers(AsyncWebsocketConsumer):
     async def draw_cards(self, player_name):
         user = str(self.scope['user'])
         cards = self.game_memory_data[self.game_id].deal_hands(user)
+
+        msg = "{0} drew 3 cards!".format(user)
+        self.game_log[self.game_id] += '\n' + msg
         await self.send(text_data=json.dumps({
                 "draw_cards": cards,
+                'message': msg,
             }
         ))
 

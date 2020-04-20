@@ -116,6 +116,11 @@ class Game:
 
 		return locations
 
+	def get_cards(self, player_name):
+		for i in self.players:
+			if i.name == player_name:
+				return i.hand
+
 	def already_chosen(self, player_name):
 		"""
 		Check if player already choose a character
