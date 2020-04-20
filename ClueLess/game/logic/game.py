@@ -162,22 +162,21 @@ class Game:
 		rooms = self.map.get_rooms()
 		for player in players :
 			character = player.get_character()
-			if(character == constants.SCARLET):
+			if character == constants.SCARLET :
 				rooms[constants.HALL_LOUNGE].add_player(player)
 				player.set_room(rooms[constants.HALL_LOUNGE])
-			elif(character == constants.MUSTARD):
+			elif character == constants.MUSTARD :
 				rooms[constants.LOUNGE_DINING].add_player(player)
 				player.set_room(rooms[constants.LOUNGE_DINING])
-			elif(character == constants.WHITE):
+			elif character == constants.WHITE :
 				rooms[constants.BALLROOM_KITCHEN].add_player(player)
 				player.set_room(rooms[constants.BALLROOM_KITCHEN])
-			elif(character == constants.GREEN):
+			elif character == constants.GREEN :
 				rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
 				player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
-			elif(character == constants.PEACOCK):
+			elif character == constants.PEACOCK :
 				rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
 				player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
-			elif(character == constants.PLUM):
+			elif character == constants.PLUM :
 				rooms[constants.STUDY_LIBRARY].add_player(player)
 				player.set_room(rooms[constants.STUDY_LIBRARY])
-		pass
