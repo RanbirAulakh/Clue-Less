@@ -51,10 +51,14 @@ gameSocket.onmessage = function(e) {
         updateYourCardsSection(cards);
     } catch (e) { }
 
-
     try {
         let locations = data["update_location"];
         updatePlayersLocation(locations);
+    } catch (e) { }
+
+    try {
+        let your_turn = data["your_turn"];
+        enableButtons(your_turn);
     } catch (e) { }
 
 };
@@ -63,14 +67,7 @@ gameSocket.onclose = function(e) {
     console.error('game socket closed unexpectedly');
 };
 
-$('#game-move-submit').click(function() {
-    gameSocket.send(JSON.stringify({
-        'type': 'move'
-    }));
-});
-
-
-///////////// Display Character Model
+//////////// Display Character Model
 function displayCharacterModal(canPickCharacter, availableCharacters) {
     if(canPickCharacter) {
         showAvailableCharacters(availableCharacters);
@@ -99,7 +96,7 @@ function showAvailableCharacters(availableCharacters) {
     }
 }
 
-/////////////// Update "Game Piece Character" section
+//////////// Update "Game Piece Character" section
 function updateGamePieceSection(player_select) {
     if(typeof player_select === 'undefined') {
         return;
@@ -112,8 +109,7 @@ function updateGamePieceSection(player_select) {
     $('#game_piece_character').append(liHTML);
 }
 
-
-///////////////// Update "Your Cards" Section
+//////////// Update "Your Cards" Section
 function updateYourCardsSection(cards) {
     if(typeof cards === 'undefined') {
         return;
@@ -136,7 +132,7 @@ function updateYourCardsSection(cards) {
     // $('#your_cards').append(weaponCard);
 }
 
-////////////// Update "Players Location" section
+//////////// Update "Players Location" section
 function updatePlayersLocation(locations) {
     if(typeof locations == 'undefined') {
         return;
@@ -153,7 +149,45 @@ function updatePlayersLocation(locations) {
 
 }
 
-///////////// Let the server know that the user select a character
+//////////// Enable or Disable Buttons
+function enableButtons(your_turn) {
+    if(typeof your_turn == 'undefined') {
+        return;
+    }
+
+    if(your_turn) {
+        $('#game-move-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+        $('#game-suggestion-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+        $('#game-accuse-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+    } else {
+        $('#game-move-submit').removeClass().addClass("btn btn-secondary disabled");
+        $('#game-suggestion-submit').removeClass().addClass("btn btn-secondary disabled");
+        $('#game-accuse-submit').removeClass().addClass("btn btn-secondary disabled");
+    }
+}
+
+$('#game-move-submit').click(function() {
+    gameSocket.send(JSON.stringify({
+        'type': 'select_move'
+    }));
+});
+
+
+$('#game-suggestion-submit').click(function() {
+    gameSocket.send(JSON.stringify({
+        'type': 'select_suggestion'
+    }));
+});
+
+$('#game-accuse-submit').click(function() {
+    gameSocket.send(JSON.stringify({
+        'type': 'select_accuse'
+    }));
+});
+
+
+
+//////////// Let the server know that the user select a character
 $('#game-player-chosen-submit').click(function() {
     let playerCharacter = $("input[name='characterChosen']:checked").val();
     gameSocket.send(JSON.stringify({

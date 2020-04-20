@@ -1,3 +1,6 @@
+# team: The Plum Professors
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro
+# description:
 
 import logging
 import json
@@ -117,8 +120,18 @@ class GameConsumers(AsyncWebsocketConsumer):
             await self.update_chosen_character(text_data_json['player_select'])
             await self.get_cards()
             await self.get_locations()
+            await self.update_users_turn()
+
         elif "show_available_moves" in text_data_json:
             await self.show_available_rooms()
+        elif "type" in text_data_json:
+            print("TYPE IF/ELSE {0}".format(text_data_json))
+            if text_data_json["type"] == "select_move":
+                self.select_move()
+            elif text_data_json["type"] == "select_accuse":
+                self.select_suggestion()
+            elif text_data_json["type"] == "select_suggestion":
+                self.select_accuse()
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -130,8 +143,6 @@ class GameConsumers(AsyncWebsocketConsumer):
             )
 
     async def chat_message(self, event):
-        # print("chat_message here?")
-
         # Send message to WebSocket
         await self.send(text_data=json.dumps(event))
 
@@ -150,6 +161,11 @@ class GameConsumers(AsyncWebsocketConsumer):
             character_select = self.game_memory_data[self.game_id].get_chosen_character(user)
             player_cards = self.game_memory_data[self.game_id].get_cards(user)
             locations = self.game_memory_data[self.game_id].get_locations()
+
+            # if user accidentally refreshed
+            # let that player know that it is their turn and alert others that this is player's turn
+            await self.update_users_turn()
+
             await self.send(text_data=json.dumps({
                     "update_character_section": character_select,
                     "your_cards": player_cards,
@@ -190,6 +206,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             if str(required_players) == str(len(self.game_memory_data[self.game_id].players)):
                 if self.game_memory_data[self.game_id].status == "Not Started":
                     self.game_memory_data[self.game_id].start_game()
+                    self.game_model[self.game_id]['status'] = "Started"
 
         else:
             await self.send(text_data=json.dumps({
@@ -246,3 +263,48 @@ class GameConsumers(AsyncWebsocketConsumer):
                     "update_location": self.game_memory_data[self.game_id].get_locations()
                 }
             )
+
+    async def update_users_turn(self):
+        if self.game_memory_data[self.game_id].status == "Started":
+            whose_turn_user = self.game_memory_data[self.game_id].current_turn.name
+            user_channel = "{0}_game_{1}".format(whose_turn_user, self.game_id)
+
+            print(user_channel)
+
+            msg = "It is {0}'s turn.".format(whose_turn_user)
+            self.game_log[self.game_id] += '\n' + msg
+
+            # reason the group message goes first
+            # 1. It will send to all users within the game
+            # and it will disable everyone' buttons
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'your_turn': False
+                }
+            )
+
+            # Once group messages are sent out
+            # then alert user that it is their turn
+            # and their buttons will be enabled
+            await self.channel_layer.group_send(
+                user_channel,
+                {
+                    'type': 'chat_message',
+                    'your_turn': True,
+                }
+            )
+
+    async def select_move(self):
+        user = str(self.scope['user'])
+        print("Implement Select Move")
+
+    async def select_suggestion(self):
+        user = str(self.scope['user'])
+        print("Implement Select suggestion")
+
+    async def select_accuse(self):
+        user = str(self.scope['user'])
+        print("Implement Select accuse")

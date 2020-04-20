@@ -1,5 +1,5 @@
 # team: The Plum Professors
-# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro
 # description:
 
 # import constants
@@ -14,8 +14,9 @@ from .map import Map
 
 class Game:
 	def __init__(self):
-		self.required_players = 0
+		self.turn_order = []
 		self.current_turn = None
+
 		self.available_characters = ["Professor Plum", "Colonel Mustard", "Mr. Green", "Mrs. White", "Ms. Scarlet", "Mrs. Peacock"]
 
 		self.players = []
@@ -52,9 +53,7 @@ class Game:
 		self.status = "Started"
 		self.deal_hands()
 		self.place_players()
-
-		# self.turn_order = self.make_turn_order(players) # TODO move to another function
-		# pass
+		self.make_turn_order()
 
 	def add_player(self, player_name):
 		"""
@@ -211,13 +210,17 @@ class Game:
 	def get_map(self):
 		return self.map
 	
-	def make_turn_order(self, players):
-		turn_order = []
+	def make_turn_order(self):
+		chosen_characters = {}
+		for player in self.players:
+			chosen_characters[player.character] = player
+
 		for i in constants.SUSPECTS:
-			for ii in players:
-				if ii.get_character().lower() == i.lower():
-					turn_order.append(ii)
-		return turn_order
+			if i in chosen_characters.keys():
+				print("Adding {0} to turn lst".format(chosen_characters[i]))
+				self.turn_order.append(chosen_characters[i])
+
+		self.current_turn = self.turn_order[0]
 		
 	def get_turn_order(self) :
 		return self.turn_order
@@ -310,3 +313,4 @@ class Game:
 				rooms[constants.STUDY_LIBRARY].add_player(player)
 				player.set_room(rooms[constants.STUDY_LIBRARY])
 				player.set_current_location(constants.STUDY_LIBRARY)
+
