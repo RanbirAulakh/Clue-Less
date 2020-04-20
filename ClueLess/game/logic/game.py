@@ -229,6 +229,8 @@ class Game:
 			if target_room.can_move():
 				start_room.remove_player(player)
 				target_room.add_player(player)
+				player.set_room(target_room)
+				player.set_current_location(target_room.get_name())
 				return True
 			else:
 				return False
@@ -242,6 +244,13 @@ class Game:
 		:param clues:
 		:return:
 		"""
+		for player in self.players :
+			if(player.get_character() in clues):
+				player.get_room().remove_player(player)
+				guessing_player.get_room().add_player(player)
+				player.set_room(guessing_player.get_room)
+				player.set_current_location(guessing_player.get_current_location())
+
 		for player in self.players :
 			if guessing_player != player:
 				for c in player.get_hand() :
@@ -263,3 +272,39 @@ class Game:
 
 		# if all of the passed in clues are in the murder clues, they win
 		return True
+	
+	#At start, place the players in a starting hallway based on their character.
+	def place_players(self):
+		rooms = self.map.get_rooms()
+		for player in players :
+			character = player.get_character()
+			
+			if character == constants.SCARLET :
+				rooms[constants.HALL_LOUNGE].add_player(player)
+				player.set_room(rooms[constants.HALL_LOUNGE])
+				player.set_location(constants.HALL_LOUNGE)
+				
+			elif character == constants.MUSTARD :
+				rooms[constants.LOUNGE_DINING].add_player(player)
+				player.set_room(rooms[constants.LOUNGE_DINING])
+				player.set_location(constants.LOUNGE_DINING)
+				
+			elif character == constants.WHITE :
+				rooms[constants.BALLROOM_KITCHEN].add_player(player)
+				player.set_room(rooms[constants.BALLROOM_KITCHEN])
+				player.set_location(constants.BALLROOM_KITCHEN)
+				
+			elif character == constants.GREEN :
+				rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
+				player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
+				player.set_location(constants.CONSERVATORY_BALLROOM)
+				
+			elif character == constants.PEACOCK :
+				rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
+				player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
+				player.set_location(constants.LIBRARY_CONSERVATORY)
+				
+			elif character == constants.PLUM :
+				rooms[constants.STUDY_LIBRARY].add_player(player)
+				player.set_room(rooms[constants.STUDY_LIBRARY])
+				player.set_location(constants.STUDY_LIBRARY)
