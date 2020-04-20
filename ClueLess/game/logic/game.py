@@ -14,6 +14,7 @@ from .map import Map
 
 class Game:
 	def __init__(self):
+		self.required_players = 0
 		self.current_turn = None
 		self.available_characters = ["Professor Plum", "Colonel Mustard", "Mr. Green", "Mrs. White", "Ms. Scarlet", "Mrs. Peacock"]
 
@@ -34,26 +35,25 @@ class Game:
 		self.create_murder(suspects, rooms, weapons)
 
 		# combine the decks then deal to the players)
-		random.shuffle(suspects)
-		self.clue_deck_suspects = suspects
-		random.shuffle(rooms)
-		self.clue_deck_rooms = rooms
-		random.shuffle(weapons)
-		self.clue_deck_weapons = weapons
+		self.clue_deck = suspects + weapons + rooms
+		random.shuffle(self.clue_deck)
 
 		self.map = Map()
 
-
-
 	def start_game(self):
 		"""
-		1. Change status to "In-Progress"
+		1. Change status to "Started"
+		2. Deal Hands
 		2. Adjust who goes first? Assuming if Scarlet wasn't selected
 		3. If Users turn, unlock Users Buttons (Consumers.py)
 		4. Check if Player.length is 4
 		"""
+		print("Game officially started!!")
+		self.status = "Started"
+		self.deal_hands()
+
 		# self.turn_order = self.make_turn_order(players) # TODO move to another function
-		pass
+		# pass
 
 	def add_player(self, player_name):
 		"""
@@ -131,7 +131,7 @@ class Game:
 	def get_cards(self, player_name):
 		for i in self.players:
 			if i.name == player_name:
-				return i.hand
+				return i.get_hand_str()
 
 	def already_chosen(self, player_name):
 		"""
@@ -198,20 +198,16 @@ class Game:
 	def get_murder(self):
 		return self.murder
 
-	def deal_hands(self, player_name):
+	def deal_hands(self):
 		"""
 		Deal initial hands, and if a player leaves, place their hand in the "clue_deck" var
 		and pass it to remaining players.
 		"""
-		for i in range(len(self.players)):
-			if self.players[i].name == player_name:
-				print(self.clue_deck_suspects)
-				murder_card = self.clue_deck_suspects.pop()
-				room_card = self.clue_deck_rooms.pop()
-				weapon_card = self.clue_deck_weapons.pop()
-				self.players[i].hand = {"suspect_card": murder_card.name, "room_card": room_card.name, "weapon_card": weapon_card.name}
-				print("cards: {0}".format(self.players[i].hand))
-				return self.players[i].hand
+		num_players = len(self.players)
+		rounds = 0
+		while len(self.clue_deck) != 0:
+			self.players[rounds % num_players].hand.append(self.clue_deck.pop())
+			rounds += 1
 
 	def get_map(self):
 		return self.map

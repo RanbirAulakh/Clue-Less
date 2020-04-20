@@ -47,7 +47,7 @@ gameSocket.onmessage = function(e) {
     } catch (e) { }
 
     try {
-        let cards = data["draw_cards"];
+        let cards = data["your_cards"];
         updateYourCardsSection(cards);
     } catch (e) { }
 
@@ -119,14 +119,21 @@ function updateYourCardsSection(cards) {
         return;
     }
 
-    let suspectCard = '<li id="player_card_person" class="list-group-item"><img class="rounded" src="/static/images/' + cards["suspect_card"].replace(" ", "") + '.png" width="50" height="50"></img>' +
-        '<label class="form-check-label pl-2"> ' + cards["suspect_card"] + ' </label></div></li>';
-    let roomCard = '<li id="player_card_room" class="list-group-item"><label class="form-check-label pl-2"> ' + cards["room_card"] + ' </label></div></li>';
-    let weaponCard = '<li id="player_card_suspect" class="list-group-item"><img class="rounded" src="/static/images/' + cards["weapon_card"].replace(" ", "") + '.png" width="50" height="50"></img>' +
-        '<label class="form-check-label pl-2"> ' + cards["weapon_card"] + ' </label></div></li>';
-    $('#your_cards').append(suspectCard);
-    $('#your_cards').append(roomCard);
-    $('#your_cards').append(weaponCard);
+    $('#your_cards').empty();
+    $('#your_cards').append('<li class="list-group-item text-center">Your Cards</li>');
+    for(var i = 0; i < cards.length; i++){
+        let cardHTML = '<li id="player_card_person" class="list-group-item"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img>' +
+        '<label class="form-check-label pl-2"> ' + cards[i] + ' </label></div></li>';
+        $('#your_cards').append(cardHTML);
+    }
+
+
+    // let roomCard = '<li id="player_card_room" class="list-group-item"><label class="form-check-label pl-2"> ' + cards["room_card"] + ' </label></div></li>';
+    // let weaponCard = '<li id="player_card_suspect" class="list-group-item"><img class="rounded" src="/static/images/' + cards["weapon_card"].replace(" ", "") + '.png" width="50" height="50"></img>' +
+    //     '<label class="form-check-label pl-2"> ' + cards["weapon_card"] + ' </label></div></li>';
+    // $('#your_cards').append(suspectCard);
+    // $('#your_cards').append(roomCard);
+    // $('#your_cards').append(weaponCard);
 }
 
 ////////////// Update "Players Location" section
@@ -145,7 +152,6 @@ function updatePlayersLocation(locations) {
     }
 
 }
-
 
 ///////////// Let the server know that the user select a character
 $('#game-player-chosen-submit').click(function() {

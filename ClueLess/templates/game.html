@@ -14,7 +14,6 @@
                 <ul class="list-group mb-3">
                     <li class="list-group-item text-center">Game Piece Character</li>
                     <li id="game_piece_character" class="list-group-item">
-
                     </li>
                 </ul>
                 <ul class="list-group mb-3" id="your_cards">
@@ -30,6 +29,7 @@
                     <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
                     <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
                     <li id="game-status" class="list-group-item"><i class="fa fa-hourglass-start"></i> Not Started </li>
+                    <li id="game-required-players" class="list-group-item"><i class="fa fa-users"></i> Required {{ game_details.required_players }} Players </li>
                 </ul>
                 <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#leaveGame">
                     Leave Game

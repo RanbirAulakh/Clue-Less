@@ -5,8 +5,11 @@ import json
 from .logic import game
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import DenyConnection
+from channels.db import database_sync_to_async
 
 from django.contrib.auth.models import AnonymousUser
+
+from . import models
 
 
 class GameConsumers(AsyncWebsocketConsumer):
@@ -35,11 +38,17 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.channel_name
         )
 
+        # create card individual channel with game_id
+        individual_user_chan = "{0}_game_{1}".format(str(self.scope['user']), self.game_id)
+        await self.channel_layer.group_add(
+            individual_user_chan,
+            self.channel_name
+        )
+
         # check if the game exist in the memory
         # If not, create new game and store them in the memory
         if self.game_id not in self.game_memory_data.keys():
-            print("creating new game instances")
-            # g = game.Game()
+            print("Creating new game instances")
             self.game_memory_data[self.game_id] = game.Game()
 
             self.game_model[self.game_id] = {}
@@ -106,8 +115,7 @@ class GameConsumers(AsyncWebsocketConsumer):
 
         if "player_select" in text_data_json:
             await self.update_chosen_character(text_data_json['player_select'])
-            await self.draw_cards(self.scope['user'])
-            await self.get_location()
+            await self.get_cards()
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -141,7 +149,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             player_cards = self.game_memory_data[self.game_id].get_cards(user)
             await self.send(text_data=json.dumps({
                     "update_character_section": character_select,
-                    "draw_cards": player_cards,
+                    "your_cards": player_cards,
                     "update_location": self.game_memory_data[self.game_id].get_locations(),
                 }
             ))
@@ -172,6 +180,13 @@ class GameConsumers(AsyncWebsocketConsumer):
                     "update_character_section": character_select
                 }
             ))
+
+            # check if # of players has chose their character and start the game!
+            required_players = await self.get_required_players()
+            if str(required_players) == str(len(self.game_memory_data[self.game_id].players)):
+                if self.game_memory_data[self.game_id].status == "Not Started":
+                    self.game_memory_data[self.game_id].start_game()
+
         else:
             await self.send(text_data=json.dumps({
                     "error": "Character already chosen! Please choose another one!",
@@ -180,23 +195,50 @@ class GameConsumers(AsyncWebsocketConsumer):
                 }
             ))
 
-    async def draw_cards(self, player_name):
-        user = str(self.scope['user'])
-        cards = self.game_memory_data[self.game_id].deal_hands(user)
+    @database_sync_to_async
+    def get_required_players(self):
+        return models.Game.objects.get(id=self.game_id).required_players
 
-        msg = "{0} drew 3 cards!".format(user)
-        self.game_log[self.game_id] += '\n' + msg
-        await self.send(text_data=json.dumps({
-                "draw_cards": cards,
-                'message': msg,
-            }
-        ))
+    async def get_cards(self):
+        """
+        This is useful is player accidentally refresh.
+        :return:
+        """
+
+        for i in self.game_memory_data[self.game_id].players:
+            user = i.name
+            user_channel = "{0}_game_{1}".format(user, self.game_id)
+            cards = self.game_memory_data[self.game_id].get_cards(user)
+
+            msg = "{0} drew {1} cards!".format(user, len(cards))
+            self.game_log[self.game_id] += '\n' + msg
+
+            await self.channel_layer.group_send(
+                user_channel,
+                {
+                    'type': 'chat_message',
+                    'your_cards': cards,
+                }
+            )
+
+            # let other people know how many cards you drew
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                }
+            )
+
+
 
     async def get_location(self):
-        await self.channel_layer.group_send(
-            self.game_group_name,
-            {
-                'type': 'chat_message',
-                "update_location": self.game_memory_data[self.game_id].get_locations(),
-            }
-        )
+        print("Locations")
+        # await self.channel_layer.group_send(
+        #     self.game_group_name,
+        #     {
+        #         'type': 'chat_message',
+        #         "update_location": self.game_memory_data[self.game_id].get_locations(),
+        #         'message': "msg",
+        #     }
+        # )
