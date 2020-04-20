@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 # Create your models here.
 class Game(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.TextField(null=False)
     type = models.CharField(max_length=10)
+    required_players = models.CharField(max_length=2)
     private_key = models.TextField(null=True, blank=True)
 
     created_date = models.DateField(auto_now_add=True)

@@ -5,9 +5,17 @@ class Player():
 		self.hand = []
 		self.seen = []
 		self.room = None
+		self.current_location = ""
 		
 	def get_hand(self):
 		return self.hand
+
+	def get_hand_str(self):
+		lst = []
+		for i in self.hand:
+			lst.append(i.name)
+
+		return lst
 		
 	def get_name(self):
 		return self.name
@@ -26,3 +34,9 @@ class Player():
 		
 	def get_room(self):
 		return self.room
+		
+	def get_current_location(self):
+		return self.current_location
+		
+	def set_current_location(self, location):
+		self.current_location = location
