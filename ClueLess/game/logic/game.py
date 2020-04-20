@@ -230,6 +230,7 @@ class Game:
 				start_room.remove_player(player)
 				target_room.add_player(player)
 				player.set_room(target_room)
+				player.set_current_location(target_room.get_name())
 				return True
 			else:
 				return False
@@ -248,6 +249,7 @@ class Game:
 				player.get_room().remove_player(player)
 				guessing_player.get_room().add_player(player)
 				player.set_room(guessing_player.get_room)
+				player.set_current_location(guessing_player.get_current_location())
 
 		for player in self.players :
 			if guessing_player != player:
