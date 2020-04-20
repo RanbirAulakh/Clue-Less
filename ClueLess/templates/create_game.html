@@ -12,13 +12,13 @@
             $('label[for=id_private_key]').remove();
             $('#id_private_key').remove();
             $('#id_type').change(function () {
-                var value = $(this).val();
+                let value = $(this).val();
                 if (value == "Private") {
                     $('#id_private_key').remove();
                     $('<div class="input-group mb-3" id="password_input">\n' +
                         '  <input type="text" class="form-control" id="id_private_key" required>\n' +
                         '  <div class="input-group-append">\n' +
-                        '    <button id="generateKeyBtn" class="btn btn-outline-secondary" type="button">Generate Key</button>\n' +
+                        '    <button id="generateKey"  class="btn btn-outline-secondary" type="button">Generate Key</button>\n' +
                         '  </div>\n' +
                         '</div>').insertBefore('#submitBtn');
                 } else {
@@ -26,9 +26,10 @@
                 }
             });
 
-            $('#generateKeyBtn').click(function () {
-                alert("sike")
+            $('#generateKey').click(function() {
+                console.log("here"); // TODO why is this broken?
             });
+
         });
 
     </script>

@@ -4,9 +4,17 @@ class Player():
 		self.character = character
 		self.hand = []
 		self.seen = []
+		self.current_location = ""
 		
 	def get_hand(self):
 		return self.hand
+
+	def get_hand_str(self):
+		lst = []
+		for i in self.hand:
+			lst.append(i.name)
+
+		return lst
 		
 	def get_name(self):
 		return self.name

@@ -12,15 +12,15 @@
 
             <div class="p-2 col-md-3">
                 <ul class="list-group mb-3">
-                    <li class="list-group-item text-center">Your Cards</li>
-                    <li id="player_card_person" class="list-group-item">PERSON </li>
-                    <li id="player_card_room" class="list-group-item">ROOM </li>
-                    <li id="player_card_suspect" class="list-group-item">WEAPON </li>
+                    <li class="list-group-item text-center">Game Piece Character</li>
+                    <li id="game_piece_character" class="list-group-item">
+                    </li>
                 </ul>
-                <ul class="list-group mb-3">
+                <ul class="list-group mb-3" id="your_cards">
+                    <li class="list-group-item text-center">Your Cards</li>
+                </ul>
+                <ul class="list-group mb-3" id="players_location">
                     <li class="list-group-item text-center">Players Locations</li>
-                    <li class="list-group-item">Ranbir @ Kitchen </li>
-                    <li class="list-group-item">Admin @ Hallway between Kitchen/Dining </li>
                 </ul>
                 <ul class="list-group mb-3">
                     <li class="list-group-item text-center">Game Details</li>
@@ -28,9 +28,12 @@
                     <li class="list-group-item"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
                     <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
                     <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
+                    <li id="game-status" class="list-group-item"><i class="fa fa-hourglass-start"></i> Not Started </li>
+                    <li id="game-required-players" class="list-group-item"><i class="fa fa-users"></i> Required {{ game_details.required_players }} Players </li>
                 </ul>
-
-                <a href="/" class="btn btn-danger btn-block"> Leave Game</a>
+                <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#leaveGame">
+                    Leave Game
+                </button>
             </div>
             <div class="col-md-9 pt-2">
                 <a id="game-move-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Move</a>
@@ -100,13 +103,51 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-12 mt-3">
 
+            <div id="chooseCharacterModal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Please select your game character</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="charactersRadios">
+
+                        </div>
+                        <div class="modal-footer">
+                            <a id="game-player-chosen-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
+                            <a href="/find_game" class="btn btn-secondary"> Leave Game</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="leaveGame" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Leave game?</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to leave the game?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</a>
+                            <a href="/find_game" class="btn btn-danger"> Leave</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="{%  static "js/messages.js"%}"></script>
+    <script src="{%  static "js/scripts.js"%}"></script>
 
 
 {% endblock %}

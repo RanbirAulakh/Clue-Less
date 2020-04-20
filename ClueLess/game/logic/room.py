@@ -1,4 +1,4 @@
-class Room():
+class Room:
 	def __init__(self, room_name):
 		self.name = room_name
 		self.connections = []
@@ -32,5 +32,6 @@ class Room():
 class Hallway(Room):
 	def can_guess(self):
 		return False
+
 	def can_move(self):
 		return len(self.get_players) == 0

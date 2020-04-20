@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <h1>Game Log (Target Release)</h1>
+
+
+    <div class="card mb-12 bg-dark text-white">
+        <div class="card-header sb-nav-link-icon"><i class="fas fa-check"></i> Recent Games (WIP - Hardcoded section)</div>
+        <div class="card-body">
+            <table class="table table-bordered table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Lobby</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Ranbir's Lobby</td>
+                        <td>Public</td>
+                        <td>Ranbir</td>
+                        <td>
+                            <button type="button" style="margin-top: -7px" class="btn btn-sm btn-primary"><i class="fas fa-stream"></i> Game Log</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
