@@ -11,8 +11,11 @@ from .room import *
 from .clue import Clue
 from .map import Map
 
+
 class Game:
 	def __init__(self):
+		self.current_turn = None
+		self.available_characters = constants.SUSPECTS
 		self.players = []
 		self.murder = []
 
@@ -28,14 +31,23 @@ class Game:
 		self.create_murder(suspects, rooms, weapons)
 
 		# combine the decks then deal to the players)
-		clue_deck = suspects + weapons + rooms
-		random.shuffle(clue_deck)
+		random.shuffle(suspects)
+		self.clue_deck_suspects = suspects
+		random.shuffle(rooms)
+		self.clue_deck_rooms = rooms
+		random.shuffle(weapons)
+		self.clue_deck_weapons = weapons
 
 		self.map = Map()
 
 		# self.turn_order = self.make_turn_order(players) # TODO move to another function
 
 	def add_player(self, player_name):
+		"""
+		Add player to the Game List
+		:param player_name:
+		:return:
+		"""
 		for i in self.players:
 			if i.name == player_name:
 				print("Player {0} already exist!".format(player_name))
@@ -46,15 +58,83 @@ class Game:
 		self.players.append(p)
 
 	def remove_player(self, player_name):
+		"""
+		Remove player from the list
+		- If player hasn't choose the character
+		-- Remove
+		- If player has choose the character
+		-- Do not remove
+		-- TODO implement show cards to other members if PLAYER choose the card and LEFT.
+		:param player_name:
+		:return:
+		"""
 		for i in self.players:
-			if i.name == player_name:
+			# if player left and haven't picked their character
+			# then, we do not need to hold their spot (or cards)
+			if i.name == player_name and i.character is None:
 				print("Removing {0} from the game.".format(i.name))
 				self.players.remove(i)
 				break
 
-	def deal_hands(self):
-		pass
-		# self.deal_hands(players,clue_deck) # TODO move to another function
+	def player_select_character(self, player_name, chosen_character):
+		"""
+		Assign chosen character to player object
+		- if chosen character has already been selected, alert user
+		- once a player choose a character, remove character from available list
+		:param player_name:
+		:param chosen_character:
+		:return: true if succeed
+		"""
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				if chosen_character in self.available_characters:
+					self.players[i].character = chosen_character
+					self.available_characters.remove(chosen_character)
+					self.players[i].current_location = "HOLA"  # TODO default character location
+
+					return True
+				else:
+					return False
+
+	def get_player_current_location(self, player_name):
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				return self.players[i].current_location
+
+	def update_player_current_location(self, player_name, new_location):
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				self.players[i].current_location = new_location
+				return self.players[i].current_location
+
+	def get_locations(self):
+		locations = {}
+
+		for i in self.players:
+			locations[i.name] = i.current_location
+
+		return locations
+
+	def already_chosen(self, player_name):
+		"""
+		Check if player already choose a character
+		:param player_name: username
+		:return: true if succeed
+		"""
+		for i in self.players:
+			if i.name == player_name:
+				if i.character is not None:
+					return True
+				else:
+					return False
+
+	def get_chosen_character(self, player_name):
+		for i in self.players:
+			if i.name == player_name:
+				if i.character is not None:
+					return i.character
+				else:
+					print("Shouldn't reach here...")
 
 	# create individual decks for the creation of the muder
 	def create_suspect_deck(self, suspects):
@@ -89,17 +169,21 @@ class Game:
 		
 	def get_murder(self):
 		return self.murder
-		
-	"""
-	Deal initial hands, and if a player leaves, place their hand in the "clue_deck" var
-	and pass it to remaining players.
-	"""
-	def deal_hands(self, players, clue_deck):
-		num_players = len(players)
-		rounds = 0
-		while len(clue_deck) != 0 :
-			players[rounds%num_players].get_hand().append(clue_deck.pop())
-			rounds += 1
+
+	def deal_hands(self, player_name):
+		"""
+		Deal initial hands, and if a player leaves, place their hand in the "clue_deck" var
+		and pass it to remaining players.
+		"""
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				print(self.clue_deck_suspects)
+				murder_card = self.clue_deck_suspects.pop()
+				room_card = self.clue_deck_rooms.pop()
+				weapon_card = self.clue_deck_weapons.pop()
+				self.players[i].hand = {"suspect_card": murder_card.name, "room_card": room_card.name, "weapon_card": weapon_card.name}
+				print("cards: {0}".format(self.players[i].hand))
+				return self.players[i].hand
 
 	def get_map(self):
 		return self.map

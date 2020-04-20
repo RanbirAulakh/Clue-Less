@@ -2,8 +2,9 @@ class Player():
 	def __init__(self, name, character):
 		self.name = name
 		self.character = character
-		self.hand = []
+		self.hand = {}
 		self.seen = []
+		self.current_location = ""
 		
 	def get_hand(self):
 		return self.hand
