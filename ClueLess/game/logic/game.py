@@ -20,6 +20,8 @@ class Game:
 		self.players = []
 		self.murder = []
 
+		self.status = "Not Started"
+
 		"""
 		TODO Random characters for each player or initialize the players out of initial game?
 		"""
@@ -41,7 +43,17 @@ class Game:
 
 		self.map = Map()
 
+
+
+	def start_game(self):
+		"""
+		1. Change status to "In-Progress"
+		2. Adjust who goes first? Assuming if Scarlet wasn't selected
+		3. If Users turn, unlock Users Buttons (Consumers.py)
+		4. Check if Player.length is 4
+		"""
 		# self.turn_order = self.make_turn_order(players) # TODO move to another function
+		pass
 
 	def add_player(self, player_name):
 		"""
@@ -142,27 +154,37 @@ class Game:
 				else:
 					print("Shouldn't reach here...")
 
-	# create individual decks for the creation of the muder
 	def create_suspect_deck(self, suspects):
-		clues=[]
-		for i in suspects :
+		"""
+		Create individual decks for the creation of the muder
+		:param suspects:
+		:return:
+		"""
+		clues = []
+		for i in suspects:
 			clues.append(Clue(i, "Suspect"))
 		return clues 
 		
 	def create_weapons_deck(self, weapons):
-		clues=[]
-		for i in weapons :
+		clues = []
+		for i in weapons:
 			clues.append(Clue(i, "Weapon"))
 		return clues 
 		
 	def create_rooms_deck(self, rooms):
-		clues=[]
-		for i in rooms :
+		clues = []
+		for i in rooms:
 			clues.append(Clue(i, "Room"))
-		return clues 
-		
-	# Shuffle and use the individual decks to put together the murder to be solved.
+		return clues
+
 	def create_murder(self, suspect_clues, room_clues, weapon_clues):
+		"""
+		Shuffle and use the individual decks to put together the murder to be solved.
+		:param suspect_clues:
+		:param room_clues:
+		:param weapon_clues:
+		:return:
+		"""
 		self.murder = []
 		random.shuffle(suspect_clues)
 		random.shuffle(room_clues)
@@ -194,11 +216,11 @@ class Game:
 	def get_map(self):
 		return self.map
 	
-	def make_turn_order(self, players) :
+	def make_turn_order(self, players):
 		turn_order = []
-		for i in constants.SUSPECTS :
-			for ii in players :
-				if ii.get_character().lower() == i.lower() :
+		for i in constants.SUSPECTS:
+			for ii in players:
+				if ii.get_character().lower() == i.lower():
 					turn_order.append(ii)
 		return turn_order
 		
@@ -207,24 +229,29 @@ class Game:
 		
 	def move_player(self, player, target_room):
 		start_room = player.get_room()
-		if(target_room in start_room.get_connections()):
-			if(target_room.can_move()):
+		if target_room in start_room.get_connections():
+			if target_room.can_move():
 				start_room.remove_player(player)
 				target_room.add_player(player)
 				return True
 			else:
 				return False
 		return False
-		
-	#assuming the the clues are strings in this case. could make a map of the clues
-	#and pull them by name to do exact compares.
+
 	def make_guess(self, guessing_player, clues):
+		"""
+		Assuming the the clues are strings in this case. could make a map of the clues
+		and pull them by name to do exact compares.
+		:param guessing_player:
+		:param clues:
+		:return:
+		"""
 		for player in self.players :
-			if(guessing_player != player):
+			if guessing_player != player:
 				for c in player.get_hand() :
-					if (c.get_clue_name().lower() in clues) :
+					if c.get_clue_name().lower() in clues:
 						return c
-		#No clues found in other players hands	
+		# No clues found in other players hands
 		return None
 	
 	def make_accusation(self, clues):
@@ -234,8 +261,9 @@ class Game:
 			clue_names.append(m.get_clue_name().lower())
 		
 		for c in clues :
-			#if even one of the clues is not in the murder clues, player loses
-			if(c.get_clue_name().lower() not in clue_names):
+			# if even one of the clues is not in the murder clues, player loses
+			if c.get_clue_name().lower() not in clue_names:
 				return False
-		#if all of the passed in clues are in the murder clues, they win
+
+		# if all of the passed in clues are in the murder clues, they win
 		return True

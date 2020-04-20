@@ -119,7 +119,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             )
 
     async def chat_message(self, event):
-        print("chat_message here?")
+        # print("chat_message here?")
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps(event))

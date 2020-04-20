@@ -108,7 +108,7 @@ function updateGamePieceSection(player_select) {
     let imageName = player_select.replace(" ", "");
     $('#game_piece_character').empty();
     let liHTML = '<img class="rounded" src="/static/images/' + imageName + '.png" width="50" height="50"></img>' +
-        '<label class="form-check-label pl-2" for="' + imageName + '"> ' + player_select + ' </label></div>';
+        '<label class="form-check-label pl-2" for="' + imageName + '">' + player_select + '</label></div>';
     $('#game_piece_character').append(liHTML);
 }
 
