@@ -6,7 +6,8 @@ from game.models import Game
 class GameForm(forms.ModelForm):
     TYPE_CHOICES = (
         ('Public', 'Public'),
-        ('Private', 'Private')
+        ('Public', 'Public'),
+        #('Private', 'Private')
     )
 
     NUM_PLAYER_CHOICES = (
