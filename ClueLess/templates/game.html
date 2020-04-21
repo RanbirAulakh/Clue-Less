@@ -6,6 +6,12 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 mt-3">
+                <div id="incorrect-noti">
+
+                </div>
+                <div id="winner">
+
+                </div>
                 <ul class="breadcrumb bg-dark list-inline justify-content-center text-white" id="players_lobby">
                 </ul>
             </div>
@@ -36,9 +42,18 @@
                 </button>
             </div>
             <div class="col-md-9 pt-2">
-                <a id="game-move-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Move</a>
-                <a id="game-suggestion-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Make Suggestion</a>
-                <a id="game-accuse-submit" class="btn btn-secondary disabled" role="button" aria-disabled="true">Accuse</a>
+                <a id="game-show-moves-modal" type="button" class="btn btn-secondary disabled" data-toggle="modal" data-target="#showAvailableMoves">
+                    Make Moves
+                </a>
+                <a id="game-suggestion-submit" type="button" class="btn btn-secondary disabled" role="button" data-toggle="modal" data-target="#showAvailableMoves">
+                    Suggest
+                </a>
+                <a id="game-accuse-modal" type="button" class="btn btn-secondary disabled" role="button" data-toggle="modal" data-target="#accuseModal">
+                    Accuse
+                </a>
+                <a id="game-next-turn-submit" type="button" class="btn btn-secondary disabled" role="button">
+                    Next Turn
+                </a>
                 <nav class="mt-3">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Game Log</a>
@@ -119,6 +134,127 @@
                         <div class="modal-footer">
                             <a id="game-player-chosen-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
                             <a href="/find_game" class="btn btn-secondary"> Leave Game</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="showAvailableMoves" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Available moves to make</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <b>Current Location: </b>
+                                <div id="current_position">
+                                    You are at TEXT
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Where would you like to move? </label>
+                                <select class="form-control" id="availableMovesOptions">
+
+                                </select>
+                            </div>
+                            <b>Map reference:</b>
+                            <img class="img-fluid" src="{%  static "images/clueless_map.PNG"%}" />
+                        </div>
+                        <div class="modal-footer">
+                            <a id="game-move-selection-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
+                            <a type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="makeSuggestionModal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Make Suggestion</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <b>Current Location: </b>
+                                <div id="current_position">
+                                    You are at TEXT
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Where would you like to move? </label>
+                                <select class="form-control" id="availableMovesOptions">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="game-move-selection-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
+                            <a type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="accuseModal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Make Accusation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>I accuse</label>
+                                <select class="form-control" id="suspect_options">
+                                    <option value="ProfessorPlum">Professor Plum</option>
+                                    <option value="ColonelMustard">Colonel Mustard</option>
+                                    <option value="Mr.Green">Mr. Green</option>
+                                    <option value="Mr.White">Mr. White</option>
+                                    <option value="Ms.Scarlet">Ms. Scarlet</option>
+                                    <option value="Mrs.Peacock">Mrs. Peacock</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>of committing the crime in the</label>
+                                <select class="form-control" id="room_options">
+                                    <option value="Study">Study</option>
+                                    <option value="Hall">Hall</option>
+                                    <option value="Lounge">Lounge</option>
+                                    <option value="Library">Library</option>
+                                    <option value="BilliardRoom">Billiard Room</option>
+                                    <option value="Dining">Dining</option>
+                                    <option value="Conservatory">Conservatory</option>
+                                    <option value="Ballroom">Ballroom</option>
+                                    <option value="Kitchen">Kitchen</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>with the</label>
+                                <select class="form-control" id="weapon_options">
+                                    <option value="Candlestick">Candlestick</option>
+                                    <option value="Revolver">Revolver</option>
+                                    <option value="LeadPipe">Lead Pipe</option>
+                                    <option value="Rope">Rope</option>
+                                    <option value="Wrench">Wrench</option>
+                                    <option value="Dagger">Dagger</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a id="game-accuse-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
+                            <a type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</a>
                         </div>
                     </div>
                 </div>

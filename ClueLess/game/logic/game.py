@@ -1,5 +1,5 @@
 # team: The Plum Professors
-# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro
 # description:
 
 # import constants
@@ -14,8 +14,10 @@ from .map import Map
 
 class Game:
 	def __init__(self):
-		self.required_players = 0
+		self.turn_order = []
 		self.current_turn = None
+		self.dead_players = []
+
 		self.available_characters = ["Professor Plum", "Colonel Mustard", "Mr. Green", "Mrs. White", "Ms. Scarlet", "Mrs. Peacock"]
 
 		self.players = []
@@ -39,6 +41,7 @@ class Game:
 		random.shuffle(self.clue_deck)
 
 		self.map = Map()
+		self.is_move_made = False
 
 	def start_game(self):
 		"""
@@ -51,9 +54,8 @@ class Game:
 		print("Game officially started!!")
 		self.status = "Started"
 		self.deal_hands()
-
-		# self.turn_order = self.make_turn_order(players) # TODO move to another function
-		# pass
+		self.place_players()
+		self.make_turn_order()
 
 	def add_player(self, player_name):
 		"""
@@ -103,8 +105,6 @@ class Game:
 				if chosen_character in self.available_characters:
 					self.players[i].character = chosen_character
 					self.available_characters.remove(chosen_character)
-					self.players[i].current_location = "HOLA"  # TODO default character location
-
 					return True
 				else:
 					return False
@@ -124,7 +124,7 @@ class Game:
 		locations = {}
 
 		for i in self.players:
-			locations[i.name] = i.current_location
+			locations[i.name] = i.get_current_location()
 
 		return locations
 
@@ -212,113 +212,187 @@ class Game:
 	def get_map(self):
 		return self.map
 	
-	def make_turn_order(self, players):
-		turn_order = []
+	def make_turn_order(self):
+		chosen_characters = {}
+		for player in self.players:
+			chosen_characters[player.character] = player
+
 		for i in constants.SUSPECTS:
-			for ii in players:
-				if ii.get_character().lower() == i.lower():
-					turn_order.append(ii)
-		return turn_order
+			if i in chosen_characters.keys():
+				print("Adding {0} to turn lst".format(chosen_characters[i]))
+				self.turn_order.append(chosen_characters[i])
+
+		self.current_turn = self.turn_order[0]
 		
 	def get_turn_order(self) :
 		return self.turn_order
-		
-	def move_player(self, player, target_room):
-		start_room = player.get_room()
-		if target_room in start_room.get_connections():
-			if target_room.can_move():
-				start_room.remove_player(player)
-				target_room.add_player(player)
-				player.set_room(target_room)
-				player.set_current_location(target_room.get_name())
-				return True
-			else:
+
+	def next_turn(self):
+		self.is_move_made = False
+
+		current_index = self.turn_order.index(self.current_turn)
+		if current_index >= len(self.turn_order) - 1:
+			current_index = 0
+			self.current_turn = self.turn_order[current_index]
+		else:
+			current_index += 1
+			self.current_turn = self.turn_order[current_index]
+
+		for i in self.dead_players:
+			if i in self.turn_order:
+				self.turn_order.remove(i)
+
+	def move_player(self, player_name, next_move):
+		target_room = self.map.rooms[next_move]
+		# if next_move in constants.ROOMS:
+		# 	target_room = constants.ROOMS.index(next_move)
+		# elif next_move in constants.HALLWAYS:
+		# 	target_room = constants.HALLWAYS.index(next_move)
+		print(target_room)
+
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				start_room = self.players[i].get_room()
+
+				if target_room in start_room.get_connections():
+					print("Yes is in connections")
+					if target_room.can_move():
+						print("Uh yes?")
+						start_room.remove_player(self.players[i])
+						target_room.add_player(self.players[i])
+
+						self.players[i].set_room(target_room)
+						self.players[i].set_current_location(target_room.get_name())
+						self.is_move_made = True
+						return True
+					else:
+						print("nah")
+						return False
+				print("nah2")
 				return False
-		return False
 
 	def make_guess(self, guessing_player, clues):
-        	for player in self.players :
-            	if(player.get_character() in clues):
-                	player.get_room().remove_player(player)
-                	guessing_player.get_room().add_player(player)
-                	player.set_room(guessing_player.get_room)
-                	player.set_current_location(guessing_player.get_current_location())
-        
-        	stored_current_turn = self.current_turn
-        	for player in self.players :
-		    if guessing_player != player:
-			possible_clues = player.disprove(clues)
+		for player in self.players :
+			if(player.get_character() in clues):
+				player.get_room().remove_player(player)
+				guessing_player.get_room().add_player(player)
+				player.set_room(guessing_player.get_room)
+				player.set_current_location(guessing_player.get_current_location())
+
+			stored_current_turn = self.current_turn
+			for player in self.players :
+				if guessing_player != player:
+					possible_clues = player.disprove(clues)
 			if len(possible_clues) !=0:
-			    #transfer control to player to pick
-			    self.current_turn = player
-			    #let player pick a card
-			    print("Pick a card to disprove the suggestion.")
-			    for card in possible_clues:
-				print(card.get_clue_name)
-			    while True:
-				try:
-				    user_input = input("Enter 1 for first card, 2 for second, etc.")                        
-				    user_input = int(c)
-				    if user_input < 1 or userinput > possible_clues.length:
-					c = possible_clues[user_input -1]
-					#transfer control back to the correct person
-					self.current_turn = stored_current_turn
-					#return picked card
-					return c
-				    else:
-					raise ValueError
-				except ValueError:
-				    print("This is not a valid number. Please enter a valid number")
+				#transfer control to player to pick
+				self.current_turn = player
+				#let player pick a card
+				print("Pick a card to disprove the suggestion.")
+				for card in possible_clues:
+					print(card.get_clue_name)
+				while True:
+					try:
+						user_input = input("Enter 1 for first card, 2 for second, etc.")
+						user_input = int(c)
+						if user_input < 1 or user_input > possible_clues.length:
+							c = possible_clues[user_input -1]
+							#transfer control back to the correct person
+							self.current_turn = stored_current_turn
+							#return picked card
+							return c
+						else:
+							raise ValueError
+
+					except ValueError:
+						print("This is not a valid number. Please enter a valid number")
 		# No clues found in other players hands
 		return None
-    
-
-	def make_accusation(self, clues):
-		murder = self.get_murder()
+	
+	def make_accusation(self, player_name, accused_clues):
 		clue_names = []
-		for m in murder:
-			clue_names.append(m.get_clue_name().lower())
-		
-		for c in clues :
+
+		p = None
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				p = self.players[i]
+
+		for m in self.murder:
+			clue_names.append(m.get_clue_name().lower().replace(" ", ""))
+
+		for c in accused_clues:
 			# if even one of the clues is not in the murder clues, player loses
-			if c.get_clue_name().lower() not in clue_names:
+			if c.lower() not in clue_names:
+				self.dead_players.append(player_name)
 				return False
 
 		# if all of the passed in clues are in the murder clues, they win
+		self.status = "Finished!"
 		return True
-	
-	#At start, place the players in a starting hallway based on their character.
+
 	def place_players(self):
+		"""
+		At start, place the players in a starting hallway based on their character.
+		:return:
+		"""
 		rooms = self.map.get_rooms()
-		for player in players :
+		for player in self.players:
 			character = player.get_character()
 			
-			if character == constants.SCARLET :
+			if character == constants.SCARLET:
 				rooms[constants.HALL_LOUNGE].add_player(player)
 				player.set_room(rooms[constants.HALL_LOUNGE])
-				player.set_location(constants.HALL_LOUNGE)
+				player.set_current_location(constants.HALL_LOUNGE)
 				
-			elif character == constants.MUSTARD :
+			elif character == constants.MUSTARD:
 				rooms[constants.LOUNGE_DINING].add_player(player)
 				player.set_room(rooms[constants.LOUNGE_DINING])
-				player.set_location(constants.LOUNGE_DINING)
+				player.set_current_location(constants.LOUNGE_DINING)
 				
-			elif character == constants.WHITE :
+			elif character == constants.WHITE:
 				rooms[constants.BALLROOM_KITCHEN].add_player(player)
 				player.set_room(rooms[constants.BALLROOM_KITCHEN])
-				player.set_location(constants.BALLROOM_KITCHEN)
+				player.set_current_location(constants.BALLROOM_KITCHEN)
 				
-			elif character == constants.GREEN :
+			elif character == constants.GREEN:
 				rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
 				player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
-				player.set_location(constants.CONSERVATORY_BALLROOM)
+				player.set_current_location(constants.CONSERVATORY_BALLROOM)
 				
-			elif character == constants.PEACOCK :
+			elif character == constants.PEACOCK:
 				rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
 				player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
-				player.set_location(constants.LIBRARY_CONSERVATORY)
+				player.set_current_location(constants.LIBRARY_CONSERVATORY)
 				
-			elif character == constants.PLUM :
+			elif character == constants.PLUM:
 				rooms[constants.STUDY_LIBRARY].add_player(player)
 				player.set_room(rooms[constants.STUDY_LIBRARY])
-				player.set_location(constants.STUDY_LIBRARY)
+				player.set_current_location(constants.STUDY_LIBRARY)
+
+	def get_available_moves(self):
+		"""
+		Get connections of where player current sitting
+		- Then check if connections are available for user to move
+		:return:
+		"""
+		connections = self.current_turn.get_room().get_connections()
+		lst = connections
+
+		for p in self.players:
+			print("Player sitting in {0}".format(p.get_room().name))
+			if p.get_room() in lst:
+				lst.remove(p.get_room())
+
+		return_list_string = []
+
+		for i in lst:
+			return_list_string.append(i.get_name())
+
+		return return_list_string
+
+	def is_in_room(self, player_name):
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				if self.players[i].room.name in constants.ROOMS:
+					return True
+				else:
+					return False
