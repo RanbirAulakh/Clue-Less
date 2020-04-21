@@ -57,6 +57,21 @@ gameSocket.onmessage = function(e) {
     } catch (e) { }
 
     try {
+        let winner = data["winner"];
+        displayWinnerAlert(winner);
+    } catch (e) { }
+
+    try {
+        let gameStatus = data["game_status"];
+        updateGameStatus(gameStatus);
+    } catch (e) { }
+
+    try {
+        let incorrectNoti = data["incorrect_accused_notification"];
+        dispalyIncorrectAccusedNotification(incorrectNoti);
+    } catch (e) { }
+
+    try {
         let enableBtns = data["enable_btn"];
         let availableMoves = data["available_moves"];
         let currentPosition = data["current_location"];
@@ -68,6 +83,50 @@ gameSocket.onmessage = function(e) {
 gameSocket.onclose = function(e) {
     console.error('game socket closed unexpectedly');
 };
+
+//////////// displayWinnerAlert
+function displayWinnerAlert(winner){
+    if(typeof winner === 'undefined') {
+        return;
+    }
+
+    if(winner['bool']) {
+        $('#winner').empty();
+        $('#winner').append('\n' +
+            '<div class="alert bg-success text-white" role="alert">\n' +
+            '  Congratulations! You are a winner!\n' +
+            '</div>');
+    } else {
+        $('#winner').append('\n' +
+            '<div class="alert bg-danger text-white" role="alert">\n' +
+            '  Unfortunately, ' + winner['user']  + ' accused correctly and won the game. \n' +
+            '</div>');
+    }
+
+}
+
+//////////// displayWinnerAlert
+function dispalyIncorrectAccusedNotification(incorrectNoti){
+    if(typeof incorrectNoti === 'undefined') {
+        return;
+    }
+
+    if(incorrectNoti) {
+        $('#incorrect-noti').empty();
+        $('#incorrect-noti').append('<div class="alert bg-danger text-white" role="alert">\n' +
+            'Unfortunately, your accusation is incorrect and no longer can make moves, suggestions, or accusation. You poor guy. \n' +
+            '</div>');
+    } else {
+        $('#incorrect-noti').empty();
+    }
+
+}
+
+//////////// Update Game Status
+function updateGameStatus(status) {
+    $('#game-status').empty();
+    $('#game-status').append('<i class="fa fa-hourglass-start"></i> ' + status);
+}
 
 //////////// Display Character Model
 function displayCharacterModal(canPickCharacter, availableCharacters) {
@@ -124,14 +183,6 @@ function updateYourCardsSection(cards) {
         '<label class="form-check-label pl-2"> ' + cards[i] + ' </label></div></li>';
         $('#your_cards').append(cardHTML);
     }
-
-
-    // let roomCard = '<li id="player_card_room" class="list-group-item"><label class="form-check-label pl-2"> ' + cards["room_card"] + ' </label></div></li>';
-    // let weaponCard = '<li id="player_card_suspect" class="list-group-item"><img class="rounded" src="/static/images/' + cards["weapon_card"].replace(" ", "") + '.png" width="50" height="50"></img>' +
-    //     '<label class="form-check-label pl-2"> ' + cards["weapon_card"] + ' </label></div></li>';
-    // $('#your_cards').append(suspectCard);
-    // $('#your_cards').append(roomCard);
-    // $('#your_cards').append(weaponCard);
 }
 
 //////////// Update "Players Location" section
@@ -174,15 +225,15 @@ function enableButtons(enableBtns, availableMoves, currentLocation) {
             }
         } else if(key === "accuse") {
             if(value) {
-                $('#game-suggestion-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+                $('#game-accuse-modal').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
             } else {
-                $('#game-suggestion-submit').removeClass().addClass("btn btn-secondary disabled");
+                $('#game-accuse-modal').removeClass().addClass("btn btn-secondary disabled");
             }
         } else if(key === "suggest") {
             if(value) {
-                $('#game-accuse-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+                $('#game-suggestion-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
             } else {
-                $('#game-accuse-submit').removeClass().addClass("btn btn-secondary disabled");
+                $('#game-suggestion-submit').removeClass().addClass("btn btn-secondary disabled");
             }
         }
     }
@@ -205,16 +256,21 @@ $('#game-suggestion-submit').click(function() {
 });
 
 $('#game-accuse-submit').click(function() {
+    let suspectSelect = $("#suspect_options").val();
+    let roomSelect = $("#room_options").val();
+    let weaponSelect = $("#weapon_options").val();
     gameSocket.send(JSON.stringify({
-        'type': 'select_accuse'
+        'type': 'select_accuse',
+        'accused': {'suspect': suspectSelect, 'room': roomSelect, 'weapon': weaponSelect}
+    }));
+    $('#accuseModal').modal('hide');
+});
+
+$('#game-next-turn-submit').click(function() {
+    gameSocket.send(JSON.stringify({
+        'type': 'next_turn',
     }));
 });
-
-$('#game-move-selection-submit').click(function() {
-
-});
-
-
 
 //////////// Let the server know that the user select a character
 $('#game-player-chosen-submit').click(function() {
