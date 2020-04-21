@@ -64,6 +64,9 @@ class GameConsumers(AsyncWebsocketConsumer):
         # accept users connection
         await self.accept()
 
+        if self.game_memory_data[self.game_id].status == "Finished!":
+            return
+
         # add user to the game
         await self.update_user_joined()
 
@@ -75,6 +78,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': msg,
+                'game_status': self.game_memory_data[self.game_id].status,
                 'model': json.dumps(self.game_model[self.game_id]),
             }
         )
@@ -125,19 +129,20 @@ class GameConsumers(AsyncWebsocketConsumer):
         elif "show_available_moves" in text_data_json:
             await self.show_available_rooms()
         elif "type" in text_data_json:
-            print("TYPE IF/ELSE {0}".format(text_data_json))
             if text_data_json["type"] == "select_move":
                 await self.select_move(text_data_json)
             elif text_data_json["type"] == "select_accuse":
-                await self.select_suggestion()
+                await self.select_accuse(text_data_json)
             elif text_data_json["type"] == "select_suggestion":
-                await self.select_accuse()
+                pass
+                # await self.select_suggestion()
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
                 self.game_group_name,
                 {
                     'type': 'chat_message',
+                    'game_status': self.game_memory_data[self.game_id].status,
                     'message': message
                 }
             )
@@ -154,6 +159,7 @@ class GameConsumers(AsyncWebsocketConsumer):
         if not self.game_memory_data[self.game_id].already_chosen(user):
             await self.send(text_data=json.dumps({
                     "pick_character": True,
+                    'game_status': self.game_memory_data[self.game_id].status,
                     "available_characters": self.game_memory_data[self.game_id].available_characters
                 }
             ))
@@ -169,6 +175,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                     "update_character_section": character_select,
                     "your_cards": player_cards,
+                    'game_status': self.game_memory_data[self.game_id].status,
                     "update_location": locations,
                 }
             ))
@@ -251,15 +258,13 @@ class GameConsumers(AsyncWebsocketConsumer):
                     }
                 )
 
-    async def show_available_rooms(self):
-        print("Show_available_rooms")
-
     async def get_locations(self):
         if self.game_memory_data[self.game_id].status == "Started":
             await self.channel_layer.group_send(
                 self.game_group_name,
                 {
                     'type': 'chat_message',
+                    'game_status': self.game_memory_data[self.game_id].status,
                     "update_location": self.game_memory_data[self.game_id].get_locations()
                 }
             )
@@ -282,7 +287,8 @@ class GameConsumers(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': msg,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False},
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
                 }
             )
 
@@ -298,8 +304,9 @@ class GameConsumers(AsyncWebsocketConsumer):
                 user_channel,
                 {
                     'type': 'chat_message',
-                    'enable_btn': {'move': not is_moved_made, 'accuse': True, 'suggest': is_in_room},
+                    'enable_btn': {'move': not is_moved_made, 'accuse': True, 'suggest': is_in_room, 'next_turn': True},
                     'available_moves': available_moves,
+                    'game_status': self.game_memory_data[self.game_id].status,
                     'current_location': current_location,
                 }
             )
@@ -321,7 +328,8 @@ class GameConsumers(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': msg,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False},
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
                 }
             )
 
@@ -330,16 +338,83 @@ class GameConsumers(AsyncWebsocketConsumer):
                 user_channel,
                 {
                     'type': 'chat_message',
-                    'enable_btn': {'move': False, 'accuse': True, 'suggest': True},
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': True, 'suggest': True, 'next_turn': True},
                 }
             )
 
             await self.get_locations()
 
-    async def select_suggestion(self):
+    async def select_suggestion(self, data):
         user = str(self.scope['user'])
+
         print("Implement Select suggestion")
 
-    async def select_accuse(self):
+    async def select_accuse(self, data):
         user = str(self.scope['user'])
-        print("Implement Select accuse")
+        user_channel = "{0}_game_{1}".format(user, self.game_id)
+        suspect_accused = data['accused']['suspect']
+        room_accused = data['accused']['room']
+        weapon_accused = data['accused']['weapon']
+
+        msg = "{0} accuse {1} of committing the crime in the {2} with the {3}".format(user, suspect_accused, room_accused, weapon_accused)
+        self.game_log[self.game_id] += '\n' + msg
+
+        # check if its correct
+        is_correct = self.game_memory_data[self.game_id].make_accusation(user, [suspect_accused, room_accused, weapon_accused])
+
+        if is_correct:
+            msg += "\nCONGRATULATION! {0} is a winner!".format(user)
+
+            # group msg
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'winner': {"user": user, "bool": False},
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                }
+            )
+
+            # user msg
+            await self.channel_layer.group_send(
+                user_channel,
+                {
+                    'type': 'chat_message',
+                    'winner': {"user": user, "bool": True},
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                }
+            )
+
+        else:
+            msg += "\nUnfortunately, {0} is incorrect and no longer can make moves, suggestions, or accusation. Poor guy.".format(user)
+
+            # group msg
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                }
+            )
+
+            # user msg
+            await self.channel_layer.group_send(
+                user_channel,
+                {
+                    'type': 'chat_message',
+                    'incorrect_accused_notification': True,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                }
+            )
+
+            # next turn
+            self.game_memory_data[self.game_id].next_turn()
+            await self.update_users_turn()
+

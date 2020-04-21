@@ -16,6 +16,7 @@ class Game:
 	def __init__(self):
 		self.turn_order = []
 		self.current_turn = None
+		self.dead_players = []
 
 		self.available_characters = ["Professor Plum", "Colonel Mustard", "Mr. Green", "Mrs. White", "Ms. Scarlet", "Mrs. Peacock"]
 
@@ -229,6 +230,18 @@ class Game:
 	def next_turn(self):
 		self.is_move_made = False
 
+		current_index = self.turn_order.index(self.current_turn)
+		if current_index >= len(self.turn_order) - 1:
+			current_index = 0
+			self.current_turn = self.turn_order[current_index]
+		else:
+			current_index += 1
+			self.current_turn = self.turn_order[current_index]
+
+		for i in self.dead_players:
+			if i in self.turn_order:
+				self.turn_order.remove(i)
+
 	def move_player(self, player_name, next_move):
 		target_room = self.map.rooms[next_move]
 		# if next_move in constants.ROOMS:
@@ -281,18 +294,25 @@ class Game:
 		# No clues found in other players hands
 		return None
 	
-	def make_accusation(self, clues):
-		murder = self.get_murder()
+	def make_accusation(self, player_name, accused_clues):
 		clue_names = []
-		for m in murder:
-			clue_names.append(m.get_clue_name().lower())
-		
-		for c in clues :
+
+		p = None
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				p = self.players[i]
+
+		for m in self.murder:
+			clue_names.append(m.get_clue_name().lower().replace(" ", ""))
+
+		for c in accused_clues:
 			# if even one of the clues is not in the murder clues, player loses
-			if c.get_clue_name().lower() not in clue_names:
+			if c.lower() not in clue_names:
+				self.dead_players.append(player_name)
 				return False
 
 		# if all of the passed in clues are in the murder clues, they win
+		self.status = "Finished!"
 		return True
 
 	def place_players(self):
