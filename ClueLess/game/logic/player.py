@@ -16,12 +16,13 @@ class Player:
 			lst.append(i.name)
 
 		return lst
-	def disprove(hand):
-		returnVal = [];
+
+	def disprove(self, hand):
+		returnVal = []
 		for card in self.hand:
-		    for proofcard in hand:
-			if card.get_clue_name == proofcard.get_clue_name:
-			    returnVal.add(card)     
+			for proofcard in hand:
+				if card.get_clue_name == proofcard.get_clue_name:
+					returnVal.add(card)
 		return returnVal
 	
 	def get_name(self):
