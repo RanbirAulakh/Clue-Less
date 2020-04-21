@@ -57,8 +57,10 @@ gameSocket.onmessage = function(e) {
     } catch (e) { }
 
     try {
-        let your_turn = data["your_turn"];
-        enableButtons(your_turn);
+        let enableBtns = data["enable_btn"];
+        let availableMoves = data["available_moves"];
+        let currentPosition = data["current_location"];
+        enableButtons(enableBtns, availableMoves, currentPosition);
     } catch (e) { }
 
 };
@@ -150,26 +152,49 @@ function updatePlayersLocation(locations) {
 }
 
 //////////// Enable or Disable Buttons
-function enableButtons(your_turn) {
-    if(typeof your_turn == 'undefined') {
+function enableButtons(enableBtns, availableMoves, currentLocation) {
+    if(typeof enableBtns === 'undefined' && typeof availableMoves === 'undefined' && typeof currentLocation === 'undefined') {
         return;
     }
+    for (const [key, value] of Object.entries(enableBtns)) {
+        if(key === 'move') {
+            console.log()
+            if(value) {
+                $('#game-show-moves-modal').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
 
-    if(your_turn) {
-        $('#game-move-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
-        $('#game-suggestion-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
-        $('#game-accuse-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
-    } else {
-        $('#game-move-submit').removeClass().addClass("btn btn-secondary disabled");
-        $('#game-suggestion-submit').removeClass().addClass("btn btn-secondary disabled");
-        $('#game-accuse-submit').removeClass().addClass("btn btn-secondary disabled");
+                // available_moves
+                $('#availableMovesOptions').empty()
+                for(let i = 0; i < availableMoves.length; i++){
+                    $('#availableMovesOptions').append('<option value="' + availableMoves[i] + '">' + availableMoves[i] + '</option>');
+                }
+
+                $('#current_position').text(currentLocation);
+            } else {
+                $('#game-show-moves-modal').removeClass().addClass("btn btn-secondary disabled");
+            }
+        } else if(key === "accuse") {
+            if(value) {
+                $('#game-suggestion-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+            } else {
+                $('#game-suggestion-submit').removeClass().addClass("btn btn-secondary disabled");
+            }
+        } else if(key === "suggest") {
+            if(value) {
+                $('#game-accuse-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+            } else {
+                $('#game-accuse-submit').removeClass().addClass("btn btn-secondary disabled");
+            }
+        }
     }
 }
 
-$('#game-move-submit').click(function() {
+$('#game-move-selection-submit').click(function() {
+    let nextMove = $("#availableMovesOptions").val();
     gameSocket.send(JSON.stringify({
-        'type': 'select_move'
+        'type': 'select_move',
+        'move_to': nextMove
     }));
+    $('#showAvailableMoves').modal('hide');
 });
 
 
@@ -183,6 +208,10 @@ $('#game-accuse-submit').click(function() {
     gameSocket.send(JSON.stringify({
         'type': 'select_accuse'
     }));
+});
+
+$('#game-move-selection-submit').click(function() {
+
 });
 
 
