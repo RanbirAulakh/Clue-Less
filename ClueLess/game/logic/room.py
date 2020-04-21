@@ -34,4 +34,4 @@ class Hallway(Room):
 		return False
 
 	def can_move(self):
-		return len(self.get_players) == 0
+		return len(self.players) == 0

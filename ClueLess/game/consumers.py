@@ -127,11 +127,11 @@ class GameConsumers(AsyncWebsocketConsumer):
         elif "type" in text_data_json:
             print("TYPE IF/ELSE {0}".format(text_data_json))
             if text_data_json["type"] == "select_move":
-                self.select_move()
+                await self.select_move(text_data_json)
             elif text_data_json["type"] == "select_accuse":
-                self.select_suggestion()
+                await self.select_suggestion()
             elif text_data_json["type"] == "select_suggestion":
-                self.select_accuse()
+                await self.select_accuse()
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -282,24 +282,59 @@ class GameConsumers(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'message': msg,
-                    'your_turn': False
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False},
                 }
             )
 
             # Once group messages are sent out
             # then alert user that it is their turn
             # and their buttons will be enabled
+            current_location = self.game_memory_data[self.game_id].get_player_current_location(whose_turn_user)
+            available_moves = self.game_memory_data[self.game_id].get_available_moves()
+            is_in_room = self.game_memory_data[self.game_id].is_in_room(whose_turn_user)  # verify if user is in room
+            is_moved_made = self.game_memory_data[self.game_id].is_move_made
+
             await self.channel_layer.group_send(
                 user_channel,
                 {
                     'type': 'chat_message',
-                    'your_turn': True,
+                    'enable_btn': {'move': not is_moved_made, 'accuse': True, 'suggest': is_in_room},
+                    'available_moves': available_moves,
+                    'current_location': current_location,
                 }
             )
 
-    async def select_move(self):
+    async def select_move(self, data):
+        print("Select move")
         user = str(self.scope['user'])
-        print("Implement Select Move")
+        next_move = data['move_to']
+        user_channel = "{0}_game_{1}".format(user, self.game_id)
+
+        flag = self.game_memory_data[self.game_id].move_player(user, next_move)
+        if flag:
+            msg = "{0} moved to {1}".format(user, next_move)
+            self.game_log[self.game_id] += '\n' + msg
+
+            # group msg
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False},
+                }
+            )
+
+            # user msg
+            await self.channel_layer.group_send(
+                user_channel,
+                {
+                    'type': 'chat_message',
+                    'enable_btn': {'move': False, 'accuse': True, 'suggest': True},
+                }
+            )
+
+            await self.get_locations()
 
     async def select_suggestion(self):
         user = str(self.scope['user'])

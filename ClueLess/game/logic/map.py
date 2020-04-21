@@ -1,13 +1,13 @@
 # team: The Plum Professors
-# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro, Parth Jalundhwala
+# author: Ranbir Aulakh, Michael Knatz, Victoria Palaoro
 # description:
 
 from .room import *
 from . import constants
 
-class Map :
+class Map:
 	def __init__(self):
-		self.rooms = []
+		self.rooms = {}
 		self.setup_rooms()
 
 	def setup_rooms(self):
@@ -84,33 +84,35 @@ class Map :
 		kitchen.add_connections(ba_k_hallway)
 		kitchen.add_connections(billiard_room)
 		kitchen.add_connections(d_k_hallway)
+
 		# easier to lookup rooms with a map so we can set starting positions
 		self.rooms = {
-			constants.STUDY : study,
-			constants.HALL : hall,
-			constants.LOUNGE : lounge,
-			constants.LIBRARY : library,
-			constants.BILLIARD : billiard_room,
-			constants.DINING : dining_room,
-			constants.CONSERVATORY : conservatory,
-			constants.BALLROOM : ballroom,
-			constants.KITCHEN : kitchen,
-			constants.BILLIARD_DINING : bi_d_hallway,
-			constants.DINING_KITCHEN : d_k_hallway,
-			constants.STUDY_HALL : s_h_hallway,
-			constants.STUDY_LIBRARY : s_li_hallway,
-			constants.HALL_LOUNGE : h_lo_hallway,
-			constants.HALL_BILLIARD : h_bi_hallway,
-			constants.LIBRARY_BILLIARD : li_bi_hallway,
-			constants.CONSERVATORY_BALLROOM : c_ba_hallway,
-			constants.BILLIARD_BALLROOM : ba_bi_hallway,
-			constants.BALLROOM_KITCHEN : ba_k_hallway,
-			constants.LIBRARY_CONSERVATORY : li_c_hallway,
-			constants.LOUNGE_DINING : d_lo_hallway
+			constants.STUDY: study,
+			constants.HALL: hall,
+			constants.LOUNGE: lounge,
+			constants.LIBRARY: library,
+			constants.BILLIARD: billiard_room,
+			constants.DINING: dining_room,
+			constants.CONSERVATORY: conservatory,
+			constants.BALLROOM: ballroom,
+			constants.KITCHEN: kitchen,
+			constants.BILLIARD_DINING: bi_d_hallway,
+			constants.DINING_KITCHEN: d_k_hallway,
+			constants.STUDY_HALL: s_h_hallway,
+			constants.STUDY_LIBRARY: s_li_hallway,
+			constants.HALL_LOUNGE: h_lo_hallway,
+			constants.HALL_BILLIARD: h_bi_hallway,
+			constants.LIBRARY_BILLIARD: li_bi_hallway,
+			constants.CONSERVATORY_BALLROOM: c_ba_hallway,
+			constants.BILLIARD_BALLROOM: ba_bi_hallway,
+			constants.BALLROOM_KITCHEN: ba_k_hallway,
+			constants.LIBRARY_CONSERVATORY: li_c_hallway,
+			constants.LOUNGE_DINING: d_lo_hallway
 		}
 		
 	def get_rooms(self):
 		return self.rooms
+
 
 #m = Map()
 #print(m.get_rooms())

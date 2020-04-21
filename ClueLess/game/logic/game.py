@@ -40,6 +40,7 @@ class Game:
 		random.shuffle(self.clue_deck)
 
 		self.map = Map()
+		self.is_move_made = False
 
 	def start_game(self):
 		"""
@@ -224,19 +225,38 @@ class Game:
 		
 	def get_turn_order(self) :
 		return self.turn_order
-		
-	def move_player(self, player, target_room):
-		start_room = player.get_room()
-		if target_room in start_room.get_connections():
-			if target_room.can_move():
-				start_room.remove_player(player)
-				target_room.add_player(player)
-				player.set_room(target_room)
-				player.set_current_location(target_room.get_name())
-				return True
-			else:
+
+	def next_turn(self):
+		self.is_move_made = False
+
+	def move_player(self, player_name, next_move):
+		target_room = self.map.rooms[next_move]
+		# if next_move in constants.ROOMS:
+		# 	target_room = constants.ROOMS.index(next_move)
+		# elif next_move in constants.HALLWAYS:
+		# 	target_room = constants.HALLWAYS.index(next_move)
+		print(target_room)
+
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				start_room = self.players[i].get_room()
+
+				if target_room in start_room.get_connections():
+					print("Yes is in connections")
+					if target_room.can_move():
+						print("Uh yes?")
+						start_room.remove_player(self.players[i])
+						target_room.add_player(self.players[i])
+
+						self.players[i].set_room(target_room)
+						self.players[i].set_current_location(target_room.get_name())
+						self.is_move_made = True
+						return True
+					else:
+						print("nah")
+						return False
+				print("nah2")
 				return False
-		return False
 
 	def make_guess(self, guessing_player, clues):
         	for player in self.players :
@@ -328,3 +348,31 @@ class Game:
 				player.set_room(rooms[constants.STUDY_LIBRARY])
 				player.set_current_location(constants.STUDY_LIBRARY)
 
+	def get_available_moves(self):
+		"""
+		Get connections of where player current sitting
+		- Then check if connections are available for user to move
+		:return:
+		"""
+		connections = self.current_turn.get_room().get_connections()
+		lst = connections
+
+		for p in self.players:
+			print("Player sitting in {0}".format(p.get_room().name))
+			if p.get_room() in lst:
+				lst.remove(p.get_room())
+
+		return_list_string = []
+
+		for i in lst:
+			return_list_string.append(i.get_name())
+
+		return return_list_string
+
+	def is_in_room(self, player_name):
+		for i in range(len(self.players)):
+			if self.players[i].name == player_name:
+				if self.players[i].room.name in constants.ROOMS:
+					return True
+				else:
+					return False
