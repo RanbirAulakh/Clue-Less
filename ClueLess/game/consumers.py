@@ -135,7 +135,8 @@ class GameConsumers(AsyncWebsocketConsumer):
                 await self.select_accuse(text_data_json)
             elif text_data_json["type"] == "select_suggestion":
                 pass
-                # await self.select_suggestion()
+            elif text_data_json["type"] == "end_turn":
+                await self.end_turn()
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -288,7 +289,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'message': msg,
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
                 }
             )
 
@@ -304,7 +305,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                 user_channel,
                 {
                     'type': 'chat_message',
-                    'enable_btn': {'move': not is_moved_made, 'accuse': True, 'suggest': is_in_room, 'next_turn': True},
+                    'enable_btn': {'move': not is_moved_made, 'accuse': True, 'suggest': is_in_room, 'end_turn': True},
                     'available_moves': available_moves,
                     'game_status': self.game_memory_data[self.game_id].status,
                     'current_location': current_location,
@@ -329,7 +330,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'message': msg,
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
                 }
             )
 
@@ -339,7 +340,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': True, 'suggest': True, 'next_turn': True},
+                    'enable_btn': {'move': False, 'accuse': True, 'suggest': True, 'end_turn': True},
                 }
             )
 
@@ -374,7 +375,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'message': msg,
                     'winner': {"user": user, "bool": False},
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
                 }
             )
 
@@ -385,7 +386,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'winner': {"user": user, "bool": True},
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
                 }
             )
 
@@ -399,7 +400,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'message': msg,
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
                 }
             )
 
@@ -410,7 +411,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'incorrect_accused_notification': True,
                     'game_status': self.game_memory_data[self.game_id].status,
-                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'next_turn': False},
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
                 }
             )
 
@@ -418,3 +419,6 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.game_memory_data[self.game_id].next_turn()
             await self.update_users_turn()
 
+    async def end_turn(self):
+        self.game_memory_data[self.game_id].next_turn()
+        await self.update_users_turn()

@@ -135,6 +135,7 @@ function displayCharacterModal(canPickCharacter, availableCharacters) {
 
         // show modal
         $('#chooseCharacterModal').modal('show');
+        $('#chooseCharacterModal').modal({backdrop: 'static', keyboard: false})
     } else if(canPickCharacter == false) {
         // do not show modal
         $('#chooseCharacterModal').modal('hide');
@@ -204,12 +205,12 @@ function updatePlayersLocation(locations) {
 
 //////////// Enable or Disable Buttons
 function enableButtons(enableBtns, availableMoves, currentLocation) {
-    if(typeof enableBtns === 'undefined' && typeof availableMoves === 'undefined' && typeof currentLocation === 'undefined') {
+    if(typeof enableBtns === 'undefined' && typeof availableMoves === 'undefined' && typeof currentLocation === 'undefined'
+           && typeof next_turn === 'undefined') {
         return;
     }
     for (const [key, value] of Object.entries(enableBtns)) {
         if(key === 'move') {
-            console.log()
             if(value) {
                 $('#game-show-moves-modal').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
 
@@ -231,9 +232,15 @@ function enableButtons(enableBtns, availableMoves, currentLocation) {
             }
         } else if(key === "suggest") {
             if(value) {
-                $('#game-suggestion-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
+                $('#game-show-suggestion-modal').removeClass("btn btn-secondary disabled").addClass("btn btn-primary text-white");
             } else {
-                $('#game-suggestion-submit').removeClass().addClass("btn btn-secondary disabled");
+                $('#game-show-suggestion-modal').removeClass().addClass("btn btn-secondary disabled");
+            }
+        } else if(key === "end_turn") {
+            if(value) {
+                $('#game-end-turn-submit').removeClass("btn btn-secondary disabled").addClass("btn btn-success text-white");
+            } else {
+                $('#game-end-turn-submit').removeClass().addClass("btn btn-secondary disabled");
             }
         }
     }
@@ -266,9 +273,9 @@ $('#game-accuse-submit').click(function() {
     $('#accuseModal').modal('hide');
 });
 
-$('#game-next-turn-submit').click(function() {
+$('#game-end-turn-submit').click(function() {
     gameSocket.send(JSON.stringify({
-        'type': 'next_turn',
+        'type': 'end_turn',
     }));
 });
 
