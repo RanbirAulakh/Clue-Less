@@ -237,28 +237,42 @@ class Game:
 		return False
 
 	def make_guess(self, guessing_player, clues):
-		"""
-		Assuming the the clues are strings in this case. could make a map of the clues
-		and pull them by name to do exact compares.
-		:param guessing_player:
-		:param clues:
-		:return:
-		"""
-		for player in self.players :
-			if(player.get_character() in clues):
-				player.get_room().remove_player(player)
-				guessing_player.get_room().add_player(player)
-				player.set_room(guessing_player.get_room)
-				player.set_current_location(guessing_player.get_current_location())
-
-		for player in self.players :
-			if guessing_player != player:
-				for c in player.get_hand() :
-					if c.get_clue_name().lower() in clues:
-						return c
+        	for player in self.players :
+            	if(player.get_character() in clues):
+                	player.get_room().remove_player(player)
+                	guessing_player.get_room().add_player(player)
+                	player.set_room(guessing_player.get_room)
+                	player.set_current_location(guessing_player.get_current_location())
+        
+        	stored_current_turn = self.current_turn
+        	for player in self.players :
+		    if guessing_player != player:
+			possible_clues = player.disprove(clues)
+			if len(possible_clues) !=0:
+			    #transfer control to player to pick
+			    self.current_turn = player
+			    #let player pick a card
+			    print("Pick a card to disprove the suggestion.")
+			    for card in possible_clues:
+				print(card.get_clue_name)
+			    while True:
+				try:
+				    user_input = input("Enter 1 for first card, 2 for second, etc.")                        
+				    user_input = int(c)
+				    if user_input < 1 or userinput > possible_clues.length:
+					c = possible_clues[user_input -1]
+					#transfer control back to the correct person
+					self.current_turn = stored_current_turn
+					#return picked card
+					return c
+				    else:
+					raise ValueError
+				except ValueError:
+				    print("This is not a valid number. Please enter a valid number")
 		# No clues found in other players hands
 		return None
-	
+    
+
 	def make_accusation(self, clues):
 		murder = self.get_murder()
 		clue_names = []
