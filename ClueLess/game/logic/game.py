@@ -21,6 +21,7 @@ class Game:
 		self.available_characters = ["Professor Plum", "Colonel Mustard", "Mr. Green", "Mrs. White", "Ms. Scarlet", "Mrs. Peacock"]
 
 		self.players = []
+		self.inactive_players = []  # inactive characters
 		self.murder = []
 
 		self.status = "Not Started"
@@ -42,6 +43,7 @@ class Game:
 
 		self.map = Map()
 		self.is_move_made = False
+		self.original_turn_order = []  # useful for suggestion
 
 	def start_game(self):
 		"""
@@ -54,8 +56,17 @@ class Game:
 		print("Game officially started!!")
 		self.status = "Started"
 		self.deal_hands()
+
+		for i in self.available_characters:
+			p = Player(i, None)
+			p.character = i
+			self.inactive_players.append(p)
+
 		self.place_players()
 		self.make_turn_order()
+
+		for i in self.turn_order:
+			self.original_turn_order.append(i.name)
 
 	def add_player(self, player_name):
 		"""
@@ -223,9 +234,6 @@ class Game:
 				self.turn_order.append(chosen_characters[i])
 
 		self.current_turn = self.turn_order[0]
-		
-	def get_turn_order(self) :
-		return self.turn_order
 
 	def next_turn(self):
 		self.is_move_made = False
@@ -244,12 +252,6 @@ class Game:
 
 	def move_player(self, player_name, next_move):
 		target_room = self.map.rooms[next_move]
-		# if next_move in constants.ROOMS:
-		# 	target_room = constants.ROOMS.index(next_move)
-		# elif next_move in constants.HALLWAYS:
-		# 	target_room = constants.HALLWAYS.index(next_move)
-		print(target_room)
-
 		for i in range(len(self.players)):
 			if self.players[i].name == player_name:
 				start_room = self.players[i].get_room()
@@ -272,41 +274,70 @@ class Game:
 				return False
 
 	def make_guess(self, guessing_player, clues):
-		for player in self.players :
-			if(player.get_character() in clues):
-				player.get_room().remove_player(player)
-				guessing_player.get_room().add_player(player)
-				player.set_room(guessing_player.get_room)
-				player.set_current_location(guessing_player.get_current_location())
+		data = {}  # this is a data that will be sent to Client (User)
 
-			stored_current_turn = self.current_turn
-			for player in self.players :
-				if guessing_player != player:
-					possible_clues = player.disprove(clues)
-			if len(possible_clues) !=0:
-				#transfer control to player to pick
-				self.current_turn = player
-				#let player pick a card
-				print("Pick a card to disprove the suggestion.")
-				for card in possible_clues:
-					print(card.get_clue_name)
+		print("Guessing Player {0}".format(guessing_player))
+		print("Clues Suggestion {0}".format(clues))
+
+		player_suggesting = None
+		for i in self.players:
+			if i.name == guessing_player:
+				player_suggesting = i
+				break
+
+		# Player is responsible for disapproving or disapproving cards
+		player_approve = None
+
+		# If Player received approved, it means player can show ONLY 1 card to a player that is making a suggestion
+		player_show_one_card = None
+
+		# determine if this player own this suspect (character) game piece
+		is_inactive_character = True
+		for player in self.players:
+			if player.get_character() in clues['suspect']:
+				is_inactive_character = False  # it means one of the active player owns this character
+
+				print("Yes, {0} owns this character, {1}, and is in {2}.".format(player.name, player.character, player.current_location))
+
+				# update room
+				print("Removing {0} from {1}".format(player.name, player.current_location))
+				self.map.rooms[player.current_location].remove_player(player)
+
+				# move suggesting player to suggesting room
+				print("Moving {0} to {1}".format(player.name, clues['room']))
+				self.map.rooms[clues['room']].add_player(player)
+
+				player.set_room(self.map.rooms[clues['room']])
+				player.set_current_location(clues['room'])
+
+				# get that said players card
+				players_cards = self.get_cards(player.name)
+
+				# get next player to approve/disapprove
 				while True:
-					try:
-						user_input = input("Enter 1 for first card, 2 for second, etc.")
-						user_input = int(c)
-						if user_input < 1 or user_input > possible_clues.length:
-							c = possible_clues[user_input -1]
-							#transfer control back to the correct person
-							self.current_turn = stored_current_turn
-							#return picked card
-							return c
-						else:
-							raise ValueError
+					print("original_turn_order {0}".format(self.original_turn_order))
+					current_index = self.original_turn_order.index(player.name)
+					if current_index >= len(self.original_turn_order) - 1:
+						current_index = 0
+						player_approve = self.original_turn_order[current_index]
+					else:
+						current_index += 1
+						player_approve = self.original_turn_order[current_index]
 
-					except ValueError:
-						print("This is not a valid number. Please enter a valid number")
-		# No clues found in other players hands
-		return None
+					if player_approve != player.name and player_approve != guessing_player:
+						break
+
+				data['player_suggester'] = guessing_player
+				data['player_to_approve_disapprove'] = player_approve
+				data['player_owner_cards'] = player.name
+				data['cards'] = players_cards
+
+				break
+
+		return data
+
+	def show_one_card_to_suggester(self):
+		pass
 	
 	def make_accusation(self, player_name, accused_clues):
 		clue_names = []
@@ -322,7 +353,7 @@ class Game:
 		for c in accused_clues:
 			# if even one of the clues is not in the murder clues, player loses
 			if c.lower() not in clue_names:
-				self.dead_players.append(player_name)
+				self.dead_players.append(p)
 				return False
 
 		# if all of the passed in clues are in the murder clues, they win

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="card mb-12 bg-dark text-white">
+    <div class="card mb-12">
         <div class="card-header sb-nav-link-icon"><i class="fas fa-gamepad"></i> Available Games</div>
         <div class="card-body">
             <div class="row">
@@ -9,14 +9,13 @@
                     <a href="/find_game" type="button" class="btn btn-sm btn-primary"><i class="fas fa-sync"></i> Refresh</a>
                 </div>
             </div>
-            <table class="table table-bordered table-dark">
+            <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th scope="col">Id</th>
                         <th scope="col">Lobby</th>
                         <th scope="col">Started</th>
                         <th scope="col">Type</th>
-                        <th scope="col">Players</th>
                         <th scope="col">Options</th>
                     </tr>
                 </thead>
@@ -27,7 +26,6 @@
                             <td>{{ item.name }}</td>
                             <td>{{ item.created_date }}</td>
                             <td>{{ item.type }}</td>
-                            <td>1/4</td>
                             <td>
                                 <a style="margin-top: -7px"  class="btn btn-sm btn-primary" href="/game/{{ item.id }}" role="button"><i class="fas fa-gamepad"></i> Join</a>
                             </td>
