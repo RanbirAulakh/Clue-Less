@@ -134,9 +134,13 @@ class GameConsumers(AsyncWebsocketConsumer):
             elif text_data_json["type"] == "select_accuse":
                 await self.select_accuse(text_data_json)
             elif text_data_json["type"] == "select_suggestion":
-                pass
+                await self.select_suggestion(text_data_json)
             elif text_data_json["type"] == "end_turn":
                 await self.end_turn()
+            elif text_data_json["type"] == "approved_cards":
+                await self.choose_approved_cards(text_data_json)
+            elif text_data_json["type"] == "what_card_to_show":
+                await self.show_one_card(text_data_json)
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -323,6 +327,8 @@ class GameConsumers(AsyncWebsocketConsumer):
             msg = "{0} moved to {1}".format(user, next_move)
             self.game_log[self.game_id] += '\n' + msg
 
+            current_location = self.game_memory_data[self.game_id].get_player_current_location(user)
+
             # group msg
             await self.channel_layer.group_send(
                 self.game_group_name,
@@ -341,6 +347,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'game_status': self.game_memory_data[self.game_id].status,
                     'enable_btn': {'move': False, 'accuse': True, 'suggest': True, 'end_turn': True},
+                    'current_location': current_location,
                 }
             )
 
@@ -348,8 +355,51 @@ class GameConsumers(AsyncWebsocketConsumer):
 
     async def select_suggestion(self, data):
         user = str(self.scope['user'])
+        user_channel = "{0}_game_{1}".format(user, self.game_id)
 
-        print("Implement Select suggestion")
+        suspect_suggest = data['suggest']['suspect']
+        room_suggest = data['suggest']['room']
+        weapon_suggest = data['suggest']['weapon']
+
+        msg = "\n{0} suggested the crime was committed in the {1} by {2} with the {3}".format(user, suspect_suggest, room_suggest, weapon_suggest)
+
+        result = self.game_memory_data[self.game_id].make_guess(user, {"suspect": suspect_suggest, "room": room_suggest, "weapon": weapon_suggest})
+
+        msg += '\n' + "{0} will look at {1}'s cards to see if {2} makes the right suggestion." \
+            .format(result['player_to_approve_disapprove'], result['player_owner_cards'], user)
+
+        self.game_log[self.game_id] += '\n' + msg
+
+        # approver/disapprover msg
+        approver_channel = "{0}_game_{1}".format(result['player_to_approve_disapprove'], self.game_id)
+        await self.channel_layer.group_send(
+            approver_channel,
+            {
+                'type': 'chat_message',
+                'message': msg,
+                'game_status': self.game_memory_data[self.game_id].status,
+                'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
+                'cards_to_approve_disapprove': result['cards'],
+                'player_owner_cards': result['player_owner_cards'],
+                'suggester_name': result['player_suggester'],
+                'suggest_msg':
+                    "{0} suggested the crime was committed in the '{1}' by '{2}' with the '{3}'. "
+                    "Below is {4}'s cards. Please tick if it matches suggester's comment."
+                        .format(user, suspect_suggest, room_suggest, weapon_suggest, result['player_owner_cards'])
+            }
+        )
+
+        # alert all
+        await self.channel_layer.group_send(
+            self.game_group_name,
+            {
+                'type': 'chat_message',
+                'message': msg,
+                'game_status': self.game_memory_data[self.game_id].status,
+                'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
+                'update_location': self.game_memory_data[self.game_id].get_locations()
+            }
+        )
 
     async def select_accuse(self, data):
         user = str(self.scope['user'])
@@ -422,3 +472,111 @@ class GameConsumers(AsyncWebsocketConsumer):
     async def end_turn(self):
         self.game_memory_data[self.game_id].next_turn()
         await self.update_users_turn()
+
+    async def choose_approved_cards(self, data):
+        approved_cards = data['approved_cards']
+        owner_card_user_channel = "{0}_game_{1}".format(str(data['owner_cards']), self.game_id)
+        suggester_user_channel = "{0}_game_{1}".format(str(data['suggester']), self.game_id)
+
+        print(approved_cards)
+
+        if len(approved_cards) == 0:
+            msg = "Unfortunately, suggester, {0}, fails to prove {1}."\
+                .format(str(data['owner_cards']), str(data['suggester']))
+            self.game_log[self.game_id] += '\n' + msg
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False}
+                }
+            )
+
+            await self.end_turn()
+
+        elif len(approved_cards) == 1:
+            # message to suggester and show only 1 card!
+            msg = "{0} showed one card to {1}.".format(str(data['owner_cards']), str(data['suggester']))
+            await self.channel_layer.group_send(
+                suggester_user_channel,
+                {
+                    'type': 'chat_message',
+                    'message': msg + ". {0} showed you {1}".format(str(data['owner_cards']), approved_cards[0]),
+                    'enable_btn': {'move': False, 'accuse': True, 'suggest': False, 'end_turn': True}
+                }
+            )
+
+            # alert others that owner of the card showed one card to suggester
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False}
+                }
+            )
+
+            self.game_log[self.game_id] += '\n' + msg
+
+            await self.end_turn()
+
+        elif len(approved_cards) > 1:
+            msg = "{0} is determining which card to show to suggester, {1}."\
+                .format(str(data['owner_cards']), str(data['suggester']))
+
+            # send to user to choose which one of the card to show to suggester
+            await self.channel_layer.group_send(
+                owner_card_user_channel,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'choose_approved_cards': approved_cards,
+                    'approved_cards_suggester': str(data['suggester']),
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
+                }
+            )
+
+            # alert others that owner is deciding which card to send to suggester
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False}
+                }
+            )
+
+    async def show_one_card(self, data):
+        print("w here?");
+        owner = str(self.scope['user'])
+        card = data['what_card_to_show']
+        suggester_user_channel = "{0}_game_{1}".format(str(data['suggester']), self.game_id)
+
+        # message to suggester and show only 1 card!
+        msg = "{0} showed one card to {1}.".format(owner, str(data['suggester']))
+        await self.channel_layer.group_send(
+            suggester_user_channel,
+            {
+                'type': 'chat_message',
+                'message': msg + ". {0} showed you {1}".format(owner, card),
+                'enable_btn': {'move': False, 'accuse': True, 'suggest': False, 'end_turn': True}
+            }
+        )
+
+        # alert others that owner is showed one card to suggester
+        await self.channel_layer.group_send(
+            self.game_group_name,
+            {
+                'type': 'chat_message',
+                'message': msg,
+                'game_status': self.game_memory_data[self.game_id].status,
+                'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False}
+            }
+        )
+
+        self.game_log[self.game_id] += '\n' + msg
+        await self.end_turn()

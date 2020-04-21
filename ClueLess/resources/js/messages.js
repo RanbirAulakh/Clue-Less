@@ -20,6 +20,8 @@ gameSocket.onmessage = function(e) {
     // load game log
     try {
         $('#game-log').text(data['log']);
+        $('#game-log').scrollTop($('#game-log')[0].scrollHeight);
+        // .scrollTop($('#game-log')[0].scrollHeight);​​​
     } catch (e) { }
 
     // game model
@@ -76,6 +78,25 @@ gameSocket.onmessage = function(e) {
         let availableMoves = data["available_moves"];
         let currentPosition = data["current_location"];
         enableButtons(enableBtns, availableMoves, currentPosition);
+    } catch (e) { }
+
+    try {
+        let currentPosition = data["current_location"];
+        updateSuggestionRoom(currentPosition);
+    } catch (e) { }
+
+    try {
+        let cardsApproveDisapprove = data["cards_to_approve_disapprove"];
+        let playersOwnerCards = data["player_owner_cards"];
+        let suggestMsg = data["suggest_msg"];
+        let suggesterName = data["suggester_name"];
+        displayApprovalDisapproval(cardsApproveDisapprove, suggestMsg, playersOwnerCards, suggesterName);
+    } catch (e) { }
+
+    try {
+        let approvedCards = data["choose_approved_cards"];
+        let suggesterName = data["approved_cards_suggester"];
+        displayApprovedCardsPickOne(approvedCards, suggesterName);
     } catch (e) { }
 
 };
@@ -246,6 +267,54 @@ function enableButtons(enableBtns, availableMoves, currentLocation) {
     }
 }
 
+//////////// Update Suggestion Room Location
+function updateSuggestionRoom(currentLocation) {
+    if(typeof currentLocation === 'undefined') {
+        return;
+    }
+
+    $('#suggest_room').text(currentLocation);
+}
+
+//////////// Show Approver/Disapprover a Modal
+function displayApprovalDisapproval(cardsApproveDisapprove, suggestMsg, playersOwnerCards, suggesterName) {
+    if(typeof cardsApproveDisapprove === 'undefined' || suggestMsg === 'undefined' || playersOwnerCards === 'undefined'
+        || suggesterName == 'undefined') {
+        return;
+    }
+
+    $('#approveDisapproveModal').modal({backdrop: 'static', keyboard: false})
+    $('#approveCheckboxes').empty();
+    $('#suggestMsg').text(suggestMsg);
+    $('#suggesterName').text(suggesterName);
+    $('#playersOwnerCards').text(playersOwnerCards);
+    for(let i = 0; i < cardsApproveDisapprove.length; i++) {
+        let checkBoxHTML = '<div class="form-check">\n' +
+            '<input name="approved_cards_checkbox" type="checkbox" class="form-check-input" value="' + cardsApproveDisapprove[i] + '">\n' +
+            '<label class="form-check-label" for="exampleCheck1">' + cardsApproveDisapprove[i] + '</label>\n' +
+            '</div>';
+        $('#approveCheckboxes').append(checkBoxHTML);
+    }
+}
+
+//////////// Allow a player to pick one card to show to suggester (ONLY IF IT'S TRUE)
+function displayApprovedCardsPickOne(approvedCards, suggesterName) {
+    if(typeof approvedCards === 'undefined' || suggesterName === 'undefined') {
+        return;
+    }
+
+    $('suggesterNamePickOne').text(suggesterName);
+    $('#chooseOneApprovedCardModal').modal({backdrop: 'static', keyboard: false})
+    $('#approvedCardsRadios').empty();
+    for(var i = 0; i < approvedCards.length; i++) {
+        let radioHTML = '<div class="form-check pt-2">' +
+            '<input class="form-check-input" type="radio" name="approvedCardsChosen" id="' + approvedCards + '" value="' + approvedCards[i] + '"/>' +
+            '<label class="form-check-label pl-2" for="' + approvedCards + '"> ' + approvedCards[i] + ' </label></div>';
+
+        $('#approvedCardsRadios').append(radioHTML);
+    }
+}
+
 $('#game-move-selection-submit').click(function() {
     let nextMove = $("#availableMovesOptions").val();
     gameSocket.send(JSON.stringify({
@@ -255,11 +324,15 @@ $('#game-move-selection-submit').click(function() {
     $('#showAvailableMoves').modal('hide');
 });
 
-
-$('#game-suggestion-submit').click(function() {
+$('#game-suggest-selection-submit').click(function() {
+    let suspectSelect = $("#suggest_suspect").val();
+    let roomSelect = $("#suggest_room").text();
+    let weaponSelect = $("#suggest_weapon").val();
     gameSocket.send(JSON.stringify({
-        'type': 'select_suggestion'
+        'type': 'select_suggestion',
+        'suggest': {'suspect': suspectSelect, 'room': roomSelect, 'weapon': weaponSelect}
     }));
+    $('#makeSuggestionModal').modal('hide');
 });
 
 $('#game-accuse-submit').click(function() {
@@ -279,6 +352,36 @@ $('#game-end-turn-submit').click(function() {
     }));
 });
 
+$('#game-submit-approval').click(function() {
+    var approvedCards = [];
+    $("input:checkbox[name='approved_cards_checkbox']:checked").each(function() {
+        approvedCards.push($(this).val());
+    });
+
+    let owner_cards = $('#playersOwnerCards').text();
+    let suggester_name = $('#suggesterName').text();
+    gameSocket.send(JSON.stringify({
+        'type': 'approved_cards',
+        'owner_cards': owner_cards,
+        'approved_cards': approvedCards,
+        'suggester': suggester_name
+    }));
+
+    $('#approveDisapproveModal').modal('hide');
+});
+
+$('#game-show-one-card-submit').click(function() {
+    console.log("here?");
+    let oneCard = $("input[name='approvedCardsChosen']:checked").val();
+    let suggester_name = $('#suggesterNamePickOne').text();
+    gameSocket.send(JSON.stringify({
+        'type': 'show_one_card',
+        'what_card_to_show': oneCard,
+        'suggester': suggester_name
+    }));
+});
+
+
 //////////// Let the server know that the user select a character
 $('#game-player-chosen-submit').click(function() {
     let playerCharacter = $("input[name='characterChosen']:checked").val();
@@ -286,7 +389,5 @@ $('#game-player-chosen-submit').click(function() {
         'player_select': playerCharacter
     }));
 });
-
-
 
 
