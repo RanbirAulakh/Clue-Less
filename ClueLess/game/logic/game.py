@@ -314,9 +314,9 @@ class Game:
 				players_cards = self.get_cards(player.name)
 
 				# get next player to approve/disapprove
+				current_index = self.original_turn_order.index(player.name)
 				while True:
 					print("original_turn_order {0}".format(self.original_turn_order))
-					current_index = self.original_turn_order.index(player.name)
 					if current_index >= len(self.original_turn_order) - 1:
 						current_index = 0
 						player_approve = self.original_turn_order[current_index]
