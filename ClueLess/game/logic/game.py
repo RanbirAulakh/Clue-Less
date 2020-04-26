@@ -309,31 +309,52 @@ class Game:
 
 				player.set_room(self.map.rooms[clues['room']])
 				player.set_current_location(clues['room'])
-
-				# get that said players card
-				players_cards = self.get_cards(player.name)
-
-				# get next player to approve/disapprove
-				current_index = self.original_turn_order.index(player.name)
-				while True:
-					print("original_turn_order {0}".format(self.original_turn_order))
-					if current_index >= len(self.original_turn_order) - 1:
-						current_index = 0
-						player_approve = self.original_turn_order[current_index]
-					else:
-						current_index += 1
-						player_approve = self.original_turn_order[current_index]
-
-					if player_approve != player.name and player_approve != guessing_player:
-						break
-
-				data['player_suggester'] = guessing_player
-				data['player_to_approve_disapprove'] = player_approve
-				data['player_owner_cards'] = player.name
-				data['cards'] = players_cards
-
+				
 				break
 
+		# get next player to approve/disapprove
+		current_index = self.original_turn_order.index(player_suggesting.name)
+		while True:
+			print("original_turn_order {0}".format(self.original_turn_order))
+			if current_index >= len(self.original_turn_order) - 1:
+				current_index = 0
+				player_approve = self.original_turn_order[current_index]
+			else:
+				current_index += 1
+				player_approve = self.original_turn_order[current_index]
+
+			if player_approve != guessing_player:
+				break
+
+		data['player_suggester'] = guessing_player
+		data['player_to_approve_disapprove'] = player_approve
+		data['player_owner_cards'] = player_approve
+		data['cards'] = self.get_cards(player_approve)
+
+		return data
+		
+	def next_disapprover(self, guessing_player, current_disapprover):
+		player_approve = None
+		current_index = self.original_turn_order.index(current_disapprover.name)
+		while True:
+			print("original_turn_order {0}".format(self.original_turn_order))
+			if current_index >= len(self.original_turn_order) - 1:
+				current_index = 0
+				player_approve = self.original_turn_order[current_index]
+			else:
+				current_index += 1
+				player_approve = self.original_turn_order[current_index]
+
+			if player_approve != guessing_player:
+				break
+			else:
+				#Final case, disapprovals have gone around the table and returned to the original guessing_player
+				return None
+		data['player_suggester'] = guessing_player
+		data['player_to_approve_disapprove'] = player_approve
+		data['player_owner_cards'] = player_approve
+		data['cards'] = self.get_cards(player_approve)
+		
 		return data
 
 	def show_one_card_to_suggester(self):

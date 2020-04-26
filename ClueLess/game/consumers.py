@@ -365,8 +365,8 @@ class GameConsumers(AsyncWebsocketConsumer):
 
         result = self.game_memory_data[self.game_id].make_guess(user, {"suspect": suspect_suggest, "room": room_suggest, "weapon": weapon_suggest})
 
-        msg += '\n' + "{0} will look at {1}'s cards to see if {2} makes the right suggestion." \
-            .format(result['player_to_approve_disapprove'], result['player_owner_cards'], user)
+        msg += '\n' + "{0} will look at their cards to see if {1} makes the right suggestion." \
+            .format(result['player_to_approve_disapprove'], user)
 
         self.game_log[self.game_id] += '\n' + msg
 
