@@ -329,8 +329,8 @@ class Game:
 
 				data['player_suggester'] = guessing_player
 				data['player_to_approve_disapprove'] = player_approve
-				data['player_owner_cards'] = player.name
-				data['cards'] = players_cards
+				data['player_owner_cards'] = player_approve
+				data['cards'] = self.get_cards(player_approve)
 
 				break
 
