@@ -6,8 +6,7 @@ from game.models import Game
 class GameForm(forms.ModelForm):
     TYPE_CHOICES = (
         ('Public', 'Public'),
-        ('Public', 'Public'),
-        #('Private', 'Private')
+        ('Private', 'Private')
     )
 
     NUM_PLAYER_CHOICES = (
@@ -25,3 +24,7 @@ class GameForm(forms.ModelForm):
     class Meta:
         model = Game
         fields = ['name', 'type', 'private_key', 'required_players']
+
+
+class GameAuthPass(forms.Form):
+    private_key = forms.CharField(label="", widget=forms.TextInput(attrs={'class': 'form-control'}))

@@ -30,3 +30,11 @@ class GameLog(models.Model):
 
     def __unicode__(self):
         return 'Game #{0} Log'.format(self.game.id)
+
+
+class GameAuthorized(models.Model):
+    game_id = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+
+    def __unicode__(self):
+        return 'Game #{0} Authorized'.format(self.game_id)
