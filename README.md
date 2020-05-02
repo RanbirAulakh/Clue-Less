@@ -1,7 +1,6 @@
 # Clue-Less
 
-Ranbir Aulakh 
-Parth Jalundhwala 
+Ranbir Aulakh
 Michael Knatz 
 Victoria Palaoro 
 
@@ -49,7 +48,7 @@ Access Admin Panel?
     - Travis-CI or Heroku can download required dependencies in order to run the game
     - django - Python web framework
     - channels - Message communication
-    - django-redis - Message communication (data store)
+    - channels-redis - Message communication (data store)
 
 
 #### (WIP) Deploy Django to Heroku

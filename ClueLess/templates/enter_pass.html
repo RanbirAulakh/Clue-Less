@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block tab_title %} Create Game {% endblock %}
+{% block content %}
+
+    <form method="post" class="col-md-4 col-sm-6">
+        {% csrf_token %}
+        {% if error %}
+        <div class="alert alert-danger text-black" role="alert">
+            {{ error_msg }}
+        </div>
+        {% endif %}
+
+        <h2>Enter password for Game {{ id }}</h2>
+        {{ form.as_p }}
+        <button id="submitBtn" class="btn btn-block btn-success" type="submit">Join Game</button>
+    </form>
+
+{% endblock %}

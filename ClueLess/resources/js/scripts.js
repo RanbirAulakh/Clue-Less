@@ -1,23 +1,32 @@
-// /*!
-//     * Start Bootstrap - SB Admin v6.0.0 (https://startbootstrap.com/templates/sb-admin)
-//     * Copyright 2013-2020 Start Bootstrap
-//     * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-sb-admin/blob/master/LICENSE)
-//     */
-//     (function($) {
-//     "use strict";
-//
-//     // Add active state to sidbar nav links
-//     var path = window.location.href; // because the 'href' property of the DOM element is the absolute path
-//         $("#layoutSidenav_nav .sb-sidenav a.nav-link").each(function() {
-//             if (this.href === path) {
-//                 $(this).addClass("active");
-//             }
-//         });
-//
-//     // Toggle the side navigation
-//     $("#sidebarToggle").on("click", function(e) {
-//         e.preventDefault();
-//         $("body").toggleClass("sb-sidenav-toggled");
-//     });
-// })(jQuery);
+$('label[for=id_private_key]').remove();
+$('#id_private_key').remove();
+$('#id_type').change(function () {
+   let value = $(this).val();
+   if (value == "Private") {
+       $('#id_private_key').remove();
+       $('<div class="input-group mb-3" id="password_input">\n' +
+           '  <input type="text" class="form-control" id="id_private_key" name="private_key" required>\n' +
+           '  <div class="input-group-append">\n' +
+           '    <a id="generateKey"  class="btn btn-outline-secondary" type="button">Generate Key</a>' +
+           '  </div><label>Please share this key with your friends!</label>\n' +
+           '</div>').insertBefore('#submitBtn');
+   } else {
+       $('#password_input').remove();
+   }
+});
 
+$(document).on('click', '#generateKey', function(){
+  var pass = randomPassword(5);
+  console.log(pass);
+  $('#id_private_key').val(pass);
+});
+
+function randomPassword(length) {
+    var chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP1234567890";
+    var pass = "";
+    for (var x = 0; x < length; x++) {
+        var i = Math.floor(Math.random() * chars.length);
+        pass += chars.charAt(i);
+    }
+    return pass;
+}
