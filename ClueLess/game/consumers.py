@@ -474,15 +474,9 @@ class GameConsumers(AsyncWebsocketConsumer):
         await self.update_users_turn()
 
     async def choose_approved_cards(self, data):
-        approved_cards = data['approved_cards']
-        owner_card_user_channel = "{0}_game_{1}".format(str(data['owner_cards']), self.game_id)
-        suggester_user_channel = "{0}_game_{1}".format(str(data['suggester']), self.game_id)
-
-        print(approved_cards)
-
-        if len(approved_cards) == 0:
-            msg = "Unfortunately, suggester, {0}, fails to prove {1}."\
-                .format(str(data['owner_cards']), str(data['suggester']))
+        if data['owner_cards'] == None:
+            msg = "No player was able to disprove {1}."\
+                .format(str(data['suggester']))
             self.game_log[self.game_id] += '\n' + msg
             await self.channel_layer.group_send(
                 self.game_group_name,
@@ -495,6 +489,52 @@ class GameConsumers(AsyncWebsocketConsumer):
             )
 
             await self.end_turn()
+            return
+        
+        approved_cards = data['approved_cards']
+        owner_card_user_channel = "{0}_game_{1}".format(str(data['owner_cards']), self.game_id)
+        suggester_user_channel = "{0}_game_{1}".format(str(data['suggester']), self.game_id)
+
+        print(approved_cards)
+
+        if len(approved_cards) == 0:
+            msg = "Unfortunately, suggester, {0}, fails to disprove {1}."\
+                .format(str(data['owner_cards']), str(data['suggester']))
+            self.game_log[self.game_id] += '\n' + msg
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False}
+                }
+            )
+            
+            msg ="{0} will look at their cards to see if {1} makes the right suggestion." \
+                .format(data['owner_cards'], data['suggester'])
+
+            self.game_log[self.game_id] += '\n' + msg
+            data = self.game_memory_data[self.game_id].next_disapprover(data['suggester'],data['owner_cards'])
+            # approver/disapprover msg
+            approver_channel = "{0}_game_{1}".format(data['player_to_approve_disapprove'], self.game_id)
+            await self.channel_layer.group_send(
+                approver_channel,
+                {
+                    'type': 'chat_message',
+                    'message': msg,
+                    'game_status': self.game_memory_data[self.game_id].status,
+                    'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
+                    'cards_to_approve_disapprove': data['cards'],
+                    'player_owner_cards': data['player_owner_cards'],
+                    'suggester_name': data['player_suggester'],
+                    'suggest_msg':
+                        "The previous player was unable to disprove {0}. "
+                        "Below is {1}'s cards. Please tick if it matches suggester's comment."
+                            .format(data['player_suggester'], data['player_owner_cards'])
+                }
+            )
+            
 
         elif len(approved_cards) == 1:
             # message to suggester and show only 1 card!
