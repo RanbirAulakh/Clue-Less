@@ -1,0 +1,56 @@
+<div id="accuseModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Make Accusation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>I accuse</label>
+                    <select class="form-control" id="suspect_options">
+                        <option value="ProfessorPlum">Professor Plum</option>
+                        <option value="ColonelMustard">Colonel Mustard</option>
+                        <option value="Mr.Green">Mr. Green</option>
+                        <option value="Mrs.White">Mrs. White</option>
+                        <option value="Ms.Scarlet">Ms. Scarlet</option>
+                        <option value="Mrs.Peacock">Mrs. Peacock</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>of committing the crime in the</label>
+                    <select class="form-control" id="room_options">
+                        <option value="Study">Study</option>
+                        <option value="Hall">Hall</option>
+                        <option value="Lounge">Lounge</option>
+                        <option value="Library">Library</option>
+                        <option value="BilliardRoom">Billiard Room</option>
+                        <option value="Dining">Dining</option>
+                        <option value="Conservatory">Conservatory</option>
+                        <option value="Ballroom">Ballroom</option>
+                        <option value="Kitchen">Kitchen</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>with the</label>
+                    <select class="form-control" id="weapon_options">
+                        <option value="Candlestick">Candlestick</option>
+                        <option value="Revolver">Revolver</option>
+                        <option value="LeadPipe">Lead Pipe</option>
+                        <option value="Rope">Rope</option>
+                        <option value="Wrench">Wrench</option>
+                        <option value="Dagger">Dagger</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="game-accuse-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
+                <a type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
