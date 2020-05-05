@@ -1,0 +1,44 @@
+<div id="makeSuggestionModal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Make Suggestion</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>I suggest the crime was committed in the</label>
+                    <label id="suggest_room">ROOM</label>
+                </div>
+                <div class="form-group">
+                    <label class="suggest_move_room">by</label>
+                    <select class="form-control" id="suggest_suspect">
+                        <option value="Professor Plum">Professor Plum</option>
+                        <option value="Colonel Mustard">Colonel Mustard</option>
+                        <option value="Mr. Green">Mr. Green</option>
+                        <option value="Mrs. White">Mrs. White</option>
+                        <option value="Ms. Scarlet">Ms. Scarlet</option>
+                        <option value="Mrs. Peacock">Mrs. Peacock</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="suggest_move_room">with the</label>
+                    <select class="form-control" id="suggest_weapon">
+                        <option value="Candlestick">Candlestick</option>
+                        <option value="Revolver">Revolver</option>
+                        <option value="Lead Pipe">Lead Pipe</option>
+                        <option value="Rope">Rope</option>
+                        <option value="Wrench">Wrench</option>
+                        <option value="Dagger">Dagger</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="game-suggest-selection-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>
+                <a type="button" class="btn btn-secondary text-white" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
