@@ -334,8 +334,9 @@ class Game:
 		return data
 		
 	def next_disapprover(self, guessing_player, current_disapprover):
+		data={}
 		player_approve = None
-		current_index = self.original_turn_order.index(current_disapprover.name)
+		current_index = self.original_turn_order.index(current_disapprover)
 		while True:
 			print("original_turn_order {0}".format(self.original_turn_order))
 			if current_index >= len(self.original_turn_order) - 1:
@@ -347,9 +348,6 @@ class Game:
 
 			if player_approve != guessing_player:
 				break
-			else:
-				#Final case, disapprovals have gone around the table and returned to the original guessing_player
-				return None
 		data['player_suggester'] = guessing_player
 		data['player_to_approve_disapprove'] = player_approve
 		data['player_owner_cards'] = player_approve
