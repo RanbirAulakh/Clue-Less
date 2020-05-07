@@ -21,7 +21,6 @@ gameSocket.onmessage = function(e) {
     try {
         $('#game-log').text(data['log']);
         $('#game-log').scrollTop($('#game-log')[0].scrollHeight);
-        // .scrollTop($('#game-log')[0].scrollHeight);​​​
     } catch (e) { }
 
     // game model
@@ -31,9 +30,9 @@ gameSocket.onmessage = function(e) {
         {
             var playerListNotepad = []
 
-            $('#players_lobby').empty();
+            // $('#players_lobby').empty();
             for(let i = 0; i < game_model.players.length; i++) {
-                $('#players_lobby').append('<li class="pl-3 list-inline-item" id="' + game_model.players[i] + '"><i class="fas fa-user-astronaut"></i> ' + game_model.players[i] + '</li>');
+                // $('#players_lobby').append('<li class="pl-3 list-inline-item" id="' + game_model.players[i] + '"><i class="fas fa-user-astronaut"></i> ' + game_model.players[i] + '</li>');
                 playerListNotepad.push(game_model.players[i] + "_HEAD");
             }
             updateTable(playerListNotepad);
@@ -205,11 +204,12 @@ function updateYourCardsSection(cards) {
     }
 
     $('#your_cards').empty();
-    $('#your_cards').append('<li class="list-group-item text-center">Your Cards</li>');
+    // $('#your_cards').append('<li class="list-group-item text-center">Your Cards</li>');
     for(var i = 0; i < cards.length; i++){
-        let cardHTML = '<li id="player_card_person" class="list-group-item"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img>' +
-        '<label class="form-check-label pl-2"> ' + cards[i] + ' </label></div></li>';
-        $('#your_cards').append(cardHTML);
+        let flexCardHTML = '<div class="p-2 bg-white bd-highlight mr-3 rounded"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img><label class="form-check-label pl-2"> ' + cards[i] + ' </label></div>';
+        // let cardHTML = '<li id="player_card_person" class="list-group-item"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img>' +
+        // '<label class="form-check-label pl-2"> ' + cards[i] + ' </label></div></li>';
+        $('#your_cards').append(flexCardHTML);
     }
 }
 
@@ -220,12 +220,19 @@ function updatePlayersLocation(locations) {
     }
 
     $('#players_location').empty();
-    $('#players_location').append('<li class="list-group-item text-center">Current Players Locations</li>');
+    // $('#players_location').append('<li class="list-group-item text-center">Current Players Locations</li>');
 
     // player, location
     for (const [key, value] of Object.entries(locations)) {
-        let liHTML = '<li class="list-group-item">' + key + ' @ ' + value + '</li>'
-        $('#players_location').append(liHTML);
+        let mediaHTML = '<div class="media p-1">\n' +
+            '    <img class="rounded mr-2" src="/static/images/Ms.Scarlet.png" height="50" width="50">\n' +
+            '    <div class="media-body text-white">\n' +
+            '         <div class="text-wrap" style=" width: 10em;">' + key + ' @ ' + value + '</div>\n' +
+            '    </div>\n' +
+            '    </div>'
+
+        // let liHTML = '<li class="list-group-item">' + key + ' @ ' + value + '</li>'
+        $('#players_location').append(mediaHTML);
     }
 
 }
@@ -432,7 +439,7 @@ function updateTable(playerList) {
 
 function addColumnToNotepad(playerId) {
     let theadTdHTML = '<td class="text-center" data-name="' + playerId + '" id="' + playerId + '">' +
-        '<img class="rounded" src="/static/images/ProfessorPlum.png" width="25" height="25"></td>';
+        '<img class="rounded" src="/static/images/ProfessorPlum.png" width="30" height="30"></td>';
 
     let tdOptionsHTML = '<td class="text-center">\n' +
         '                <select class="selectpicker" title=" " data-width="fit" data-style="btn-secondary btn-sm">\n' +
