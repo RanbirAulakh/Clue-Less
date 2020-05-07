@@ -29,11 +29,17 @@ gameSocket.onmessage = function(e) {
         const game_model = JSON.parse(data["model"]);
         if($("#players_lobby li").length != game_model.players.length)
         {
+            var playerListNotepad = []
+
             $('#players_lobby').empty();
             for(let i = 0; i < game_model.players.length; i++) {
                 $('#players_lobby').append('<li class="pl-3 list-inline-item" id="' + game_model.players[i] + '"><i class="fas fa-user-astronaut"></i> ' + game_model.players[i] + '</li>');
+                playerListNotepad.push(game_model.players[i] + "_HEAD");
             }
+            updateTable(playerListNotepad);
         }
+
+
     } catch (e) { }
 
     // choose character modal
@@ -371,7 +377,6 @@ $('#game-submit-approval').click(function() {
 });
 
 $('#game-show-one-card-submit').click(function() {
-    console.log("here?");
     let oneCard = $("input[name='approvedCardsChosen']:checked").val();
     let suggester_name = $('#suggesterNamePickOne').text();
     gameSocket.send(JSON.stringify({
@@ -389,5 +394,69 @@ $('#game-player-chosen-submit').click(function() {
         'player_select': playerCharacter
     }));
 });
+
+
+function updateTable(playerList) {
+    // if table does not contain playerName, add
+    let existingPlayerNameId = [];
+
+    $(".notepad-header td").each(function() {
+
+        if(this.id !== '')
+        {
+            existingPlayerNameId.push(this.id);
+        }
+    });
+
+    let addCol = []
+    jQuery.grep(playerList, function(el) {
+        if (jQuery.inArray(el, existingPlayerNameId) === -1) {
+            addCol.push(el);
+        }
+    });
+    let removCol = [];
+    jQuery.grep(existingPlayerNameId, function(el) {
+        if (jQuery.inArray(el, playerList) === -1) {
+            removCol.push(el);
+        }
+    });
+
+    for(let i = 0; i < addCol.length; i++) {
+        addColumnToNotepad(addCol[i]);
+    }
+    for(let i = 0; i < removCol.length; i++) {
+        removeColumnFromNotepad(removCol[i]);
+    }
+
+}
+
+function addColumnToNotepad(playerId) {
+    let theadTdHTML = '<td class="text-center" data-name="' + playerId + '" id="' + playerId + '">' +
+        '<img class="rounded" src="/static/images/ProfessorPlum.png" width="25" height="25"></td>';
+
+    let tdOptionsHTML = '<td class="text-center">\n' +
+        '                <select class="selectpicker" title=" " data-width="fit" data-style="btn-secondary btn-sm">\n' +
+        '                  <option data-icon="fas fa-check fa-xs"></option>\n' +
+        '                  <option data-icon="fas fa-times fa-xs"></option>\n' +
+        '                  <option data-icon="fas fa-question fa-xs"></option>\n' +
+        '                </select>\n' +
+        '            </td>';
+    $('#notepad .notepad-header').append(theadTdHTML);
+
+    $('#notepad .table-col tr').append(tdOptionsHTML);
+    $('.selectpicker').selectpicker('render'); // render dropdown menu
+}
+
+function removeColumnFromNotepad(playerId) {
+    let target = $('#notepad').find('tr td[data-name="' + playerId +'"]');
+    let index = (target).index();
+
+    $('#notepad').find('.notepad-header td:eq(' + index + ')').remove();
+    $("#notepad .table-col tr").each(function() {
+        $(this).find("td:eq(" + index + ")").remove();
+    });
+
+    $('.selectpicker').selectpicker('render'); // render dropdown menu
+}
 
 

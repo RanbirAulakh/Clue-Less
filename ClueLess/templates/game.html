@@ -12,36 +12,14 @@
                 <div id="winner">
 
                 </div>
+                <h2>Players</h2>
                 <ul class="breadcrumb bg-dark list-inline justify-content-center text-white" id="players_lobby">
+                </ul>
+                <ul class="breadcrumb bg-dark list-inline justify-content-center text-black" id="players_location">
                 </ul>
             </div>
 
-            <div class="p-2 col-md-3">
-                <ul class="list-group mb-3">
-                    <li class="list-group-item text-center">Game Piece Character</li>
-                    <li id="game_piece_character" class="list-group-item">
-                    </li>
-                </ul>
-                <ul class="list-group mb-3" id="your_cards">
-                    <li class="list-group-item text-center">Your Cards</li>
-                </ul>
-                <ul class="list-group mb-3" id="players_location">
-                    <li class="list-group-item text-center">Players Locations</li>
-                </ul>
-                <ul class="list-group mb-3">
-                    <li class="list-group-item text-center">Game Details</li>
-                    <li id="game_id" class="list-group-item"><i class="fa fa-passport"></i> {{ game_details.id }}</li>
-                    <li class="list-group-item"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
-                    <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
-                    <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
-                    <li id="game-status" class="list-group-item"><i class="fa fa-hourglass-start"></i> Not Started </li>
-                    <li id="game-required-players" class="list-group-item"><i class="fa fa-users"></i> Required {{ game_details.required_players }} Players </li>
-                </ul>
-                <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#leaveGame">
-                    Leave Game
-                </button>
-            </div>
-            <div class="col-md-9 pt-2">
+            <div class="col-md-8 pt-2">
                 <a id="game-show-moves-modal" type="button" class="btn btn-secondary disabled" data-toggle="modal" data-target="#showAvailableMoves">
                     Make Move
                 </a>
@@ -72,6 +50,17 @@
                 </div>
             </div>
 
+            <div class="p-2 col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        Notepad
+                    </div>
+                    <div class="card-body overflow-auto">
+                        {% include "game/notepad.html" %}
+                    </div>
+                </div>
+            </div>
+
             <!-- Popup Modals -->
             {% include "modals/choose_character.html" %}
             {% include "modals/show_available_moves.html" %}
@@ -82,6 +71,31 @@
             {% include "modals/leave_game.html" %}
 
         </div>
+        <div class="p-2 col-md-3">
+            <ul class="list-group mb-3">
+                <li class="list-group-item text-center">Game Piece Character</li>
+                <li id="game_piece_character" class="list-group-item">
+                </li>
+            </ul>
+            <ul class="list-group mb-3" id="your_cards">
+                <li class="list-group-item text-center">Your Cards</li>
+            </ul>
+            <ul class="list-group mb-3" id="players_location">
+                <li class="list-group-item text-center">Players Locations</li>
+            </ul>
+            <ul class="list-group mb-3">
+                <li class="list-group-item text-center">Game Details</li>
+                <li id="game_id" class="list-group-item"><i class="fa fa-passport"></i> {{ game_details.id }}</li>
+                <li class="list-group-item"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
+                <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
+                <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
+                <li id="game-status" class="list-group-item"><i class="fa fa-hourglass-start"></i> Not Started </li>
+                <li id="game-required-players" class="list-group-item"><i class="fa fa-users"></i> Required {{ game_details.required_players }} Players </li>
+            </ul>
+            <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#leaveGame">
+                Leave Game
+            </button>
+            </div>
     </div>
 
     <script src="{%  static "js/messages.js"%}"></script>
