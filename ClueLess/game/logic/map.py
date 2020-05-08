@@ -58,11 +58,11 @@ class Map:
 		s_h_hallway.add_connections(hall)
 		study.add_connections(s_li_hallway)
 		study.add_connections(s_h_hallway)
-		study.add_connections(billiard_room)
+		study.add_connections(kitchen)
 		hall.add_connections(s_h_hallway)
 		hall.add_connections(h_bi_hallway)
 		hall.add_connections(h_lo_hallway)
-		lounge.add_connections(billiard_room)
+		lounge.add_connections(conservatory)
 		lounge.add_connections(h_lo_hallway)
 		lounge.add_connections(d_lo_hallway)
 		library.add_connections(s_li_hallway)
@@ -76,13 +76,13 @@ class Map:
 		dining_room.add_connections(d_k_hallway)
 		dining_room.add_connections(d_lo_hallway)
 		conservatory.add_connections(li_c_hallway)
-		conservatory.add_connections(billiard_room)
+		conservatory.add_connections(lounge)
 		conservatory.add_connections(c_ba_hallway)
 		ballroom.add_connections(c_ba_hallway)
 		ballroom.add_connections(ba_bi_hallway)
 		ballroom.add_connections(ba_k_hallway)
 		kitchen.add_connections(ba_k_hallway)
-		kitchen.add_connections(billiard_room)
+		kitchen.add_connections(study)
 		kitchen.add_connections(d_k_hallway)
 
 		# easier to lookup rooms with a map so we can set starting positions
@@ -113,9 +113,13 @@ class Map:
 	def get_rooms(self):
 		return self.rooms
 
+	def is_hallway(self, room):
+		#do we want a room object or a string that we can use to reference rooms?
+		return isinstance(room, Hallway)
 
 #m = Map()
-#print(m.get_rooms())
 #print(m.get_rooms()[constants.STUDY])
+#print(m.is_hallway(m.get_rooms()[constants.LOUNGE_DINING]))
+#print(m.is_hallway(m.get_rooms()[constants.LOUNGE]))
 #print(m.get_rooms()[constants.STUDY].get_name())
 #print(m.get_rooms()[constants.STUDY].get_connections())
