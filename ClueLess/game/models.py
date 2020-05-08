@@ -38,3 +38,17 @@ class GameAuthorized(models.Model):
 
     def __unicode__(self):
         return 'Game #{0} Authorized'.format(self.game_id)
+
+
+class GameStatistics(models.Model):
+
+    total_accuse = models.IntegerField()
+    total_accuse_failed = models.IntegerField()
+    total_accuse_success = models.IntegerField()
+    total_suggestion = models.IntegerField()
+
+
+
+    def __unicode__(self):
+        return 'Game #{0} Statistics'.format(self.game_id)
+

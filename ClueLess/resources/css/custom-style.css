@@ -87,3 +87,86 @@
     border-top: #f8f9fa solid 40px;
     border-bottom: #f8f9fa solid 40px;
 }
+
+#charactersRadios input[type=radio] {
+    display: None;
+}
+
+#charactersRadios img:hover {
+    cursor: pointer;
+}
+
+#charactersRadios input[type=radio]:checked + label > img {
+    color: white;
+}
+
+#charactersRadios input[type=radio]:checked + label {
+    color: white;
+    padding: 5px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+#charactersRadios input#MrsPeacock[type=radio]:checked + label > img,
+#charactersRadios input#MrsPeacock[type=radio]:checked  + label {
+    background-color: #669add;
+}
+
+#charactersRadios input#MsScarlet[type=radio]:checked + label > img,
+#charactersRadios input#MsScarlet[type=radio]:checked  + label {
+    background-color: #ca0001;
+}
+
+#charactersRadios input#MrsWhite[type=radio]:checked + label > img,
+#charactersRadios input#MrsWhite[type=radio]:checked  + label {
+    color: black;
+    background-color: #ededee;
+}
+
+#charactersRadios input#MrGreen[type=radio]:checked + label > img,
+#charactersRadios input#MrGreen[type=radio]:checked  + label {
+    background-color: #cbda3a;
+}
+
+#charactersRadios input#ColonelMustard[type=radio]:checked + label > img,
+#charactersRadios input#ColonelMustard[type=radio]:checked  + label {
+    background-color: #efc210;
+}
+
+#charactersRadios input#ProfessorPlum[type=radio]:checked + label > img,
+#charactersRadios input#ProfessorPlum[type=radio]:checked  + label {
+    background-color: #d0bed5;
+}
+
+#charactersRadios label:hover {
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    width: 100%;
+    border-radius: 5px;
+}
+
+#charactersRadios label[for=MrsPeacock]:hover {
+    background-color: #669add;
+}
+
+#charactersRadios label[for=MsScarlet]:hover {
+    background-color: #ca0001;
+}
+
+#charactersRadios label[for=MrsWhite]:hover {
+    background-color: #ededee;
+    color: black;
+}
+
+#charactersRadios label[for=MrGreen]:hover {
+    background-color: #cbda3a;
+}
+
+#charactersRadios label[for=ColonelMustard]:hover {
+    background-color: #efc210;
+}
+
+#charactersRadios label[for=ProfessorPlum]:hover {
+    background-color: #d0bed5;
+}
