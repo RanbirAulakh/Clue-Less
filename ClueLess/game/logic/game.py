@@ -139,6 +139,13 @@ class Game:
 
 		return locations
 
+	def get_character_game_pieces(self):
+		players_details = {}
+		for i in self.players:
+			players_details[i.name] = {"location": i.current_location, "character": i.character}
+
+		return players_details
+
 	def get_cards(self, player_name):
 		for i in self.players:
 			if i.name == player_name:

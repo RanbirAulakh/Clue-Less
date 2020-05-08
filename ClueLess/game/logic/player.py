@@ -3,7 +3,6 @@ class Player:
 		self.name = name
 		self.character = character
 		self.hand = []
-		self.seen = []
 		self.room = None
 		self.current_location = ""
 		
@@ -27,12 +26,6 @@ class Player:
 	
 	def get_name(self):
 		return self.name
-		
-	def append_seen(self, clue):
-		self.seen.append(clue)
-	
-	def get_seen(self):
-		return self.seen
 		
 	def get_character(self):
 		return self.character

@@ -3,7 +3,7 @@
 
 {% block content %}
 
-    <div class="container">
+    <div class=""> <!-- Took out container (does it look good? idk) -->
         <div class="row">
             <div class="col-md-12 mt-3">
                 <div id="incorrect-noti">
@@ -12,14 +12,16 @@
                 <div id="winner">
 
                 </div>
-                <h2>Players</h2>
-                <ul class="breadcrumb bg-dark list-inline justify-content-center text-white" id="players_lobby">
-                </ul>
-                <ul class="breadcrumb bg-dark list-inline justify-content-center text-black" id="players_location">
-                </ul>
+                <h4>Players & Locations</h4>
+                <div class="breadcrumb bg-dark list-inline text-black" id="players_details">
+                </div>
+                <h4>Your Cards</h4>
+                <div class="d-flex mb-3 p-2" id="your_cards">
+
+                </div>
             </div>
 
-            <div class="col-md-8 pt-2">
+            <div class="col-md-8 col-lg-9 col-xl-9 pt-2">
                 <a id="game-show-moves-modal" type="button" class="btn btn-secondary disabled" data-toggle="modal" data-target="#showAvailableMoves">
                     Make Move
                 </a>
@@ -36,6 +38,7 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Game Log</a>
                         <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Map</a>
+                        <a class="nav-item nav-link" id="nav-game-details-tab" data-toggle="tab" href="#nav-game-details" role="tab" aria-controls="nav-game-details" aria-selected="false">Game Details</a>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -47,10 +50,27 @@
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                         {% include "game/map.html" %}
                     </div>
+                    <div class="tab-pane fade" id="nav-game-details" role="tabpanel" aria-labelledby="nav-game-details-tab">
+                        <br/>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item text-center">Game Piece Character</li>
+                            <li id="game_piece_character" class="list-group-item">
+                            </li>
+                        </ul>
+                        <ul class="list-group mb-3">
+                            <li class="list-group-item text-center">Game Details</li>
+                            <li id="game_id" class="list-group-item"><i class="fa fa-passport"></i> {{ game_details.id }}</li>
+                            <li class="list-group-item"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
+                            <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
+                            <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
+                            <li id="game-status" class="list-group-item"><i class="fa fa-hourglass-start"></i> Not Started </li>
+                            <li id="game-required-players" class="list-group-item"><i class="fa fa-users"></i> Required {{ game_details.required_players }} Players </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <div class="p-2 col-md-4">
+            <div class="col-md-4 col-lg-3 col-xl-3">
                 <div class="card">
                     <div class="card-header">
                         Notepad
@@ -59,6 +79,9 @@
                         {% include "game/notepad.html" %}
                     </div>
                 </div>
+                <button type="button" class="btn btn-danger btn-block mt-3" data-toggle="modal" data-target="#leaveGame">
+                    Quit Game
+                </button>
             </div>
 
             <!-- Popup Modals -->
@@ -71,31 +94,6 @@
             {% include "modals/leave_game.html" %}
 
         </div>
-        <div class="p-2 col-md-3">
-            <ul class="list-group mb-3">
-                <li class="list-group-item text-center">Game Piece Character</li>
-                <li id="game_piece_character" class="list-group-item">
-                </li>
-            </ul>
-            <ul class="list-group mb-3" id="your_cards">
-                <li class="list-group-item text-center">Your Cards</li>
-            </ul>
-            <ul class="list-group mb-3" id="players_location">
-                <li class="list-group-item text-center">Players Locations</li>
-            </ul>
-            <ul class="list-group mb-3">
-                <li class="list-group-item text-center">Game Details</li>
-                <li id="game_id" class="list-group-item"><i class="fa fa-passport"></i> {{ game_details.id }}</li>
-                <li class="list-group-item"><i class="fa fa-gamepad"></i> {{ game_details.name }}'s Lobby</li>
-                <li class="list-group-item"><i class="fa fa-unlock-alt"></i> {{ game_details.type }}</li>
-                <li class="list-group-item"><i class="fa fa-calendar"></i> {{ game_details.created_date }}</li>
-                <li id="game-status" class="list-group-item"><i class="fa fa-hourglass-start"></i> Not Started </li>
-                <li id="game-required-players" class="list-group-item"><i class="fa fa-users"></i> Required {{ game_details.required_players }} Players </li>
-            </ul>
-            <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#leaveGame">
-                Leave Game
-            </button>
-            </div>
     </div>
 
     <script src="{%  static "js/messages.js"%}"></script>

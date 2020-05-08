@@ -21,24 +21,29 @@ gameSocket.onmessage = function(e) {
     try {
         $('#game-log').text(data['log']);
         $('#game-log').scrollTop($('#game-log')[0].scrollHeight);
-        // .scrollTop($('#game-log')[0].scrollHeight);​​​
     } catch (e) { }
 
-    // game model
+    // // game model
+    // try {
+    //     const game_model = JSON.parse(data["model"]);
+    //     if($("#players_lobby li").length != game_model.players.length)
+    //     {
+    //         var playerListNotepad = []
+    //
+    //         // $('#players_lobby').empty();
+    //         for(let i = 0; i < game_model.players.length; i++) {
+    //             // $('#players_lobby').append('<li class="pl-3 list-inline-item" id="' + game_model.players[i] + '"><i class="fas fa-user-astronaut"></i> ' + game_model.players[i] + '</li>');
+    //             playerListNotepad.push(game_model.players[i] + "_HEAD");
+    //         }
+    //         updateTable(playerListNotepad);
+    //     }
+    //
+    // } catch (e) { }
+
     try {
-        const game_model = JSON.parse(data["model"]);
-        if($("#players_lobby li").length != game_model.players.length)
-        {
-            var playerListNotepad = []
-
-            $('#players_lobby').empty();
-            for(let i = 0; i < game_model.players.length; i++) {
-                $('#players_lobby').append('<li class="pl-3 list-inline-item" id="' + game_model.players[i] + '"><i class="fas fa-user-astronaut"></i> ' + game_model.players[i] + '</li>');
-                playerListNotepad.push(game_model.players[i] + "_HEAD");
-            }
-            updateTable(playerListNotepad);
-        }
-
+        let playerDetails = data["players_details"];
+        updatePlayersDetailsLocation(playerDetails);
+        updateNotepadTable(playerDetails);
 
     } catch (e) { }
 
@@ -57,11 +62,6 @@ gameSocket.onmessage = function(e) {
     try {
         let cards = data["your_cards"];
         updateYourCardsSection(cards);
-    } catch (e) { }
-
-    try {
-        let locations = data["update_location"];
-        updatePlayersLocation(locations);
     } catch (e) { }
 
     try {
@@ -177,9 +177,10 @@ function showAvailableCharacters(availableCharacters) {
     for(var i = 0; i < availableCharacters.length; i++) {
         let imageName = availableCharacters[i].replace(" ", "");
         let radioHTML = '<div class="form-check pt-2">' +
-            '<input class="form-check-input mt-3" type="radio" name="characterChosen" id="' + imageName + '" value="' + availableCharacters[i] + '"/>' +
-            '<img class="rounded" src="/static/images/' + imageName + '.png" width="50" height="50"></img>' +
-            '<label class="form-check-label pl-2" for="' + imageName + '"> ' + availableCharacters[i] + ' </label></div>';
+            '<input class="form-check-input mt-3" type="radio" name="characterChosen" id="' + imageName.replace(".", "") + '" value="' + availableCharacters[i] + '"/>' +
+            '<label class="form-check-label" for="' + imageName.replace(".", "") + '">' +
+            '<img class="rounded" src="/static/images/' + imageName + '.png" width="50" height="50" for="' + imageName.replace(".", "") + '"></img>' +
+            ' ' + availableCharacters[i] + ' </label></div>';
 
         $('#charactersRadios').append(radioHTML);
     }
@@ -205,29 +206,35 @@ function updateYourCardsSection(cards) {
     }
 
     $('#your_cards').empty();
-    $('#your_cards').append('<li class="list-group-item text-center">Your Cards</li>');
     for(var i = 0; i < cards.length; i++){
-        let cardHTML = '<li id="player_card_person" class="list-group-item"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img>' +
-        '<label class="form-check-label pl-2"> ' + cards[i] + ' </label></div></li>';
-        $('#your_cards').append(cardHTML);
+        let flexCardHTML = '<div class="p-2 bg-white bd-highlight mr-3 rounded"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img><label class="form-check-label pl-2"> ' + cards[i] + ' </label></div>';
+
+        $('#your_cards').append(flexCardHTML);
     }
 }
 
 //////////// Update "Players Location" section
-function updatePlayersLocation(locations) {
-    if(typeof locations == 'undefined') {
+function updatePlayersDetailsLocation(playerDetails) {
+    if(typeof playerDetails == 'undefined') {
         return;
     }
 
-    $('#players_location').empty();
-    $('#players_location').append('<li class="list-group-item text-center">Current Players Locations</li>');
+    $('#players_details').empty();
 
     // player, location
-    for (const [key, value] of Object.entries(locations)) {
-        let liHTML = '<li class="list-group-item">' + key + ' @ ' + value + '</li>'
-        $('#players_location').append(liHTML);
-    }
+    for (const [key, value] of Object.entries(playerDetails)) {
+        let playerName = key;
+        let playerLocation = value["location"];
+        let playerCharacter = value["character"].replace(" ", "");
 
+        let mediaHTML = '<div class="media p-1">\n' +
+            '    <img class="rounded mr-2" src="/static/images/' + playerCharacter + '.png" height="50" width="50">\n' +
+            '    <div class="media-body text-white">\n' +
+            '         <div class="text-wrap" style=" width: 10em;">' + playerName + ' @ ' + playerLocation + '</div>\n' +
+            '    </div>\n' +
+            '    </div>';
+        $('#players_details').append(mediaHTML);
+    }
 }
 
 //////////// Enable or Disable Buttons
@@ -285,7 +292,7 @@ function updateSuggestionRoom(currentLocation) {
 //////////// Show Approver/Disapprover a Modal
 function displayApprovalDisapproval(cardsApproveDisapprove, suggestMsg, playersOwnerCards, suggesterName) {
     if(typeof cardsApproveDisapprove === 'undefined' || suggestMsg === 'undefined' || playersOwnerCards === 'undefined'
-        || suggesterName == 'undefined') {
+        || suggesterName === 'undefined') {
         return;
     }
 
@@ -396,33 +403,41 @@ $('#game-player-chosen-submit').click(function() {
 });
 
 
-function updateTable(playerList) {
+function updateNotepadTable(playerDetails) {
     // if table does not contain playerName, add
     let existingPlayerNameId = [];
 
     $(".notepad-header td").each(function() {
-
         if(this.id !== '')
         {
             existingPlayerNameId.push(this.id);
         }
     });
 
+    let playersList = []
+    for (const [key, value] of Object.entries(playerDetails)) {
+        playersList.push(key + "_HEAD");
+    }
+
     let addCol = []
-    jQuery.grep(playerList, function(el) {
+    jQuery.grep(playersList, function(el) {
         if (jQuery.inArray(el, existingPlayerNameId) === -1) {
             addCol.push(el);
         }
     });
+
     let removCol = [];
     jQuery.grep(existingPlayerNameId, function(el) {
-        if (jQuery.inArray(el, playerList) === -1) {
+        if (jQuery.inArray(el, playersList) === -1) {
             removCol.push(el);
         }
     });
 
+    console.log(addCol);
+    console.log(removCol);
+
     for(let i = 0; i < addCol.length; i++) {
-        addColumnToNotepad(addCol[i]);
+        addColumnToNotepad(addCol[i], playerDetails);
     }
     for(let i = 0; i < removCol.length; i++) {
         removeColumnFromNotepad(removCol[i]);
@@ -430,9 +445,12 @@ function updateTable(playerList) {
 
 }
 
-function addColumnToNotepad(playerId) {
+function addColumnToNotepad(playerId, playerDetails) {
+    let playerName = playerId.slice(0, playerId.lastIndexOf("_HEAD"));
+    let playerCharacter = playerDetails[playerName]["character"].replace(" ", "");
+
     let theadTdHTML = '<td class="text-center" data-name="' + playerId + '" id="' + playerId + '">' +
-        '<img class="rounded" src="/static/images/ProfessorPlum.png" width="25" height="25"></td>';
+        '<img class="rounded" src="/static/images/'+ playerCharacter + '.png" width="30" height="30"></td>';
 
     let tdOptionsHTML = '<td class="text-center">\n' +
         '                <select class="selectpicker" title=" " data-width="fit" data-style="btn-secondary btn-sm">\n' +

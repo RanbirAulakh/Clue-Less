@@ -19,7 +19,7 @@ class GameConsumers(AsyncWebsocketConsumer):
     # instead of storing the data to the DB and reading from the DB,
     # we can manage the game from the memory
     # This is the model that will be returned to user (contains partial data)
-    game_model = {}
+    # game_model = {}
 
     # Private game memory (contains all data)
     game_memory_data = {}
@@ -54,10 +54,6 @@ class GameConsumers(AsyncWebsocketConsumer):
             print("Creating new game instances")
             self.game_memory_data[self.game_id] = game.Game()
 
-            self.game_model[self.game_id] = {}
-            self.game_model[self.game_id]['id'] = str(self.game_id)
-            self.game_model[self.game_id]['players'] = []
-
             self.game_log[self.game_id] = {}
             self.game_log[self.game_id] = ''
 
@@ -79,7 +75,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                 'type': 'chat_message',
                 'message': msg,
                 'game_status': self.game_memory_data[self.game_id].status,
-                'model': json.dumps(self.game_model[self.game_id]),
+                'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
             }
         )
 
@@ -103,7 +99,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             {
                 'type': 'chat_message',
                 'message': msg,
-                'model': json.dumps(self.game_model[self.game_id])
+                'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
             }
         )
 
@@ -126,10 +122,11 @@ class GameConsumers(AsyncWebsocketConsumer):
             await self.get_locations()
             await self.update_users_turn()
 
-        elif "show_available_moves" in text_data_json:
-            await self.show_available_rooms()
+        # elif "show_available_moves" in text_data_json:
         elif "type" in text_data_json:
-            if text_data_json["type"] == "select_move":
+            if text_data_json["type"] == "show_available_moves":
+                await self.show_available_rooms()  # this not implemented? My head hurts
+            elif text_data_json["type"] == "select_move":
                 await self.select_move(text_data_json)
             elif text_data_json["type"] == "select_accuse":
                 await self.select_accuse(text_data_json)
@@ -141,6 +138,8 @@ class GameConsumers(AsyncWebsocketConsumer):
                 await self.choose_approved_cards(text_data_json)
             elif text_data_json["type"] == "what_card_to_show":
                 await self.show_one_card(text_data_json)
+            elif text_data_json["type"] == "quit_game":
+                pass
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -159,13 +158,12 @@ class GameConsumers(AsyncWebsocketConsumer):
     async def update_user_joined(self):
         user = str(self.scope['user'])
 
-        self.game_model[self.game_id]['players'].append(user)
-
         if not self.game_memory_data[self.game_id].already_chosen(user):
             await self.send(text_data=json.dumps({
                     "pick_character": True,
-                    'game_status': self.game_memory_data[self.game_id].status,
-                    "available_characters": self.game_memory_data[self.game_id].available_characters
+                    "game_status": self.game_memory_data[self.game_id].status,
+                    "available_characters": self.game_memory_data[self.game_id].available_characters,
+                    "players_details": self.game_memory_data[self.game_id].get_character_game_pieces(),
                 }
             ))
         else:
@@ -180,8 +178,8 @@ class GameConsumers(AsyncWebsocketConsumer):
             await self.send(text_data=json.dumps({
                     "update_character_section": character_select,
                     "your_cards": player_cards,
-                    'game_status': self.game_memory_data[self.game_id].status,
-                    "update_location": locations,
+                    "game_status": self.game_memory_data[self.game_id].status,
+                    "players_details": self.game_memory_data[self.game_id].get_character_game_pieces(),
                 }
             ))
 
@@ -189,7 +187,7 @@ class GameConsumers(AsyncWebsocketConsumer):
         user = str(self.scope['user'])
 
         # self.game_memory_data[self.game_id]['game'].remove_player(user)
-        self.game_model[self.game_id]['players'].remove(user)
+        # self.game_model[self.game_id]['players'].remove(user)
 
     async def update_chosen_character(self, character_select):
         user = str(self.scope['user'])
@@ -204,12 +202,14 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'message': msg,
                     "available_characters": self.game_memory_data[self.game_id].available_characters,
+                    'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
                 }
             )
             await self.send(text_data=json.dumps({
                     "pick_character": False,
                     "available_characters": None,
-                    "update_character_section": character_select
+                    "update_character_section": character_select,
+                    'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
                 }
             ))
 
@@ -218,19 +218,29 @@ class GameConsumers(AsyncWebsocketConsumer):
             if str(required_players) == str(len(self.game_memory_data[self.game_id].players)):
                 if self.game_memory_data[self.game_id].status == "Not Started":
                     self.game_memory_data[self.game_id].start_game()
-                    self.game_model[self.game_id]['status'] = "Started"
+                    self.game_memory_data[self.game_id].status = "Started"
+
+                    # update the database that user can no longer join
+                    self.set_joinable_false()
 
         else:
             await self.send(text_data=json.dumps({
                     "error": "Character already chosen! Please choose another one!",
                     "pick_character": True,
-                    "available_characters": self.game_memory_data[self.game_id].available_characters
+                    "available_characters": self.game_memory_data[self.game_id].available_characters,
+                    'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
                 }
             ))
 
     @database_sync_to_async
     def get_required_players(self):
         return models.Game.objects.get(id=self.game_id).required_players
+
+    @database_sync_to_async
+    def set_joinable_false(self):
+        pass
+        # models.Game.objects.
+        # return models.Game.objects.get(id=self.game_id).required_players
 
     async def get_cards(self):
         """
@@ -270,9 +280,17 @@ class GameConsumers(AsyncWebsocketConsumer):
                 {
                     'type': 'chat_message',
                     'game_status': self.game_memory_data[self.game_id].status,
-                    "update_location": self.game_memory_data[self.game_id].get_locations()
+                    'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
+                    # "update_location": self.game_memory_data[self.game_id].get_locations()
                 }
             )
+
+    async def get_all_players_data(self):
+        """
+        TODO add inactive player
+        :return:
+        """
+        player_data = self.game_memory_data[self.game_id].get_character_game_pieces
 
     async def update_users_turn(self):
         if self.game_memory_data[self.game_id].status == "Started":
@@ -397,7 +415,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                 'message': msg,
                 'game_status': self.game_memory_data[self.game_id].status,
                 'enable_btn': {'move': False, 'accuse': False, 'suggest': False, 'end_turn': False},
-                'update_location': self.game_memory_data[self.game_id].get_locations()
+                'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
             }
         )
 
