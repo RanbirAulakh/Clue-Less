@@ -5,7 +5,7 @@
 
     <div class=""> <!-- Took out container (does it look good? idk) -->
         <div class="row">
-            <div class="col-md-12 mt-3">
+            <div class="col-md-12">
                 <div id="incorrect-noti">
 
                 </div>
@@ -16,7 +16,7 @@
                 <div class="breadcrumb bg-dark list-inline text-black" id="players_details">
                 </div>
                 <h4>Your Cards</h4>
-                <div class="d-flex mb-3 p-2" id="your_cards">
+                <div class="breadcrumb bg-dark list-inline text-black d-flex mb-3 p-2" id="your_cards">
 
                 </div>
             </div>
@@ -83,6 +83,23 @@
                     Quit Game
                 </button>
             </div>
+
+{#            <div id="approveCheckboxes">#}
+{#                <div class="form-check pt-2">#}
+{#                    <input name="approved_cards_checkbox" type="checkbox" class="form-check-input" id="ColonelMustardCheckbox" value="ColonelMustard"/>#}
+{#                    <label class="form-check-label" for="ColonelMustardCheckbox">#}
+{#                        <img class="rounded" src="{% static "images/ColonelMustard.png" %}" width="50" height="50" for="ColonelMustardCheckbox"></img>#}
+{#                        Colonel Mustard#}
+{#                    </label>#}
+{#                </div>#}
+{#                <div class="form-check pt-2">#}
+{#                    <input name="approved_cards_checkbox" type="checkbox" class="form-check-input" id="PlumProfessor" value="ColonelMustard"/>#}
+{#                    <label class="form-check-label" for="PlumProfessor">#}
+{#                        <img class="rounded" src="{% static "images/ProfessorPlum.png" %}" width="50" height="50" for="PlumProfessor"></img>#}
+{#                        Colonel Mustard#}
+{#                    </label>#}
+{#                </div>#}
+{#            </div>#}
 
             <!-- Popup Modals -->
             {% include "modals/choose_character.html" %}

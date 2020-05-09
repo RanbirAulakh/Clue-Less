@@ -27,7 +27,11 @@
                             <td>{{ item.created_date }}</td>
                             <td>{{ item.type }}</td>
                             <td>
-                                <a style="margin-top: -7px"  class="btn btn-sm btn-primary" href="/game/{{ item.id }}" role="button"><i class="fas fa-gamepad"></i> Join</a>
+                                {% if item.is_joinable %}
+                                    <a style="margin-top: -7px"  class="btn btn-sm btn-primary" href="/game/{{ item.id }}" role="button"><i class="fas fa-gamepad"></i> Join</a>
+                                {% else %}
+                                    <a style="margin-top: -7px" href="#" class="btn btn-secondary btn-sm disabled" role="button" aria-disabled="true"><i class="fas fa-gamepad"></i> Lobby is Full!</a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

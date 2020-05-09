@@ -21,6 +21,10 @@ If this is an initial setup or if you have made some changes to the Model classe
 
 - `python3 manage.py migrate`
 
+If this is an initial setup, run the command below:
+
+- `python manage.py loaddata init_data.json`
+
 `python3 manage.py runserver`
 
 Then open web broswer (Chrome, Firefox, or Edge) and go to `http://127.0.0.1:8000/`

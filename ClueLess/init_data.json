@@ -1,0 +1,18 @@
+[
+  {
+    "model": "game.GameStatistic",
+    "pk": 1,
+    "fields": {
+      "total_accuse": 0,
+      "total_accuse_failed": 0,
+      "total_accuse_success": 0,
+      "total_suggestion": 0,
+      "chosen_professor_plum": 0,
+      "chosen_colonel_mustard": 0,
+      "chosen_mr_green": 0,
+      "chosen_mrs_white": 0,
+      "chosen_ms_scarlet": 0,
+      "chosen_mrs_peacock": 0
+    }
+  }
+]

@@ -23,23 +23,6 @@ gameSocket.onmessage = function(e) {
         $('#game-log').scrollTop($('#game-log')[0].scrollHeight);
     } catch (e) { }
 
-    // // game model
-    // try {
-    //     const game_model = JSON.parse(data["model"]);
-    //     if($("#players_lobby li").length != game_model.players.length)
-    //     {
-    //         var playerListNotepad = []
-    //
-    //         // $('#players_lobby').empty();
-    //         for(let i = 0; i < game_model.players.length; i++) {
-    //             // $('#players_lobby').append('<li class="pl-3 list-inline-item" id="' + game_model.players[i] + '"><i class="fas fa-user-astronaut"></i> ' + game_model.players[i] + '</li>');
-    //             playerListNotepad.push(game_model.players[i] + "_HEAD");
-    //         }
-    //         updateTable(playerListNotepad);
-    //     }
-    //
-    // } catch (e) { }
-
     try {
         let playerDetails = data["players_details"];
         updatePlayersDetailsLocation(playerDetails);
@@ -207,7 +190,7 @@ function updateYourCardsSection(cards) {
 
     $('#your_cards').empty();
     for(var i = 0; i < cards.length; i++){
-        let flexCardHTML = '<div class="p-2 bg-white bd-highlight mr-3 rounded"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img><label class="form-check-label pl-2"> ' + cards[i] + ' </label></div>';
+        let flexCardHTML = '<div class="p-2 text-white mr-3 rounded"><img class="rounded" src="/static/images/' + cards[i].replace(" ", "") + '.png" width="50" height="50"></img><label class="form-check-label pl-2"> ' + cards[i] + ' </label></div>';
 
         $('#your_cards').append(flexCardHTML);
     }
@@ -400,6 +383,7 @@ $('#game-player-chosen-submit').click(function() {
     gameSocket.send(JSON.stringify({
         'player_select': playerCharacter
     }));
+    $('#chooseCharacterModal').modal('hide');
 });
 
 

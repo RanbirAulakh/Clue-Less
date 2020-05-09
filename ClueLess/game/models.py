@@ -14,7 +14,6 @@ class Game(models.Model):
     completed_date = models.DateTimeField(null=True, blank=True)  # if game is completed
     winner = models.ForeignKey(User, null=True, blank=True, related_name='winner', on_delete=models.DO_NOTHING)
 
-    current_turn = models.ForeignKey(User, null=True, blank=True, related_name='current_turn', on_delete=models.DO_NOTHING)
     is_joinable = models.BooleanField(default=True)
 
     def __unicode__(self):
@@ -22,11 +21,8 @@ class Game(models.Model):
 
 
 class GameLog(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.DO_NOTHING)
-    text = models.TextField()
-
-    created_date = models.DateField(auto_now_add=True)
-    modified_date = models.DateField(auto_now=True)
+    game_id = models.TextField()
+    text = models.TextField(null=True, blank=True)
 
     def __unicode__(self):
         return 'Game #{0} Log'.format(self.game.id)
@@ -40,15 +36,17 @@ class GameAuthorized(models.Model):
         return 'Game #{0} Authorized'.format(self.game_id)
 
 
-class GameStatistics(models.Model):
-
+class GameStatistic(models.Model):
     total_accuse = models.IntegerField()
     total_accuse_failed = models.IntegerField()
     total_accuse_success = models.IntegerField()
     total_suggestion = models.IntegerField()
 
+    chosen_professor_plum = models.IntegerField()
+    chosen_colonel_mustard = models.IntegerField()
+    chosen_mr_green = models.IntegerField()
+    chosen_mrs_white = models.IntegerField()
+    chosen_ms_scarlet = models.IntegerField()
+    chosen_mrs_peacock = models.IntegerField()
 
-
-    def __unicode__(self):
-        return 'Game #{0} Statistics'.format(self.game_id)
 
