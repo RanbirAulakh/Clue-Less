@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotFound
 from django.shortcuts import render, redirect
 from . import forms
 from . import models
@@ -24,6 +25,10 @@ def create_game_page(request):
                     game_auth_model = models.GameAuthorized(game_id=m.id, user_id=request.user.id)
                     game_auth_model.save()
 
+                # create game log
+                game_log_model = models.GameLog(game_id=m.id)
+                game_log_model.save()
+
                 return redirect('/game/{0}'.format(m.id))
         else:
             form = forms.GameForm()
@@ -37,7 +42,10 @@ def game(request, game_id):
     if not request.user.is_authenticated:
         return redirect('/login')
 
-    game_details = models.Game.objects.get(id=game_id)
+    try:
+        game_details = models.Game.objects.get(id=game_id)
+    except:
+        return render(request, "404.html")
 
     if game_details.is_joinable:
         if game_details.type == 'Private':
@@ -49,6 +57,7 @@ def game(request, game_id):
             return render(request, 'game.html', {'game_details': game_details})
     else:
         return redirect('find_game')
+
 
 
 def auth_game_user(game_id, user_id):

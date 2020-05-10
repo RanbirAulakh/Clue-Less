@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'home',
     'game',
     'channels',
+    'account'
 ]
 
 MIDDLEWARE = [

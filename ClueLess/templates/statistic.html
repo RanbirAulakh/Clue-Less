@@ -6,40 +6,36 @@
         To view your own personal stats, please login!
         </div>
     {% else %}
-        <div class="alert bg-danger text-white" role="alert">
-          Your record (WIP) - These are hardcoded values!
-        </div>
+        <h2>Your Personal Record</h2>
         <div class="row">
             <div class="col-xl-4 col-md-4">
                 <div class="card bg-dark text-white mb-4">
+                    <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-gamepad"></i> Total Games Played</div>
+                    <div class="card-body text-center display-4">{{ user_stats.total_game }}</div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-md-4">
+                <div class="card bg-dark text-white mb-4">
                     <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-trophy"></i> Total Wins</div>
-                    <div class="card-body text-center display-4">2</div>
+                    <div class="card-body text-center display-4">{{ user_stats.total_wins }}</div>
                 </div>
             </div>
             <div class="col-xl-4 col-md-4">
                 <div class="card bg-dark text-white mb-4">
                     <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-poop"></i> Total Loss</div>
-                    <div class="card-body text-center display-4">2</div>
-                </div>
-            </div>
-            <div class="col-xl-4 col-md-4">
-                <div class="card bg-dark text-white mb-4">
-                    <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-gamepad"></i> Total Games Played</div>
-                    <div class="card-body text-center display-4">2</div>
+                    <div class="card-body text-center display-4">{{ user_stats.total_loss }}</div>
                 </div>
             </div>
             <div class="col-xl-4 col-md-4">
                 <div class="card bg-dark text-white mb-4">
                     <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Chosen Character</div>
-                    <div class="card-body text-center display-4">Scarlet</div>
+                    <div class="card-body text-center display-4">{{ user_most_chosen_character }}</div>
                 </div>
             </div>
         </div>
     {% endif %}
 
-    <div class="alert bg-primary text-white" role="alert">
-      Global Statistic (WIP) - These are hardcoded values!
-    </div>
+    <h2>Global Statistic</h2>
     <div class="row">
         <div class="col-xl-4 col-md-4">
             <div class="card bg-dark text-white mb-4">
@@ -55,20 +51,32 @@
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card bg-dark text-white mb-4">
-                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Popular Character</div>
-                <div class="card-body text-center display-4">Scarlet</div>
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-eye"></i> Total Accuse</div>
+                <div class="card-body text-center display-4">{{ global_statistics.total_accuse }}</div>
             </div>
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card bg-dark text-white mb-4">
-                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-trophy"></i> Most Wins</div>
-                <div class="card-body text-center display-4">User Account</div>
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-check-circle"></i> Total Accuse Success</div>
+                <div class="card-body text-center display-4">{{ global_statistics.total_accuse_success }}</div>
             </div>
         </div>
         <div class="col-xl-4 col-md-4">
             <div class="card bg-dark text-white mb-4">
-                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-poop"></i> Worst Guesser</div>
-                <div class="card-body text-center display-4">User Account</div>
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-poop"></i> Total Accuse Failed</div>
+                <div class="card-body text-center display-4">{{ global_statistics.total_accuse_failed }}</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-lightbulb"></i> Total Suggestions</div>
+                <div class="card-body text-center display-4">{{ global_statistics.total_suggestion }}</div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Chosen Character</div>
+                <div class="card-body text-center display-4">{{ most_chosen_character }}</div>
             </div>
         </div>
     </div>

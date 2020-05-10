@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-
+    <h1>Welcome to ClueLess game!</h1>
     {% if not user.is_authenticated %}
         <div class="alert bg-warning text-white" role="alert">
         Please Login if you would like to create or join game!
@@ -20,14 +20,10 @@
                 <div class="card-body text-center display-4">{{ total_games }}</div>
             </div>
         </div>
-{#        <div class="col-xl-4 col-md-4">#}
-{#            <div class="card bg-dark text-white mb-4">#}
-{#                <div class="card-header text-center sb-nav-link-icon"><i class="fas fa-user-graduate"></i> Most Popular Character</div>#}
-{#                <div class="card-body text-center display-4">Scarlet</div>#}
-{#            </div>#}
-{#        </div>#}
     </div>
 
-
+    <h5>Feel free to <a href="/create_game">create the game</a> or <a href="/find_game">join your friend's game!</a>
+        <br/><br/>
+        <a href="/statistic">Check out Global Statistics!</a> Find out who is the most popular character? total accusation?</h5>
 
 {% endblock %}
