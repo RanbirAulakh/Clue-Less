@@ -30,7 +30,7 @@ class GameLog(models.Model):
 
 class GameAuthorized(models.Model):
     game_id = models.TextField()
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __unicode__(self):
         return 'Game #{0} Authorized'.format(self.game_id)

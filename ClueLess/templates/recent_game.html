@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="col-md-2">
+        <div class="card">
+            <div class="card-header text-center">
+                <i class="fas fa-trophy"></i> Winner
+            </div>
+            <div class="card-body text-center">
+                <h5 class="card-title">{{ game_details.winner }}</h5>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="form-group mt-3 col-md-8">
+        <h3>Game Log</h3>
+        <textarea class="form-control" id="game-log" rows="20" disabled>
+            {{ game_log.text }}
+        </textarea>
+    </div>
+
+
+{% endblock %}

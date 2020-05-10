@@ -144,8 +144,8 @@ function displayCharacterModal(canPickCharacter, availableCharacters) {
         showAvailableCharacters(availableCharacters);
 
         // show modal
-        $('#chooseCharacterModal').modal('show');
         $('#chooseCharacterModal').modal({backdrop: 'static', keyboard: false})
+        $('#chooseCharacterModal').modal('show');
     } else if(canPickCharacter == false) {
         // do not show modal
         $('#chooseCharacterModal').modal('hide');
@@ -386,7 +386,6 @@ $('#game-player-chosen-submit').click(function() {
     $('#chooseCharacterModal').modal('hide');
 });
 
-
 function updateNotepadTable(playerDetails) {
     // if table does not contain playerName, add
     let existingPlayerNameId = [];
@@ -462,3 +461,16 @@ function removeColumnFromNotepad(playerId) {
 }
 
 
+
+$('.quit_game_button').click(async function() {
+    await gameSocket.send(JSON.stringify({
+        'type': 'quit_game'
+    }));
+});
+
+$('#leaveGameModal').on('show.bs.modal', function (event) {
+    let button = $(event.relatedTarget) // Button that triggered the modal
+    let recipient = button.data('link') // Extract info from data-* attributes
+    let modal = $(this)
+    modal.find('.quit_game_button').attr("href", recipient);
+})
