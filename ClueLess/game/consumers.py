@@ -10,7 +10,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.exceptions import DenyConnection
 from channels.db import database_sync_to_async
 
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 
 from . import models
 from account import models as Account
@@ -93,7 +93,7 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-        await self.update_user_left()
+        # await self.update_user_left()
         msg = "{0} left the game {1}".format(self.scope["user"], self.game_id)
         self.game_log[self.game_id] += '\n' + msg
 
@@ -120,7 +120,7 @@ class GameConsumers(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
 
         if "player_select" in text_data_json:
-            await self.update_chosen_character(text_data_json['player_select'])
+            await self.update_chosen_character(text_data_json['player_select'], False)
             await self.get_cards()
             await self.get_locations()
             await self.update_users_turn()
@@ -142,7 +142,13 @@ class GameConsumers(AsyncWebsocketConsumer):
             elif text_data_json["type"] == "what_card_to_show":
                 await self.show_one_card(text_data_json)
             elif text_data_json["type"] == "quit_game":
-                pass
+                await self.quit_game()
+
+                if self.game_memory_data[self.game_id].status == "Not Started":
+                    await self.update_chosen_character(None, True)
+                elif self.game_memory_data[self.game_id].status == "Started":
+                    # alert others that they got their new cards!
+                    pass
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -185,13 +191,19 @@ class GameConsumers(AsyncWebsocketConsumer):
                 }
             ))
 
-    async def update_user_left(self):
-        user = str(self.scope['user'])
+    async def update_chosen_character(self, character_select, refresh_required):
+        if refresh_required:
+            await self.channel_layer.group_send(
+                self.game_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': "Adding character back to available characters list.",
+                    "available_characters": self.game_memory_data[self.game_id].available_characters,
+                    'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
+                }
+            )
+            return
 
-        # self.game_memory_data[self.game_id]['game'].remove_player(user)
-        # self.game_model[self.game_id]['players'].remove(user)
-
-    async def update_chosen_character(self, character_select):
         user = str(self.scope['user'])
         self.game_memory_data[self.game_id].add_player(user)
         if self.game_memory_data[self.game_id].player_select_character(user, character_select):
@@ -242,10 +254,9 @@ class GameConsumers(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_joinable_false(self):
-        pass
-        # game_object = models.Game.objects.get(id=self.game_id)
-        # game_object.is_joinable = False
-        # game_object.save(update_fields=['is_joinable'])
+        game_object = models.Game.objects.get(id=self.game_id)
+        game_object.is_joinable = False
+        game_object.save(update_fields=['is_joinable'])
 
     async def get_cards(self):
         """
@@ -286,7 +297,6 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'type': 'chat_message',
                     'game_status': self.game_memory_data[self.game_id].status,
                     'players_details': self.game_memory_data[self.game_id].get_character_game_pieces(),
-                    # "update_location": self.game_memory_data[self.game_id].get_locations()
                 }
             )
 
@@ -649,6 +659,29 @@ class GameConsumers(AsyncWebsocketConsumer):
         await self.end_turn()
 
     @database_sync_to_async
+    def quit_game(self):
+        user = self.scope['user']
+        models.GameAuthorized.objects.filter(user_id=self.scope['user'].id).delete()
+
+        # if the game hasn't started
+        if self.game_memory_data[self.game_id].status == "Not Started":
+            for i in self.game_memory_data[self.game_id].players:
+                if i.name == str(user):
+                    if i.character:
+                        print("Player ({0}) left. Adding {1} back to available_characters list".format(user, i.character))
+                        self.game_memory_data[self.game_id].available_characters.append(i.character)
+
+                        break
+
+            # remove player from players list
+            self.game_memory_data[self.game_id].remove_player(str(user))
+
+        elif self.game_memory_data[self.game_id].status == "Started":
+            # game has started, pass cards to the rest of the players
+
+            pass
+
+    @database_sync_to_async
     def update_db_accuse(self, success):
         game_stats = models.GameStatistic.objects.get(id=1)
         game_stats.total_accuse += 1
@@ -674,7 +707,6 @@ class GameConsumers(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def update_db_chosen_character(self, player_name, character):
-        print(player_name)
         player_stats = Account.UserStatistic.objects.get(user=player_name)
         game_stats = models.GameStatistic.objects.get(id=1)
 
@@ -715,17 +747,14 @@ class GameConsumers(AsyncWebsocketConsumer):
         game_db_log.text = self.game_log[game_id]
         game_db_log.save()
 
-        print(player_winner)
-
-        # Below dont work for some reason...
         # whoever is in game, assign them a loss except a winner
-        # for i in self.game_memory_data[self.game_id].players:
-        #     print(i.name)
-        #     if i.name == player_winner:
-        #         continue
-        #     else:
-        #         player_stats = Account.UserStatistic.objects.get(user=i.name)
-        #         player_stats.total_loss += 1
-        #         player_stats.save()
+        for i in self.game_memory_data[self.game_id].players:
+            if i.name == player_winner:
+                continue
+            else:
+                pk_user_id = User.objects.get(username=i.name).pk
+                player_stats = Account.UserStatistic.objects.get(user=pk_user_id)
+                player_stats.total_loss += 1
+                player_stats.save()
 
 

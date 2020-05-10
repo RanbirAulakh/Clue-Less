@@ -86,21 +86,23 @@ class Game:
 	def remove_player(self, player_name):
 		"""
 		Remove player from the list
-		- If player hasn't choose the character
-		-- Remove
-		- If player has choose the character
-		-- Do not remove
-		-- TODO implement show cards to other members if PLAYER choose the card and LEFT.
 		:param player_name:
 		:return:
 		"""
 		for i in self.players:
-			# if player left and haven't picked their character
-			# then, we do not need to hold their spot (or cards)
-			if i.name == player_name and i.character is None:
+			if i.name == player_name:
 				print("Removing {0} from the game.".format(i.name))
 				self.players.remove(i)
 				break
+
+	def pass_cards_to_players(self, player_name):
+		"""
+		If the game is started and the player quit the game,
+		pass that player's cards to rest of the players in the game
+		:param player_name:
+		:return:
+		"""
+		pass
 
 	def player_select_character(self, player_name, chosen_character):
 		"""

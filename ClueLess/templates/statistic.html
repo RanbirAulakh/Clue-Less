@@ -3,7 +3,7 @@
 {% block content %}
     {% if not user.is_authenticated %}
         <div class="alert bg-warning text-white" role="alert">
-        To view your own personal stats, please login!
+        To view your own personal stats, please <a href="/login"> login!</a>
         </div>
     {% else %}
         <h2>Your Personal Record</h2>
