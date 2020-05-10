@@ -10,6 +10,7 @@ from .player import Player
 from .room import *
 from .clue import Clue
 from .map import Map
+from bs4 import BeautifulSoup
 
 
 class Game:
@@ -120,6 +121,84 @@ class Game:
 
 			if flag:
 				break
+
+	def move_change_html(self, next_move):
+		character = self.get_character
+		currentlocation = self.get_current_location
+		if(character == constants.PLUM):
+			findregex = 'alt="Plum"'
+			endregex = 'alt="Plum" src = "../../resources/images/ProfessorPlum.png" />'
+		elif(character == constants.SCARLET):
+			findregex = 'alt="Scarlet"'
+			endregex = 'alt="Scarlet" src = "../../resources/images/Ms.Scarlet.png" />'
+		elif(character == constants.WHITE):
+			findregex = 'alt="White"'
+			endregex = 'alt="White" src = "../../resources/images/Mrs.White.png" />'
+		elif(character == constants.MUSTARD):
+			findregex = 'alt="Mustard"'
+			endregex = 'alt = "Mustard" src="../../resources/images/ColonelMustard.png" />'
+		elif(character == constants.PEACOCK):
+			findregex = 'alt="Peacock"'
+			endregex = 'alt="Peacock" src = "../../resources/images/Mrs.Peacock.png" />'
+		elif(character == constants.GREEN):
+			findregex = 'alt="Green"'
+			endregex = 'alt="Green" src = "../../resources/images/Mr.Green.png" />'
+		target_room = self.map.rooms[next_move]
+		original_text = ""
+		if(target_room == constants.HALL):
+			original_text = "hall"
+		elif(target_room == constants.STUDY):
+			original_text = "study"
+		elif(target_room == constants.LOUNGE):
+			original_text = "lounge"
+		elif(target_room == constants.LIBRARY):
+			original_text = "library"
+		elif(target_room == constants.BILLIARD):
+			original_text = "billiard"
+		elif(target_room == constants.DINING):
+			original_text = "dining"
+		elif(target_room == constants.CONSERVATORY):
+			original_text = "conservatory"
+		elif(target_room == constants.BALLROOM):
+			original_text = "ballroom"
+		elif(target_room == constants.KITCHEN):
+			original_text = "kitchen"
+		elif(target_room == constants.STUDY_HALL):
+			original_text = "studyhall"
+		elif(target_room == constants.HALL_LOUNGE):
+			original_text = "halllounge"
+		elif(target_room == constants.STUDY_LIBRARY):
+			original_text = "studylibrary"
+		elif(target_room == constants.HALL_BILLIARD):
+			original_text = "hallbilliard"
+		elif(target_room == constants.LOUNGE_DINING):
+			original_text = "loungediningroom"
+		elif(target_room == constants.LIBRARY_BILLIARD):
+			original_text = "librarybilliard"
+		elif(target_room == constants.BILLIARD_DINING):
+			original_text = "billiarddining"
+		elif(target_room == constants.LIBRARY_CONSERVATORY):
+			original_text = "libraryconservatory"
+		elif(target_room == constants.BILLIARD_BALLROOM):
+			original_text = "billiardballroom"
+		elif(target_room == constants.DINING_KITCHEN):
+			original_text = "diningkitchen"
+		elif(target_room == constants.CONSERVATORY_BALLROOM):
+			original_text = "conservatoryballroom"
+		elif(target_room == constants.BALLROOM_KITCHEN):
+			original_text = "ballroomkitchen"
+		firsttext = '<img class = ' + currentlocation + ' ' + endregex
+		newhtmltext = '<img class = ' + original_text + ' ' +endregex
+		target_file = open('../../templates/game/map.html', 'r')
+		target_text = target_file.read()
+
+		soup = BeautifulSoup(target_text, 'html.parser')
+		soup.find(firsttext).replace_with(newhtmltext)
+
+		target_file.close()
+		dest_file = open("../../templates/game/map.html", 'w')
+		dest_file.write(soup)
+		dest_file.close()
 
 	def player_select_character(self, player_name, chosen_character):
 		"""
@@ -291,6 +370,7 @@ class Game:
 
 						self.players[i].set_room(target_room)
 						self.players[i].set_current_location(target_room.get_name())
+						move_change_html(self.players[i], target_room)
 						self.is_move_made = True
 						return True
 					else:
