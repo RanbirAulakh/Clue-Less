@@ -121,7 +121,7 @@ class GameConsumers(AsyncWebsocketConsumer):
 
         if "player_select" in text_data_json:
             await self.update_chosen_character(text_data_json['player_select'], False)
-            await self.get_cards()
+            await self.get_cards(False)
             await self.get_locations()
             await self.update_users_turn()
 
@@ -148,7 +148,7 @@ class GameConsumers(AsyncWebsocketConsumer):
                     await self.update_chosen_character(None, True)
                 elif self.game_memory_data[self.game_id].status == "Started":
                     # alert others that they got their new cards!
-                    pass
+                    await self.get_cards(True)
         else:
             message = text_data_json['message']
             await self.channel_layer.group_send(
@@ -258,7 +258,7 @@ class GameConsumers(AsyncWebsocketConsumer):
         game_object.is_joinable = False
         game_object.save(update_fields=['is_joinable'])
 
-    async def get_cards(self):
+    async def get_cards(self, given_from_player):
         """
         This is useful is player accidentally refresh.
         :return:
@@ -269,7 +269,11 @@ class GameConsumers(AsyncWebsocketConsumer):
                 user_channel = "{0}_game_{1}".format(user, self.game_id)
                 cards = self.game_memory_data[self.game_id].get_cards(user)
 
-                msg = "{0} drew {1} cards!".format(user, len(cards))
+                if given_from_player:
+                    msg = "Got cards from another player. {0} have total of {1} cards!".format(user, len(cards))
+                else:
+                    msg = "{0} drew {1} cards!".format(user, len(cards))
+
                 self.game_log[self.game_id] += '\n' + msg
 
                 await self.channel_layer.group_send(
@@ -677,9 +681,13 @@ class GameConsumers(AsyncWebsocketConsumer):
             self.game_memory_data[self.game_id].remove_player(str(user))
 
         elif self.game_memory_data[self.game_id].status == "Started":
-            # game has started, pass cards to the rest of the players
+            # pass players cards to rest of the lobby and remove player from players list
+            self.game_memory_data[self.game_id].pass_cards_to_players(str(user))
 
-            pass
+            # update that player's stat who left the game
+            player_stats = Account.UserStatistic.objects.get(user=self.scope['user'].id)
+            player_stats.total_loss += 1
+            player_stats.save()
 
     @database_sync_to_async
     def update_db_accuse(self, success):

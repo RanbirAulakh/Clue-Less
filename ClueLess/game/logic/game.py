@@ -102,7 +102,24 @@ class Game:
 		:param player_name:
 		:return:
 		"""
-		pass
+		get_cards = []
+		for i in self.players:
+			if i.name == player_name:
+				get_cards = i.hand
+				print("Getting {0}'s cards: {1}.".format(i.name, get_cards))
+				break
+
+		while(True):
+			flag = False
+			for i in self.players:
+				if len(get_cards) == 0:
+					flag = True
+					break
+				print("here?")
+				i.hand.append(get_cards.pop())
+
+			if flag:
+				break
 
 	def player_select_character(self, player_name, chosen_character):
 		"""
