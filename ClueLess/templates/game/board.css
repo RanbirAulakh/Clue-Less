@@ -1,0 +1,158 @@
+.study{
+  position: absolute;
+  top: 110px;
+  left: 120px;
+  width: 40px;
+  height: auto;
+}
+.studyhall{
+  position: absolute;
+  top: 110px;
+  left: 190px;
+  width: 40px;
+  height: auto;
+}
+.hall{
+  position: absolute;
+  top: 110px;
+  left: 260px;
+  width: 40px;
+  height: auto;
+}
+.halllounge{
+  position: absolute;
+  top: 110px;
+  left: 330px;
+  width: 40px;
+  height: auto;
+}
+.studylibrary{
+  position: absolute;
+  top: 190px;
+  left: 120px;
+  width: 40px;
+  height: auto;
+}
+.hallbilliard{
+  position: absolute;
+  top: 190px;
+  left: 260px;
+  width: 40px;
+  height: auto;
+}
+.loungediningroom{
+  position: absolute;
+  top: 190px;
+  left: 400px;
+  width: 40px;
+  height: auto;
+}
+.librarybilliard{
+  position: absolute;
+  top: 260px;
+  left: 190px;
+  width: 40px;
+  height: auto;
+}
+.billiarddining{
+  position: absolute;
+  top: 260px;
+  left: 330px;
+  width: 40px;
+  height: auto;
+}
+.libraryconservatory{
+  position: absolute;
+  top: 330px;
+  left: 120px;
+  width: 40px;
+  height: auto;
+}
+.billiardballroom{
+  position: absolute;
+  top: 330px;
+  left: 260px;
+  width: 40px;
+  height: auto;
+}
+.diningkitchen{
+  position: absolute;
+  top: 330px;
+  left: 400px;
+  width: 40px;
+  height: auto;
+}
+.conservatoryballroom{
+  position: absolute;
+  top: 400px;
+  left: 190px;
+  width: 40px;
+  height: auto;
+}
+.ballroomkitchen{
+  position: absolute;
+  top: 400px;
+  left: 330px;
+  width: 40px;
+  height: auto;
+}
+.lounge{
+  position: absolute;
+  top: 110px;
+  left: 400px;
+  width: 40px;
+  height: auto;
+}
+.library{
+  position: absolute;
+  top: 260px;
+  left: 120px;
+  width: 40px;
+  height: auto;
+}
+.billiard{
+  position: absolute;
+  top: 260px;
+  left: 260px;
+  width: 40px;
+  height: auto;
+}
+.dining{
+  position: absolute;
+  top: 260px;
+  left: 400px;
+  width: 40px;
+  height: auto;
+}
+.conservatory{
+  position: absolute;
+  top: 400px;
+  left: 120px;
+  width: 40px;
+  height: auto;
+}
+.ballroom{
+  position: absolute;
+  top: 400px;
+  left: 260px;
+  width: 40px;
+  height: auto;
+}
+.kitchen{
+  position: absolute;
+  top: 400px;
+  left: 400px;
+  width: 40px;
+  height: auto;
+}
+
+.board{
+position: relative;
+top: 0;
+left: 0;
+}
+.map{
+position: relative;
+top: 0;
+left: 0;
+}
