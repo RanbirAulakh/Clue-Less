@@ -373,7 +373,7 @@ class Game:
 
 						self.players[i].set_room(target_room)
 						self.players[i].set_current_location(target_room.get_name())
-						move_change_html(self.players[i], target_room)
+						self.move_change_html(self.players[i], target_room)
 						self.is_move_made = True
 						return True
 					else:
