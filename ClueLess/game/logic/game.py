@@ -10,6 +10,8 @@ from .player import Player
 from .room import *
 from .clue import Clue
 from .map import Map
+from pyquery import PyQuery as pq
+
 
 
 class Game:
