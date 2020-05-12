@@ -280,9 +280,9 @@ class Game:
 
 
 
-	def move_change_html(self, next_move):
-		character = self.get_character
-		currentlocation = self.get_current_location
+	def move_change_html(self, player, next_move):
+		character = player.get_character
+		currentlocation = player.get_current_location
 		if(character == constants.PLUM):
 			endregex = 'src = "../../resources/images/ProfessorPlum.png" />'
 		elif(character == constants.SCARLET):
@@ -375,7 +375,7 @@ class Game:
 
 						self.players[i].set_room(target_room)
 						self.players[i].set_current_location(target_room.get_name())
-						self.move_change_html(target_room)
+						self.move_change_html(self.players[i], target_room)
 						self.is_move_made = True
 						return True
 					else:
