@@ -283,6 +283,7 @@ function displayApprovalDisapproval(cardsApproveDisapprove, suggestMsg, playersO
 
     $('#approveDisapproveModal').modal({backdrop: 'static', keyboard: false})
     $('#approveCheckboxes').empty();
+    $('#suggestMsg').empty();
     $('#suggestMsg').append(suggestMsg);
     $('#suggesterName').text(suggesterName);
     $('#playersOwnerCards').text(playersOwnerCards);
@@ -301,7 +302,7 @@ function displayApprovedCardsPickOne(approvedCards, suggesterName) {
         return;
     }
 
-    $('suggesterNamePickOne').text(suggesterName);
+    $('#suggesterNamePickOne').text(suggesterName);
     $('#chooseOneApprovedCardModal').modal({backdrop: 'static', keyboard: false})
     $('#approvedCardsRadios').empty();
     for(var i = 0; i < approvedCards.length; i++) {
@@ -413,21 +414,18 @@ function updateNotepadTable(playerDetails) {
         }
     });
 
-    let removCol = [];
+    let removeCol = [];
     jQuery.grep(existingPlayerNameId, function(el) {
         if (jQuery.inArray(el, playersList) === -1) {
-            removCol.push(el);
+            removeCol.push(el);
         }
     });
-
-    console.log(addCol);
-    console.log(removCol);
 
     for(let i = 0; i < addCol.length; i++) {
         addColumnToNotepad(addCol[i], playerDetails);
     }
-    for(let i = 0; i < removCol.length; i++) {
-        removeColumnFromNotepad(removCol[i]);
+    for(let i = 0; i < removeCol.length; i++) {
+        removeColumnFromNotepad(removeCol[i]);
     }
 
 }
@@ -464,8 +462,6 @@ function removeColumnFromNotepad(playerId) {
     $('.selectpicker').selectpicker('render'); // render dropdown menu
 }
 
-
-
 $('.quit_game_button').click(async function() {
     await gameSocket.send(JSON.stringify({
         'type': 'quit_game'
@@ -478,7 +474,6 @@ $('#leaveGameModal').on('show.bs.modal', function (event) {
     let modal = $(this)
     modal.find('.quit_game_button').attr("href", recipient);
 })
-
 
 function updateMap(playerDetails) {
     if(typeof playerDetails === 'undefined') {
@@ -494,16 +489,6 @@ function updateMap(playerDetails) {
         let location = "#" + value["location"].replace(" ", "-") + " img";
         let character = value["character"].replace(" ", "");
 
-        console.log(location);
-        console.log(character);
         $(location).attr('src', '/static/images/' + character + '.png');
-
-        // let mediaHTML = '<div class="media p-1">\n' +
-        //     '    <img class="rounded mr-2" src="/static/images/' + playerCharacter + '.png" height="50" width="50">\n' +
-        //     '    <div class="media-body text-white">\n' +
-        //     '         <div class="text-wrap" style=" width: 10em;">' + playerName + ' @ ' + playerLocation + '</div>\n' +
-        //     '    </div>\n' +
-        //     '    </div>';
-        // $('#players_details').append(mediaHTML);
     }
 }

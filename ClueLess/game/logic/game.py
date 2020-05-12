@@ -47,6 +47,8 @@ class Game:
 		self.is_move_made = False
 		self.original_turn_order = []  # useful for suggestion
 
+		self.suggest_msg = ""  # useful for suggestion msg
+
 	def start_game(self):
 		"""
 		1. Change status to "Started"

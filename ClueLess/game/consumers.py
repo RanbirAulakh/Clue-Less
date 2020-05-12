@@ -400,6 +400,10 @@ class GameConsumers(AsyncWebsocketConsumer):
 
         self.game_log[self.game_id] += '\n' + msg
 
+        self.game_memory_data[self.game_id].suggest_msg = \
+            "<b>{0}</b> suggested the crime was committed in the <b>{1}</b> " \
+            "by <b>{2}</b> with the <b>{3}</b>.".format(user, room_suggest, suspect_suggest, weapon_suggest)
+
         # approver/disapprover msg
         approver_channel = "{0}_game_{1}".format(result['player_to_approve_disapprove'], self.game_id)
         await self.channel_layer.group_send(
@@ -413,9 +417,8 @@ class GameConsumers(AsyncWebsocketConsumer):
                 'player_owner_cards': result['player_owner_cards'],
                 'suggester_name': result['player_suggester'],
                 'suggest_msg':
-                    "<b>{0}</b> suggested the crime was committed in the <b>{1}</b> by <b>{2}</b> with the <b>{3}</b>. "
-                    "Below is <b>{4}</b>'s cards. Please tick if it matches suggester's comment."
-                        .format(user, room_suggest, suspect_suggest, weapon_suggest, result['player_owner_cards'])
+                    "{0} Below is <b>{1}</b>'s cards. Please tick if it matches suggester's comment."
+                        .format(self.game_memory_data[self.game_id].suggest_msg, result['player_owner_cards'])
             }
         )
 
@@ -570,12 +573,11 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'player_owner_cards': data['player_owner_cards'],
                     'suggester_name': data['player_suggester'],
                     'suggest_msg':
-                        "The previous player was unable to disprove {0}. "
-                        "Below is {1}'s cards. Please tick if it matches suggester's comment."
-                            .format(data['player_suggester'], data['player_owner_cards'])
+                        "The previous player was unable to disprove {0}. {1}"
+                        "Below is {2}'s cards. Please tick if it matches suggester's comment."
+                            .format(data['player_suggester'], self.game_memory_data[self.game_id].suggest_msg, data['player_owner_cards'])
                 }
             )
-            
 
         elif len(approved_cards) == 1:
             # message to suggester and show only 1 card!
