@@ -167,10 +167,10 @@ class Game:
 	def get_character_game_pieces(self):
 		players_details = {}
 		for i in self.players:
-			players_details[i.name] = {"location": i.current_location, "character": i.character}
+			players_details[i.name] = {"location": i.current_location, "character": i.character, "inactive": False}
 
 		for i in self.inactive_players:
-			players_details[i.name] = {"location": i.current_location, "character": i.character}
+			players_details[i.name] = {"location": i.current_location, "character": i.character, "inactive": True}
 
 		return players_details
 
@@ -390,9 +390,6 @@ class Game:
 		data['cards'] = self.get_cards(player_approve)
 		
 		return data
-
-	def show_one_card_to_suggester(self):
-		pass
 	
 	def make_accusation(self, player_name, accused_clues):
 		clue_names = []

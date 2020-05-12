@@ -283,7 +283,7 @@ function displayApprovalDisapproval(cardsApproveDisapprove, suggestMsg, playersO
 
     $('#approveDisapproveModal').modal({backdrop: 'static', keyboard: false})
     $('#approveCheckboxes').empty();
-    $('#suggestMsg').text(suggestMsg);
+    $('#suggestMsg').append(suggestMsg);
     $('#suggesterName').text(suggesterName);
     $('#playersOwnerCards').text(playersOwnerCards);
     for(let i = 0; i < cardsApproveDisapprove.length; i++) {
@@ -401,7 +401,9 @@ function updateNotepadTable(playerDetails) {
 
     let playersList = []
     for (const [key, value] of Object.entries(playerDetails)) {
-        playersList.push(key + "_HEAD");
+        if(value["inactive"] === false){
+            playersList.push(key + "_HEAD");
+        }
     }
 
     let addCol = []
