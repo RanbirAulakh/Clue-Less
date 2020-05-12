@@ -27,6 +27,7 @@ gameSocket.onmessage = function(e) {
         let playerDetails = data["players_details"];
         updatePlayersDetailsLocation(playerDetails);
         updateNotepadTable(playerDetails);
+        updateMap(playerDetails);
 
     } catch (e) { }
 
@@ -91,6 +92,7 @@ gameSocket.onmessage = function(e) {
 };
 
 gameSocket.onclose = function(e) {
+    console.log("WebSocket Error: " , e);
     console.error('game socket closed unexpectedly');
 };
 
@@ -281,7 +283,8 @@ function displayApprovalDisapproval(cardsApproveDisapprove, suggestMsg, playersO
 
     $('#approveDisapproveModal').modal({backdrop: 'static', keyboard: false})
     $('#approveCheckboxes').empty();
-    $('#suggestMsg').text(suggestMsg);
+    $('#suggestMsg').empty();
+    $('#suggestMsg').append(suggestMsg);
     $('#suggesterName').text(suggesterName);
     $('#playersOwnerCards').text(playersOwnerCards);
     for(let i = 0; i < cardsApproveDisapprove.length; i++) {
@@ -299,7 +302,7 @@ function displayApprovedCardsPickOne(approvedCards, suggesterName) {
         return;
     }
 
-    $('suggesterNamePickOne').text(suggesterName);
+    $('#suggesterNamePickOne').text(suggesterName);
     $('#chooseOneApprovedCardModal').modal({backdrop: 'static', keyboard: false})
     $('#approvedCardsRadios').empty();
     for(var i = 0; i < approvedCards.length; i++) {
@@ -399,7 +402,9 @@ function updateNotepadTable(playerDetails) {
 
     let playersList = []
     for (const [key, value] of Object.entries(playerDetails)) {
-        playersList.push(key + "_HEAD");
+        if(value["inactive"] === false){
+            playersList.push(key + "_HEAD");
+        }
     }
 
     let addCol = []
@@ -409,21 +414,18 @@ function updateNotepadTable(playerDetails) {
         }
     });
 
-    let removCol = [];
+    let removeCol = [];
     jQuery.grep(existingPlayerNameId, function(el) {
         if (jQuery.inArray(el, playersList) === -1) {
-            removCol.push(el);
+            removeCol.push(el);
         }
     });
-
-    console.log(addCol);
-    console.log(removCol);
 
     for(let i = 0; i < addCol.length; i++) {
         addColumnToNotepad(addCol[i], playerDetails);
     }
-    for(let i = 0; i < removCol.length; i++) {
-        removeColumnFromNotepad(removCol[i]);
+    for(let i = 0; i < removeCol.length; i++) {
+        removeColumnFromNotepad(removeCol[i]);
     }
 
 }
@@ -460,8 +462,6 @@ function removeColumnFromNotepad(playerId) {
     $('.selectpicker').selectpicker('render'); // render dropdown menu
 }
 
-
-
 $('.quit_game_button').click(async function() {
     await gameSocket.send(JSON.stringify({
         'type': 'quit_game'
@@ -474,3 +474,24 @@ $('#leaveGameModal').on('show.bs.modal', function (event) {
     let modal = $(this)
     modal.find('.quit_game_button').attr("href", recipient);
 })
+
+function updateMap(playerDetails) {
+    if(typeof playerDetails === 'undefined') {
+        console.log("here?");
+        return;
+    }
+
+    // remove all images
+    $('#mapBoard img').attr('src', '/static/images/');
+
+    // add all images
+    for (const [key, value] of Object.entries(playerDetails)) {
+        let location = "#" + value["location"].replace(" ", "-") + " img";
+        let character = value["character"].replace(" ", "");
+
+        console.log(location);
+        console.log(character);
+
+        $(location).attr('src', '/static/images/' + character + '.png');
+    }
+}

@@ -139,9 +139,12 @@ class GameConsumers(AsyncWebsocketConsumer):
                 await self.end_turn()
             elif text_data_json["type"] == "approved_cards":
                 await self.choose_approved_cards(text_data_json)
-            elif text_data_json["type"] == "what_card_to_show":
+            elif text_data_json["type"] == "show_one_card":
                 await self.show_one_card(text_data_json)
             elif text_data_json["type"] == "quit_game":
+                if self.game_memory_data[self.game_id].status == "Finished":
+                    return  # don't do anything
+
                 await self.quit_game()
 
                 if self.game_memory_data[self.game_id].status == "Not Started":
@@ -391,7 +394,7 @@ class GameConsumers(AsyncWebsocketConsumer):
         room_suggest = data['suggest']['room']
         weapon_suggest = data['suggest']['weapon']
 
-        msg = "\n{0} suggested the crime was committed in the {1} by {2} with the {3}".format(user, suspect_suggest, room_suggest, weapon_suggest)
+        msg = "\n{0} suggested the crime was committed in the {1} by {2} with the {3}".format(user, room_suggest, suspect_suggest, weapon_suggest)
 
         result = self.game_memory_data[self.game_id].make_guess(user, {"suspect": suspect_suggest, "room": room_suggest, "weapon": weapon_suggest})
 
@@ -399,6 +402,10 @@ class GameConsumers(AsyncWebsocketConsumer):
             .format(result['player_to_approve_disapprove'], user)
 
         self.game_log[self.game_id] += '\n' + msg
+
+        self.game_memory_data[self.game_id].suggest_msg = \
+            "<b>{0}</b> suggested the crime was committed in the <b>{1}</b> " \
+            "by <b>{2}</b> with the <b>{3}</b>.".format(user, room_suggest, suspect_suggest, weapon_suggest)
 
         # approver/disapprover msg
         approver_channel = "{0}_game_{1}".format(result['player_to_approve_disapprove'], self.game_id)
@@ -413,9 +420,8 @@ class GameConsumers(AsyncWebsocketConsumer):
                 'player_owner_cards': result['player_owner_cards'],
                 'suggester_name': result['player_suggester'],
                 'suggest_msg':
-                    "<b>{0}</b> suggested the crime was committed in the <b>{1}</b> by <b>{2}</b> with the <b>{3}</b>. "
-                    "Below is <b>{4}</b>'s cards. Please tick if it matches suggester's comment."
-                        .format(user, room_suggest, suspect_suggest, weapon_suggest, result['player_owner_cards'])
+                    "{0} Below is <b>{1}</b>'s cards. Please tick if it matches suggester's comment."
+                        .format(self.game_memory_data[self.game_id].suggest_msg, result['player_owner_cards'])
             }
         )
 
@@ -570,12 +576,11 @@ class GameConsumers(AsyncWebsocketConsumer):
                     'player_owner_cards': data['player_owner_cards'],
                     'suggester_name': data['player_suggester'],
                     'suggest_msg':
-                        "The previous player was unable to disprove {0}. "
-                        "Below is {1}'s cards. Please tick if it matches suggester's comment."
-                            .format(data['player_suggester'], data['player_owner_cards'])
+                        "The previous player was unable to disprove {0}. {1}"
+                        "Below is {2}'s cards. Please tick if it matches suggester's comment."
+                            .format(data['player_suggester'], self.game_memory_data[self.game_id].suggest_msg, data['player_owner_cards'])
                 }
             )
-            
 
         elif len(approved_cards) == 1:
             # message to suggester and show only 1 card!
@@ -632,7 +637,6 @@ class GameConsumers(AsyncWebsocketConsumer):
             )
 
     async def show_one_card(self, data):
-        print("w here?");
         owner = str(self.scope['user'])
         card = data['what_card_to_show']
         suggester_user_channel = "{0}_game_{1}".format(str(data['suggester']), self.game_id)

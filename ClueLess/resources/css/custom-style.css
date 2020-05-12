@@ -2,118 +2,129 @@
     min-height: 70px;
 }
 
-.board {
+.boardV2 {
+    grid-template: repeat(5, 1fr) / repeat(5, 1fr);
     display: grid;
-    justify-content: center;
-    align-content: center;
-    grid-template-columns: repeat(5, 7vw);
-    grid-template-rows: repeat(5, 7vw);
+    overflow: auto;
+    min-height: 0;  /* NEW */
+    min-width: 0;   /* NEW; needed for Firefox */
 }
 
-.room-box {
-    background: #576490;
+.board-room {
     text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-color: #576490;
     color: white;
+    min-width: 150px;
+    height: 150px;
+    max-width: 100%;
     position:relative;
 }
 
-.passageway-box {
+.board-hallway-hor {
+    text-align: center;
+    background-color: #1D1E2C;
+    border-top: #f8f9fa solid 2rem;
+    border-bottom: #f8f9fa solid 2rem;
+    height: 150px;
+    min-width: 150px;
+    max-width: 100%;
+}
+
+.board-hallway-ver {
+    text-align: center;
+    background-color: #1D1E2C;
+    border-left: #f8f9fa solid 2rem;
+    border-right: #f8f9fa solid 2rem;
+    height: 150px;
+    min-width: 150px;
+    max-width: 100%;
+}
+
+.board-room img {
+    height: 50px;
+    width: auto;
+}
+
+.board-room p {
+    padding-top: 10px;
+}
+
+.board-hallway-hor img {
+    height: 50px;
+    width: auto;
+    justify-content: center;
+    align-content: center;
+    margin: 15px;
+}
+
+.board-hallway-ver img {
+    height: 50px;
+    width: auto;
+    justify-content: center;
+    align-content: center;
+    margin: 15px;
+}
+
+.passageway-br {
     color: black;
-    background-color: #f8f9fa;
-
-    width: 15%;
-    height: 15%;
-}
-
-.passageway-box.tl {
+    background-color: black;
     position: absolute;
-    bottom: 0;
-    right: 0;
-}
-
-.passageway-box.tr {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-}
-
-.passageway-box.bl {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.passageway-box.br {
-    position: absolute;
+    width: 25px;
+    height: 25px;
     top: 0;
     left: 0;
 }
 
-.rotate-45-left {
-    display: inline-block;
-    -webkit-transform: rotate(-45deg);
-    transform: rotate(-45deg);
+.passageway-tl {
+    color: black;
+    background-color: black;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    bottom: 0;
+    right: 0;
 }
 
-.rotate-45-right {
-    display: inline-block;
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
+.passageway-tr {
+    color: black;
+    background-color: red;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    bottom: 0;
+    left: 0;
 }
 
-.hallway-ver {
-    background: #1D1E2C;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-
-    border-left: #f8f9fa solid 40px;
-    border-right: #f8f9fa solid 40px;
+.passageway-bl {
+    color: black;
+    background-color: red;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    top: 0;
+    right: 0;
 }
 
-.hallway-hor {
-    background: #1D1E2C;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-
-    border-top: #f8f9fa solid 40px;
-    border-bottom: #f8f9fa solid 40px;
-}
-
-#charactersRadios input[type=radio],
-#approveCheckboxes input[type=checkbox] {
+#charactersRadios input[type=radio] {
     display: None;
 }
 
-#charactersRadios img:hover,
-#approveCheckboxes img:hover {
+#charactersRadios img:hover {
     cursor: pointer;
 }
 
-#charactersRadios input[type=radio]:checked + label > img,
-#approveCheckboxes input[type=checkbox]:checked + label > img {
+#charactersRadios input[type=radio]:checked + label > img{
     color: white;
 }
 
-#charactersRadios input[type=radio]:checked + label,
-#approveCheckboxes input[type=checkbox]:checked + label {
+#charactersRadios input[type=radio]:checked + label{
     color: white;
     width: 100%;
     border-radius: 5px;
 }
 
 #charactersRadios input#MrsPeacock[type=radio]:checked + label > img,
-#charactersRadios input#MrsPeacock[type=radio]:checked  + label,
-#approveCheckboxes input#MrsPeacock[type=checkbox]:checked + label > img,
-#approveCheckboxes input#MrsPeacock[type=checkbox]:checked  + label {
+#charactersRadios input#MrsPeacock[type=radio]:checked  + label {
     background-color: #669add;
 }
 

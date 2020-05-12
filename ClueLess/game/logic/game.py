@@ -10,6 +10,8 @@ from .player import Player
 from .room import *
 from .clue import Clue
 from .map import Map
+from pyquery import PyQuery as pq
+
 
 
 class Game:
@@ -45,6 +47,8 @@ class Game:
 		self.is_move_made = False
 		self.original_turn_order = []  # useful for suggestion
 
+		self.suggest_msg = ""  # useful for suggestion msg
+
 	def start_game(self):
 		"""
 		1. Change status to "Started"
@@ -62,7 +66,11 @@ class Game:
 			p.character = i
 			self.inactive_players.append(p)
 
-		self.place_players()
+		for player in self.players:
+			self.place_players(player)
+		for player in self.inactive_players:
+			self.place_players(player)
+
 		self.make_turn_order()
 
 		for i in self.turn_order:
@@ -161,7 +169,10 @@ class Game:
 	def get_character_game_pieces(self):
 		players_details = {}
 		for i in self.players:
-			players_details[i.name] = {"location": i.current_location, "character": i.character}
+			players_details[i.name] = {"location": i.current_location, "character": i.character, "inactive": False}
+
+		for i in self.inactive_players:
+			players_details[i.name] = {"location": i.current_location, "character": i.character, "inactive": True}
 
 		return players_details
 
@@ -291,6 +302,7 @@ class Game:
 
 						self.players[i].set_room(target_room)
 						self.players[i].set_current_location(target_room.get_name())
+						# self.move_change_html(self.players[i], target_room)
 						self.is_move_made = True
 						return True
 					else:
@@ -380,9 +392,6 @@ class Game:
 		data['cards'] = self.get_cards(player_approve)
 		
 		return data
-
-	def show_one_card_to_suggester(self):
-		pass
 	
 	def make_accusation(self, player_name, accused_clues):
 		clue_names = []
@@ -405,44 +414,44 @@ class Game:
 		self.status = "Finished!"
 		return True
 
-	def place_players(self):
+	def place_players(self, player):
 		"""
 		At start, place the players in a starting hallway based on their character.
 		:return:
 		"""
 		rooms = self.map.get_rooms()
-		for player in self.players:
-			character = player.get_character()
-			
-			if character == constants.SCARLET:
-				rooms[constants.HALL_LOUNGE].add_player(player)
-				player.set_room(rooms[constants.HALL_LOUNGE])
-				player.set_current_location(constants.HALL_LOUNGE)
-				
-			elif character == constants.MUSTARD:
-				rooms[constants.LOUNGE_DINING].add_player(player)
-				player.set_room(rooms[constants.LOUNGE_DINING])
-				player.set_current_location(constants.LOUNGE_DINING)
-				
-			elif character == constants.WHITE:
-				rooms[constants.BALLROOM_KITCHEN].add_player(player)
-				player.set_room(rooms[constants.BALLROOM_KITCHEN])
-				player.set_current_location(constants.BALLROOM_KITCHEN)
-				
-			elif character == constants.GREEN:
-				rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
-				player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
-				player.set_current_location(constants.CONSERVATORY_BALLROOM)
-				
-			elif character == constants.PEACOCK:
-				rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
-				player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
-				player.set_current_location(constants.LIBRARY_CONSERVATORY)
-				
-			elif character == constants.PLUM:
-				rooms[constants.STUDY_LIBRARY].add_player(player)
-				player.set_room(rooms[constants.STUDY_LIBRARY])
-				player.set_current_location(constants.STUDY_LIBRARY)
+
+		character = player.get_character()
+
+		if character == constants.SCARLET:
+			rooms[constants.HALL_LOUNGE].add_player(player)
+			player.set_room(rooms[constants.HALL_LOUNGE])
+			player.set_current_location(constants.HALL_LOUNGE)
+
+		elif character == constants.MUSTARD:
+			rooms[constants.LOUNGE_DINING].add_player(player)
+			player.set_room(rooms[constants.LOUNGE_DINING])
+			player.set_current_location(constants.LOUNGE_DINING)
+
+		elif character == constants.WHITE:
+			rooms[constants.BALLROOM_KITCHEN].add_player(player)
+			player.set_room(rooms[constants.BALLROOM_KITCHEN])
+			player.set_current_location(constants.BALLROOM_KITCHEN)
+
+		elif character == constants.GREEN:
+			rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
+			player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
+			player.set_current_location(constants.CONSERVATORY_BALLROOM)
+
+		elif character == constants.PEACOCK:
+			rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
+			player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
+			player.set_current_location(constants.LIBRARY_CONSERVATORY)
+
+		elif character == constants.PLUM:
+			rooms[constants.STUDY_LIBRARY].add_player(player)
+			player.set_room(rooms[constants.STUDY_LIBRARY])
+			player.set_current_location(constants.STUDY_LIBRARY)
 
 	def get_available_moves(self):
 		"""

@@ -4,12 +4,12 @@ $('#id_type').change(function () {
    let value = $(this).val();
    if (value == "Private") {
        $('#id_private_key').remove();
-       $('<div class="input-group mb-3" id="password_input">\n' +
+       $('<div class="row"> <div class="col-md-12"> <div class="input-group" id="password_input">\n' +
            '  <input type="text" class="form-control" id="id_private_key" name="private_key" required>\n' +
            '  <div class="input-group-append">\n' +
            '    <a id="generateKey"  class="btn btn-outline-secondary" type="button">Generate Key</a>' +
-           '  </div><label>Please share this key with your friends!</label>\n' +
-           '</div>').insertBefore('#submitBtn');
+           '  </div></div><label style="">Please share this key with your friends!</label>\n' +
+           '</div></div>').insertBefore('#submitBtn');
    } else {
        $('#password_input').remove();
    }
