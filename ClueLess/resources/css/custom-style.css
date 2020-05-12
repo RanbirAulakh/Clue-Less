@@ -6,18 +6,29 @@
     display: grid;
     justify-content: center;
     align-content: center;
-    grid-template-columns: repeat(5, 7vw);
-    grid-template-rows: repeat(5, 7vw);
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    overflow: auto;
+}
+
+.person {
+  width: 40%;
+  height: auto;
 }
 
 .room-box {
     background: #576490;
     text-align: center;
     display: flex;
-    align-items: center;
+    /*align-items: center;*/
     justify-content: center;
     color: white;
     position:relative;
+}
+
+.room-box img {
+    height: 50%;
+    width: auto;
 }
 
 .passageway-box {
@@ -32,15 +43,18 @@
     position: absolute;
     bottom: 0;
     right: 0;
+    background-color: red;
 }
 
 .passageway-box.tr {
+    background-color: black;
     position: absolute;
     bottom: 0;
     left: 0;
 }
 
 .passageway-box.bl {
+    background-color: black;
     position: absolute;
     top: 0;
     right: 0;
@@ -50,18 +64,7 @@
     position: absolute;
     top: 0;
     left: 0;
-}
-
-.rotate-45-left {
-    display: inline-block;
-    -webkit-transform: rotate(-45deg);
-    transform: rotate(-45deg);
-}
-
-.rotate-45-right {
-    display: inline-block;
-    -webkit-transform: rotate(45deg);
-    transform: rotate(45deg);
+    background-color: red;
 }
 
 .hallway-ver {
@@ -72,8 +75,8 @@
     justify-content: center;
     color: white;
 
-    border-left: #f8f9fa solid 40px;
-    border-right: #f8f9fa solid 40px;
+    border-left: #f8f9fa solid 30px;
+    border-right: #f8f9fa solid 30px;
 }
 
 .hallway-hor {
@@ -84,8 +87,8 @@
     justify-content: center;
     color: white;
 
-    border-top: #f8f9fa solid 40px;
-    border-bottom: #f8f9fa solid 40px;
+    border-top: #f8f9fa solid 30px;
+    border-bottom: #f8f9fa solid 30px;
 }
 
 #charactersRadios input[type=radio],

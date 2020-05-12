@@ -27,6 +27,7 @@ gameSocket.onmessage = function(e) {
         let playerDetails = data["players_details"];
         updatePlayersDetailsLocation(playerDetails);
         updateNotepadTable(playerDetails);
+        updateMap(playerDetails);
 
     } catch (e) { }
 
@@ -91,6 +92,7 @@ gameSocket.onmessage = function(e) {
 };
 
 gameSocket.onclose = function(e) {
+    console.log("WebSocket Error: " , e);
     console.error('game socket closed unexpectedly');
 };
 
@@ -474,3 +476,32 @@ $('#leaveGameModal').on('show.bs.modal', function (event) {
     let modal = $(this)
     modal.find('.quit_game_button').attr("href", recipient);
 })
+
+
+function updateMap(playerDetails) {
+    if(typeof playerDetails === 'undefined') {
+        console.log("here?");
+        return;
+    }
+
+    // remove all images
+    $('#mapBoard img').attr('src', '/static/images/');
+
+    // add all images
+    for (const [key, value] of Object.entries(playerDetails)) {
+        let location = "#" + value["location"].replace(" ", "-") + " img";
+        let character = value["character"].replace(" ", "");
+
+        console.log(location);
+        console.log(character);
+        $(location).attr('src', '/static/images/' + character + '.png');
+
+        // let mediaHTML = '<div class="media p-1">\n' +
+        //     '    <img class="rounded mr-2" src="/static/images/' + playerCharacter + '.png" height="50" width="50">\n' +
+        //     '    <div class="media-body text-white">\n' +
+        //     '         <div class="text-wrap" style=" width: 10em;">' + playerName + ' @ ' + playerLocation + '</div>\n' +
+        //     '    </div>\n' +
+        //     '    </div>';
+        // $('#players_details').append(mediaHTML);
+    }
+}

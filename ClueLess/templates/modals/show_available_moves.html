@@ -1,7 +1,7 @@
 {% load static %}
 
-<div id="showAvailableMoves" class="modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
+<div id="showAvailableMoves" class="modal " tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Available moves to make</h5>
@@ -9,7 +9,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="background-color: #f8f9fa">
                 <div class="form-group">
                     <b>Current Location: </b>
                     <div id="current_position">
@@ -23,7 +23,8 @@
                     </select>
                 </div>
                 <b>Map reference:</b>
-                <img class="img-fluid" src="{%  static "images/clueless_map.PNG"%}" />
+                {% include "game/map.html" %}
+{#                <img class="img-fluid" src="{%  static "images/clueless_map.PNG"%}" />#}
             </div>
             <div class="modal-footer">
                 <a id="game-move-selection-submit" type="button" class="btn btn-primary text-white">Confirm Selection</a>

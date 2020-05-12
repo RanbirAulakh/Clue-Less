@@ -64,7 +64,11 @@ class Game:
 			p.character = i
 			self.inactive_players.append(p)
 
-		self.place_players()
+		for player in self.players:
+			self.place_players(player)
+		for player in self.inactive_players:
+			self.place_players(player)
+
 		self.make_turn_order()
 
 		for i in self.turn_order:
@@ -163,6 +167,9 @@ class Game:
 	def get_character_game_pieces(self):
 		players_details = {}
 		for i in self.players:
+			players_details[i.name] = {"location": i.current_location, "character": i.character}
+
+		for i in self.inactive_players:
 			players_details[i.name] = {"location": i.current_location, "character": i.character}
 
 		return players_details
@@ -278,88 +285,6 @@ class Game:
 			if i in self.turn_order:
 				self.turn_order.remove(i)
 
-
-
-	def move_change_html(self, player, next_move):
-		character = player.get_character
-		currentlocation = player.get_current_location
-		if(character == constants.PLUM):
-			endregex = 'src = "../../resources/images/ProfessorPlum.png" />'
-		elif(character == constants.SCARLET):
-			endregex = 'src = "../../resources/images/Ms.Scarlet.png" />'
-		elif(character == constants.WHITE):
-			endregex = 'src = "../../resources/images/Mrs.White.png" />'
-		elif(character == constants.MUSTARD):
-			endregex = 'src="../../resources/images/ColonelMustard.png" />'
-		elif(character == constants.PEACOCK):
-			endregex = 'src = "../../resources/images/Mrs.Peacock.png" />'
-		elif(character == constants.GREEN):
-			endregex = 'src = "../../resources/images/Mr.Green.png" />'
-		target_room = self.map.rooms[next_move]
-		original_text = ""
-		if(target_room == constants.HALL):
-			original_text = "hall"
-		elif(target_room == constants.STUDY):
-			original_text = "study"
-		elif(target_room == constants.LOUNGE):
-			original_text = "lounge"
-		elif(target_room == constants.LIBRARY):
-			original_text = "library"
-		elif(target_room == constants.BILLIARD):
-			original_text = "billiard"
-		elif(target_room == constants.DINING):
-			original_text = "dining"
-		elif(target_room == constants.CONSERVATORY):
-			original_text = "conservatory"
-		elif(target_room == constants.BALLROOM):
-			original_text = "ballroom"
-		elif(target_room == constants.KITCHEN):
-			original_text = "kitchen"
-		elif(target_room == constants.STUDY_HALL):
-			original_text = "studyhall"
-		elif(target_room == constants.HALL_LOUNGE):
-			original_text = "halllounge"
-		elif(target_room == constants.STUDY_LIBRARY):
-			original_text = "studylibrary"
-		elif(target_room == constants.HALL_BILLIARD):
-			original_text = "hallbilliard"
-		elif(target_room == constants.LOUNGE_DINING):
-			original_text = "loungediningroom"
-		elif(target_room == constants.LIBRARY_BILLIARD):
-			original_text = "librarybilliard"
-		elif(target_room == constants.BILLIARD_DINING):
-			original_text = "billiarddining"
-		elif(target_room == constants.LIBRARY_CONSERVATORY):
-			original_text = "libraryconservatory"
-		elif(target_room == constants.BILLIARD_BALLROOM):
-			original_text = "billiardballroom"
-		elif(target_room == constants.DINING_KITCHEN):
-			original_text = "diningkitchen"
-		elif(target_room == constants.CONSERVATORY_BALLROOM):
-			original_text = "conservatoryballroom"
-		elif(target_room == constants.BALLROOM_KITCHEN):
-			original_text = "ballroomkitchen"
-		personsimage = '<img class = "person"' + endregex
-		#opens file
-		target_file = open('../../templates/game/map.html', 'r')
-		contents = target_file.read()
-		#starts pyquery
-		fullhtmldoc = pq(contents)
-		toberemoved = "." + endregex
-		#removes person's image
-		fullhtmldoc(toberemoved).remove()
-		#finds new area
-		newarea = fullhtmldoc.find(original_text)
-		#inserts image inside newarea
-		personsimage.append(newarea)
-		target_file.close()
-		#write new file
-		save_file = open('../../templates/game/map.html', 'w')
-		save_file.write(fullhtmldoc)
-		save_file.close()
-
-
-
 	def move_player(self, player_name, next_move):
 		target_room = self.map.rooms[next_move]
 		for i in range(len(self.players)):
@@ -375,7 +300,7 @@ class Game:
 
 						self.players[i].set_room(target_room)
 						self.players[i].set_current_location(target_room.get_name())
-						self.move_change_html(self.players[i], target_room)
+						# self.move_change_html(self.players[i], target_room)
 						self.is_move_made = True
 						return True
 					else:
@@ -383,7 +308,6 @@ class Game:
 						return False
 				print("nah2")
 				return False
-
 
 	def make_guess(self, guessing_player, clues):
 		data = {}  # this is a data that will be sent to Client (User)
@@ -491,44 +415,44 @@ class Game:
 		self.status = "Finished!"
 		return True
 
-	def place_players(self):
+	def place_players(self, player):
 		"""
 		At start, place the players in a starting hallway based on their character.
 		:return:
 		"""
 		rooms = self.map.get_rooms()
-		for player in self.players:
-			character = player.get_character()
-			
-			if character == constants.SCARLET:
-				rooms[constants.HALL_LOUNGE].add_player(player)
-				player.set_room(rooms[constants.HALL_LOUNGE])
-				player.set_current_location(constants.HALL_LOUNGE)
-				
-			elif character == constants.MUSTARD:
-				rooms[constants.LOUNGE_DINING].add_player(player)
-				player.set_room(rooms[constants.LOUNGE_DINING])
-				player.set_current_location(constants.LOUNGE_DINING)
-				
-			elif character == constants.WHITE:
-				rooms[constants.BALLROOM_KITCHEN].add_player(player)
-				player.set_room(rooms[constants.BALLROOM_KITCHEN])
-				player.set_current_location(constants.BALLROOM_KITCHEN)
-				
-			elif character == constants.GREEN:
-				rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
-				player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
-				player.set_current_location(constants.CONSERVATORY_BALLROOM)
-				
-			elif character == constants.PEACOCK:
-				rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
-				player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
-				player.set_current_location(constants.LIBRARY_CONSERVATORY)
-				
-			elif character == constants.PLUM:
-				rooms[constants.STUDY_LIBRARY].add_player(player)
-				player.set_room(rooms[constants.STUDY_LIBRARY])
-				player.set_current_location(constants.STUDY_LIBRARY)
+
+		character = player.get_character()
+
+		if character == constants.SCARLET:
+			rooms[constants.HALL_LOUNGE].add_player(player)
+			player.set_room(rooms[constants.HALL_LOUNGE])
+			player.set_current_location(constants.HALL_LOUNGE)
+
+		elif character == constants.MUSTARD:
+			rooms[constants.LOUNGE_DINING].add_player(player)
+			player.set_room(rooms[constants.LOUNGE_DINING])
+			player.set_current_location(constants.LOUNGE_DINING)
+
+		elif character == constants.WHITE:
+			rooms[constants.BALLROOM_KITCHEN].add_player(player)
+			player.set_room(rooms[constants.BALLROOM_KITCHEN])
+			player.set_current_location(constants.BALLROOM_KITCHEN)
+
+		elif character == constants.GREEN:
+			rooms[constants.CONSERVATORY_BALLROOM].add_player(player)
+			player.set_room(rooms[constants.CONSERVATORY_BALLROOM])
+			player.set_current_location(constants.CONSERVATORY_BALLROOM)
+
+		elif character == constants.PEACOCK:
+			rooms[constants.LIBRARY_CONSERVATORY].add_player(player)
+			player.set_room(rooms[constants.LIBRARY_CONSERVATORY])
+			player.set_current_location(constants.LIBRARY_CONSERVATORY)
+
+		elif character == constants.PLUM:
+			rooms[constants.STUDY_LIBRARY].add_player(player)
+			player.set_room(rooms[constants.STUDY_LIBRARY])
+			player.set_current_location(constants.STUDY_LIBRARY)
 
 	def get_available_moves(self):
 		"""
