@@ -2,93 +2,107 @@
     min-height: 70px;
 }
 
-.board {
+.boardV2 {
+    grid-template: repeat(5, 1fr) / repeat(5, 1fr);
     display: grid;
-    justify-content: center;
-    align-content: center;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
     overflow: auto;
+    min-height: 0;  /* NEW */
+    min-width: 0;   /* NEW; needed for Firefox */
 }
 
-.person {
-  width: 40%;
-  height: auto;
-}
-
-.room-box {
-    background: #576490;
+.board-room {
     text-align: center;
-    display: flex;
-    /*align-items: center;*/
-    justify-content: center;
+    background-color: #576490;
     color: white;
+    min-width: 150px;
+    height: 150px;
+    max-width: 100%;
     position:relative;
 }
 
-.room-box img {
-    height: 50%;
+.board-hallway-hor {
+    text-align: center;
+    background-color: #1D1E2C;
+    border-top: #f8f9fa solid 2rem;
+    border-bottom: #f8f9fa solid 2rem;
+    height: 150px;
+    min-width: 150px;
+    max-width: 100%;
+}
+
+.board-hallway-ver {
+    text-align: center;
+    background-color: #1D1E2C;
+    border-left: #f8f9fa solid 2rem;
+    border-right: #f8f9fa solid 2rem;
+    height: 150px;
+    min-width: 150px;
+    max-width: 100%;
+}
+
+.board-room img {
+    height: 50px;
     width: auto;
 }
 
-.passageway-box {
+.board-room p {
+    padding-top: 10px;
+}
+
+.board-hallway-hor img {
+    height: 50px;
+    width: auto;
+    justify-content: center;
+    align-content: center;
+    margin: 15px;
+}
+
+.board-hallway-ver img {
+    height: 50px;
+    width: auto;
+    justify-content: center;
+    align-content: center;
+    margin: 15px;
+}
+
+.passageway-br {
     color: black;
-    background-color: #f8f9fa;
-
-    width: 15%;
-    height: 15%;
-}
-
-.passageway-box.tl {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background-color: red;
-}
-
-.passageway-box.tr {
     background-color: black;
     position: absolute;
+    width: 25px;
+    height: 25px;
+    top: 0;
+    left: 0;
+}
+
+.passageway-tl {
+    color: black;
+    background-color: black;
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    bottom: 0;
+    right: 0;
+}
+
+.passageway-tr {
+    color: black;
+    background-color: red;
+    position: absolute;
+    width: 25px;
+    height: 25px;
     bottom: 0;
     left: 0;
 }
 
-.passageway-box.bl {
-    background-color: black;
+.passageway-bl {
+    color: black;
+    background-color: red;
     position: absolute;
+    width: 25px;
+    height: 25px;
     top: 0;
     right: 0;
-}
-
-.passageway-box.br {
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: red;
-}
-
-.hallway-ver {
-    background: #1D1E2C;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-
-    border-left: #f8f9fa solid 30px;
-    border-right: #f8f9fa solid 30px;
-}
-
-.hallway-hor {
-    background: #1D1E2C;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-
-    border-top: #f8f9fa solid 30px;
-    border-bottom: #f8f9fa solid 30px;
 }
 
 #charactersRadios input[type=radio] {

@@ -142,6 +142,9 @@ class GameConsumers(AsyncWebsocketConsumer):
             elif text_data_json["type"] == "show_one_card":
                 await self.show_one_card(text_data_json)
             elif text_data_json["type"] == "quit_game":
+                if self.game_memory_data[self.game_id].status == "Finished":
+                    return  # don't do anything
+
                 await self.quit_game()
 
                 if self.game_memory_data[self.game_id].status == "Not Started":

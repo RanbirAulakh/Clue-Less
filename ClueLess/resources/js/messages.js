@@ -489,6 +489,9 @@ function updateMap(playerDetails) {
         let location = "#" + value["location"].replace(" ", "-") + " img";
         let character = value["character"].replace(" ", "");
 
+        console.log(location);
+        console.log(character);
+
         $(location).attr('src', '/static/images/' + character + '.png');
     }
 }

@@ -1,84 +1,102 @@
 {% load static %}
 
 <div class="container">
-<div class="board mt-3" id="mapBoard">
-    <div id="Study" class="room-box">
-        STUDY
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-        <div class="passageway-box tl"></div>
-    </div>
-    <div id="Study-Hall-Hallway" class="hallway-hor">
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div id="Hall" class="room-box">HALL
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div id="Hall-Lounge-Hallway" class="hallway-hor">
-        <img class="rounded person" style="height: auto" src="{% static "images/Ms.Scarlet.png" %}" alt=" " />
-    </div>
-    <div id="Lounge" class="room-box">LOUNGE
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-        <div class="passageway-box tr"></div>
-    </div>
+    <div class="boardV2" id="mapBoard">
+        
+        <div id="Study" class="board-room">
+            <div class="passageway-tl"></div>
+            <p>STUDY</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Study-Hall-Hallway" class="board-hallway-hor">
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Hall" class="board-room">
+            <p>HALL</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Hall-Lounge-Hallway" class="board-hallway-hor">
+            <img class="rounded person" src="{% static "images/Ms.Scarlet.png" %}" alt />
+        </div>
+        <div id="Lounge" class="board-room">
+            <div class="passageway-tr"></div>
+            <p>LOUNGE</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
 
-    <div id="Study-Library-Hallway" class="hallway-ver">
-        <img class="rounded person" src="{% static "images/ProfessorPlum.png" %}" alt=" " />
-    </div>
-    <div class="square"></div>
-    <div id="Hall-Billiard-Room-Hallway" class="hallway-ver">
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div class="square"></div>
-    <div id="Lounge-Dining-Room-Hallway" class="hallway-ver">
-        <img class="rounded person" src="{% static "images/ColonelMustard.png" %}" alt=" " />
-    </div>
+        <div id="Study-Library-Hallway" class="board-hallway-ver">
+            <p></p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div>
+        </div>
+        <div id="Hall-Billiard-Room-Hallway" class="board-hallway-ver">
+            <p></p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div>
+        </div>
+        <div id="Lounge-Dining-Room-Hallway" class="board-hallway-ver">
+            <p></p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
 
-    <div id="Library" class="room-box">LIBRARY
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div id="Library-Billiard-Room-Hallway" class="hallway-hor">
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div id="Billiard-Room" class="room-box">BILLIARD ROOM
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div id="Billiard-Room-Dining-Room-Hallway" class="hallway-hor">
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div id="Dining" class="room-box">DINING ROOM
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
+        <div id="Library" class="board-room">
+            <p>LIBRARY</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Library-Billiard-Room-Hallway" class="board-hallway-hor">
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Billiard-Room" class="board-room">
+            <p>BILLIARD ROOM</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Billiard-Room-Dining-Room-Hallway" class="board-hallway-hor">
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Dining" class="board-room">
+            <p>DINING ROOM</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
 
+        <div id="Library-Conservatory-Hallway" class="board-hallway-ver">
+            <p></p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div>
+        </div>
+        <div id="Billiard-Room-Ballroom-Hallway" class="board-hallway-ver">
+            <p></p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div>
+        </div>
+        <div id="Dining-Room-Kitchen-Hallway" class="board-hallway-ver">
+            <p></p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
 
-    <div id="Library-Conservatory-Hallway" class="hallway-ver">
-        <img class="rounded person" src="{% static "images/Mrs.Peacock.png" %}" alt=" " />
-    </div>
-    <div class="square"></div>
-    <div id="Billiard-Room-Ballroom-Hallway" class="hallway-ver">
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
-    <div class="square"></div>
-    <div id="Dining-Room-Kitchen-Hallway" class="hallway-ver">
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-    </div>
+        <div id="Conservatory" class="board-room">
+            <div class="passageway-bl"></div>
+            <p>CONSERVATORY</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Conservatory-Ballroom-Hallway" class="board-hallway-hor">
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Ballroom" class="board-room">
+            <p>BALLROOM</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Ballroom-Kitchen-Hallway" class="board-hallway-hor">
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
+        <div id="Kitchen" class="board-room">
+            <div class="passageway-br"></div>
+            <p>KITCHEN</p>
+            <img class="rounded person" src="{% static "" %}" alt />
+        </div>
 
-    <div id="Conservatory" class="room-box">CONSERVATORY
-        <img class="rounded person" src="{% static "images/" %}" alt=" " />
-        <div class="passageway-box bl"></div>
     </div>
-    <div id="Conservatory-Ballroom-Hallway" class="hallway-hor">
-        <img class="rounded person" src="{% static "images/Mr.Green.png" %}" alt=" "/>
-    </div>
-    <div id="Ballroom" class="room-box">BALLROOM
-        <img class="rounded person" src="{% static "images/" %}"  alt=" " />
-    </div>
-    <div id="Ballroom-Kitchen-Hallway" class="hallway-hor">
-        <img class="rounded person" src="{% static "images/Mrs.White.png" %}" alt=" " />
-    </div>
-    <div id="Kitchen" class="room-box">KITCHEN
-        <img class="rounded person"  src="{% static "images/" %}" alt=" " />
-        <div class="passageway-box br"></div>
-    </div>
-    
 </div>
-    </div>
